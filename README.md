@@ -67,6 +67,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 ## Roadmap
 
 - [ ] Point my router's DNS at Pi-hole so every device gets ad blocking
+- [ ] Free up space on the Wyse's 7.5GB drive (Pi-hole flagged "Disk shortage ahead") and move Docker data to the 1.8TB drive
 - [ ] Fix IP forwarding so the Tailscale exit node works
 - [ ] Switch the network config to `allow-hotplug` so a cable plugged in after boot still works
 - [ ] Bring back Pi-hole ad blocking on the go (point Tailscale DNS at the Wyse's Tailscale IP)
