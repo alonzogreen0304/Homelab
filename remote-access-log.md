@@ -85,22 +85,14 @@ Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page l
 
 ---
 
-## Step 5: A Wi-Fi scare that wasn't the homelab
-
-Right after this, my phone got stuck on **"Searching..."** when I switched back to my home Wi-Fi (my range extender's network).
-
-**What I learned:** joining Wi-Fi happens before Tailscale or the Wyse are involved, so this was a phone ↔ extender problem, not a homelab problem. Fixes to try: toggle Wi-Fi, forget and rejoin the network, or power-cycle the extender.
-
-**Rule for anywhere:** if the internet ever stops working while Tailscale is on, flip the Tailscale toggle **off** first. If that fixes it, it was Tailscale. If not, it's the network.
-
----
-
 ## Requirements for remote access to work
 
 1. Tailscale toggle **on** in the phone app
 2. Wyse **powered on with ethernet plugged in before boot**
 3. Home internet **up** (power or internet outage at home = can't reach it)
 4. Some work/school networks block VPNs. If so, switch to cellular data
+
+**Rule for anywhere:** if the internet ever stops working while Tailscale is on, flip the Tailscale toggle **off** first. If that fixes it, it was Tailscale. If not, it's the network.
 
 ---
 
