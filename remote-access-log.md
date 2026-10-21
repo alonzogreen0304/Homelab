@@ -98,11 +98,20 @@ Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page l
 | Turned Tailscale off completely | **Worked** | It's something Tailscale changes |
 | Tailscale on, **"Use Tailscale DNS" off** | **Worked** | **It's DNS** |
 
-**What that means:** with "Use Tailscale DNS" on, my phone sends every website lookup wherever my Tailscale DNS settings say. My best guess is that they point at Pi-hole on the Wyse by an address the main router's network can't reach, so every lookup failed and nothing loaded. The extender network could reach the Wyse, which is why it worked there.
+**Root cause (confirmed in the Tailscale admin console → DNS):**
+- **Override DNS servers** was **on**, forcing every Tailscale device to use one nameserver
+- That nameserver was the Wyse's **local** IP (`192.168.x.x`), not its Tailscale IP
 
-**Fix for now:** "Use Tailscale DNS" stays **off** on my phone. I can still reach the Wyse and Pi-hole through the Tailscale `100.x` address, which doesn't need DNS.
+A local `192.168` address only works on the same network as the Wyse (the extender's network). On the main router, at work, or on cellular, my phone couldn't reach it, so **every** website lookup failed. It only looked like it worked at home because I was usually on the extender's Wi-Fi.
 
-**Root cause still to confirm:** check the nameservers in the Tailscale admin console (DNS page).
+**Fix:**
+1. Tailscale admin console → **DNS** → turned **off "Override DNS servers"** (kept MagicDNS on)
+2. Phone → Tailscale app → **Settings** → turned **"Use Tailscale DNS" back on**
+3. Tested websites on the main router with Tailscale on
+
+Now devices use whatever network they're on for normal lookups, and Tailscale only handles tailnet names.
+
+**Lesson:** a local IP (`192.168.x.x`) in a VPN-wide setting is a trap, because VPN devices aren't on your local network. Anything Tailscale-wide should point at a **Tailscale IP** (`100.x.x.x`).
 
 ---
 
@@ -136,6 +145,6 @@ Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page l
 - [ ] Fix IP forwarding, then approve the Wyse as an exit node in the Tailscale admin console
 - [ ] Remove old iPhones from the Tailscale machine list
 - [ ] Reset the Pi-hole dashboard password over SSH (`sudo docker exec -it pihole pihole setpassword`)
-- [ ] Check Tailscale admin → DNS nameservers and fix them so "Use Tailscale DNS" works on any network
+- [ ] Bring back Pi-hole ad blocking on the go: set the global nameserver to the Wyse's **Tailscale** IP and let Pi-hole accept queries from the tailnet
 - [ ] Figure out how the main router and the extender networks relate (same network or two separate ones)
 - [ ] Set up SSH from my laptop ([ssh-setup.md](ssh-setup.md))
