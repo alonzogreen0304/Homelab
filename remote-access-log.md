@@ -85,6 +85,27 @@ Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page l
 
 ---
 
+## Step 5: Tailscale broke my internet on my main router
+
+**What happened:** my home has two networks: the main router, and a Wi-Fi extender (the Wyse is plugged into the extender by ethernet). On the extender's network everything worked. On the main router, my phone said **"No Internet Connection"** whenever Tailscale was on.
+
+**How I narrowed it down (one change at a time):**
+
+| Test | Result | What it ruled out |
+|---|---|---|
+| Exit node off | Still broken | Not the exit node |
+| Turned off "Use Tailscale Subnets" | Still broken | Not subnet routing |
+| Turned Tailscale off completely | **Worked** | It's something Tailscale changes |
+| Tailscale on, **"Use Tailscale DNS" off** | **Worked** | **It's DNS** |
+
+**What that means:** with "Use Tailscale DNS" on, my phone sends every website lookup wherever my Tailscale DNS settings say. My best guess is that they point at Pi-hole on the Wyse by an address the main router's network can't reach, so every lookup failed and nothing loaded. The extender network could reach the Wyse, which is why it worked there.
+
+**Fix for now:** "Use Tailscale DNS" stays **off** on my phone. I can still reach the Wyse and Pi-hole through the Tailscale `100.x` address, which doesn't need DNS.
+
+**Root cause still to confirm:** check the nameservers in the Tailscale admin console (DNS page).
+
+---
+
 ## Requirements for remote access to work
 
 1. Tailscale toggle **on** in the phone app
@@ -103,6 +124,7 @@ Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page l
 - **Exit node = all traffic goes through the Wyse.** If the Wyse is down, the phone's internet is blocked (kill switch). Keep it off until IP forwarding is fixed.
 - **Servers don't need a monitor or a login.** Services start at boot on their own.
 - **Plug network cables in before booting** with my current config.
+- **Change one thing at a time.** Toggling settings one by one is how I proved it was DNS.
 - **Troubleshoot in layers:** power → cable → network → service. The problem was the cable, not the software.
 - **Redact before posting:** emails, IPs, and device addresses get blurred in every screenshot.
 
@@ -114,4 +136,6 @@ Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page l
 - [ ] Fix IP forwarding, then approve the Wyse as an exit node in the Tailscale admin console
 - [ ] Remove old iPhones from the Tailscale machine list
 - [ ] Reset the Pi-hole dashboard password over SSH (`sudo docker exec -it pihole pihole setpassword`)
+- [ ] Check Tailscale admin → DNS nameservers and fix them so "Use Tailscale DNS" works on any network
+- [ ] Figure out how the main router and the extender networks relate (same network or two separate ones)
 - [ ] Set up SSH from my laptop ([ssh-setup.md](ssh-setup.md))
