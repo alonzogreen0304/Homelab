@@ -94,6 +94,8 @@ Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page l
 
 **Rule for anywhere:** if the internet ever stops working while Tailscale is on, flip the Tailscale toggle **off** first. If that fixes it, it was Tailscale. If not, it's the network.
 
+**Seen in real life:** right after switching my phone from cellular back to home Wi-Fi, nothing would load (I couldn't even send a message). Turning Tailscale off and back on fixed it instantly. Tailscale sometimes needs a reconnect after the phone changes networks.
+
 ---
 
 ## Key takeaways
