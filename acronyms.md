@@ -2,7 +2,7 @@
 
 **Beginner level:** the acronyms I keep running into while studying for Security+ (SY0-701) and building my homelab, with plain-English meanings.
 
-**158 acronyms** across 10 categories. Practice them with the [Acronym Breach game](games/acronym-breach.html).
+**158 acronyms** across 10 categories. Practice them with the [Acronym Breach game](https://alonzogreen0304.github.io/Homelab/games/acronym-breach.html).
 
 ## Categories
 

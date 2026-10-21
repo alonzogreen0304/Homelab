@@ -47,7 +47,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 ## Study tools
 
 - [Acronyms cheat sheet](acronyms.md): 158 Security+ and homelab acronyms with plain-English meanings
-- [Acronym Breach](games/acronym-breach.html): a terminal-style hacker game for drilling them (download the file and open it in a browser)
+- [Acronym Breach](https://alonzogreen0304.github.io/Homelab/games/acronym-breach.html): a terminal-style hacker game for drilling them. Play it in the browser, or add it to your phone's home screen ([source](games/acronym-breach.html))
 
 ---
 
