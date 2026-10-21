@@ -44,6 +44,13 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 ---
 
+## Study tools
+
+- [Acronyms cheat sheet](acronyms.md): 158 Security+ and homelab acronyms with plain-English meanings
+- [Acronym Breach](games/acronym-breach.html): a terminal-style hacker game for drilling them (download the file and open it in a browser)
+
+---
+
 ## Roadmap
 
 - [ ] Point my router's DNS at Pi-hole so every device gets ad blocking
