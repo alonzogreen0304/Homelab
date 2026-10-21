@@ -144,7 +144,6 @@ Now devices use whatever network they're on for normal lookups, and Tailscale on
 - [ ] Change `auto enp4s0` to `allow-hotplug enp4s0` so a cable plugged in after boot still works
 - [ ] Fix IP forwarding, then approve the Wyse as an exit node in the Tailscale admin console
 - [ ] Remove old iPhones from the Tailscale machine list
-- [ ] Reset the Pi-hole dashboard password over SSH (`sudo docker exec -it pihole pihole setpassword`)
 - [ ] Bring back Pi-hole ad blocking on the go: set the global nameserver to the Wyse's **Tailscale** IP and let Pi-hole accept queries from the tailnet
 - [ ] Figure out how the main router and the extender networks relate (same network or two separate ones)
 - [ ] Set up SSH from my laptop ([ssh-setup.md](ssh-setup.md))

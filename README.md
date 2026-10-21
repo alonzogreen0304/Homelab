@@ -70,7 +70,6 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [ ] Fix IP forwarding so the Tailscale exit node works
 - [ ] Switch the network config to `allow-hotplug` so a cable plugged in after boot still works
 - [ ] Bring back Pi-hole ad blocking on the go (point Tailscale DNS at the Wyse's Tailscale IP)
-- [ ] Reset the Pi-hole dashboard password
 - [ ] Remove old devices from Tailscale
 - [x] Reach the server remotely through Tailscale
 - [x] Run the server headless
