@@ -20,6 +20,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 |---|---|
 | Dell Wyse 5060 thin client | Always-on home server (Debian 12) |
 | 1.8TB external drive | Extra storage for the server |
+| Wall-plug Wi-Fi extender | Gives the Wyse its ethernet connection |
 | Gaming PC (Windows) | Future virtual machine lab |
 | Laptop | Remote access and study |
 
@@ -30,10 +31,21 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 | Service | What it does | Status |
 |---|---|---|
 | [Pi-hole](pihole.md) | Blocks ads and trackers at the DNS level | ✅ Running in Docker, not yet network-wide |
-| [Tailscale](tailscale.md) | Secure remote access to my network from anywhere | ✅ Connected, exit node needs a fix |
+| [Tailscale](tailscale.md) | Secure remote access to my network from anywhere | ✅ Reaching Pi-hole from my phone anywhere; DNS fixed; exit node waiting on IP forwarding |
 | Docker | Runs services in isolated containers | ✅ Running |
 | [SSH](ssh-setup.md) | Control the server from my laptop, no monitor needed | 🔜 Setup planned |
-| XFCE desktop | Lightweight graphical desktop | ✅ Installed |
+| XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
+
+---
+
+## Progress so far
+
+| Date | What I did |
+|---|---|
+| Oct 21, 2026 | Ran the Wyse headless for the first time, reached Pi-hole from my phone through Tailscale, and fixed a Tailscale DNS setting that broke my phone's internet off the home network ([log](remote-access-log.md)) |
+| Oct 21, 2026 | Built a 158-acronym cheat sheet and the Acronym Breach practice game, published with GitHub Pages |
+| Oct 21, 2026 | Wrote the SSH setup guide and the Wyse safety net plan |
+| Oct 20, 2026 | Recovered the Wyse from a boot failure: emergency mode, no network, no desktop, and a kernel panic ([log](wyse-boot-recovery.md)) |
 
 ---
 
@@ -55,8 +67,13 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 ## Roadmap
 
 - [ ] Point my router's DNS at Pi-hole so every device gets ad blocking
-- [ ] Fix IP forwarding so Tailscale exit node works
+- [ ] Fix IP forwarding so the Tailscale exit node works
+- [ ] Switch the network config to `allow-hotplug` so a cable plugged in after boot still works
+- [ ] Bring back Pi-hole ad blocking on the go (point Tailscale DNS at the Wyse's Tailscale IP)
+- [ ] Reset the Pi-hole dashboard password
 - [ ] Remove old devices from Tailscale
+- [x] Reach the server remotely through Tailscale
+- [x] Run the server headless
 - [ ] Set up SSH from my laptop, then switch to key-based login ([guide](ssh-setup.md))
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
