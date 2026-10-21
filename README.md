@@ -32,6 +32,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 | [Pi-hole](pihole.md) | Blocks ads and trackers at the DNS level | ✅ Running in Docker, not yet network-wide |
 | [Tailscale](tailscale.md) | Secure remote access to my network from anywhere | ✅ Connected, exit node needs a fix |
 | Docker | Runs services in isolated containers | ✅ Running |
+| [SSH](ssh-setup.md) | Control the server from my laptop, no monitor needed | 🔜 Setup planned |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed |
 
 ---
@@ -48,7 +49,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [ ] Point my router's DNS at Pi-hole so every device gets ad blocking
 - [ ] Fix IP forwarding so Tailscale exit node works
 - [ ] Remove old devices from Tailscale
-- [ ] Set up SSH with key-based login
+- [ ] Set up SSH from my laptop, then switch to key-based login ([guide](ssh-setup.md))
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 
