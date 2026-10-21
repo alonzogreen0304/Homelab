@@ -39,6 +39,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 ## Logs and write-ups
 
 - [Wyse boot failure recovery](wyse-boot-recovery.md): fixing emergency mode, network, desktop, and a kernel panic
+- [Wyse safety net](wyse-safety-net.md): production rules and how to set up (and undo) every safety net before running Pi-hole for the whole house
 
 ---
 
