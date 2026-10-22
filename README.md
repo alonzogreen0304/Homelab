@@ -31,7 +31,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 | Service | What it does | Status |
 |---|---|---|
 | [Pi-hole](pihole.md) | Blocks ads and trackers at the DNS level | ✅ Running in Docker, not yet network-wide |
-| [Tailscale](tailscale.md) | Secure remote access to my network from anywhere | ✅ Reaching Pi-hole from my phone anywhere; DNS fixed; IP forwarding fixed, exit node ready to test |
+| [Tailscale](tailscale.md) | Secure remote access to my network from anywhere | ✅ Reaching Pi-hole from my phone anywhere; DNS fixed; exit node working |
 | Docker | Runs services in isolated containers | ✅ Running |
 | [SSH](ssh-setup.md) | Control the server from my laptop, no monitor needed | ✅ Working from my laptop over Tailscale, key-only (passwords disabled) |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
@@ -72,7 +72,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [ ] Point my router's DNS at Pi-hole so every device gets ad blocking
 - [x] Free up space on the Wyse's drive (93% → 81%)
 - [x] Fix IP forwarding
-- [ ] Approve and test the Wyse as an exit node
+- [x] Approve and test the Wyse as an exit node (ISP flips from T-Mobile to Comcast)
 - [x] Switch the network config to `allow-hotplug` (survived a full power-down and reboot)
 - [ ] Bring back Pi-hole ad blocking on the go (point Tailscale DNS at the Wyse's Tailscale IP)
 - [ ] Remove old devices from Tailscale

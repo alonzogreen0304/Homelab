@@ -32,12 +32,16 @@ sudo tailscale ip        # show this device's Tailscale IP
 
 - ✅ Server connected and online
 - ✅ Reached Pi-hole from my phone through Tailscale ([log](remote-access-log.md))
-- ⚠️ Exit node kept **off** on my phone until forwarding is fixed. When it was on and the Wyse was offline, my phone's internet was blocked
+- ⚠️ If the Wyse is offline while the exit node is on, my phone's internet is blocked (kill switch). Fix: disable the exit node in the app
 - ✅ IP forwarding enabled (`/etc/sysctl.d/99-tailscale.conf`), health warning gone
-- 🔜 Next: approve and test the exit node
+- ✅ **Exit node approved and tested (Oct 22, 2026).** On cellular, whatismyip.com showed ISP **Comcast** (my home internet) with the exit node on, and **T-Mobile** (my carrier) with it off. Traffic really does leave through my house
+- ⚠️ Exit node is noticeably slower: traffic is limited by home upload speed and the 2.4GHz extender. I only turn it on for public Wi-Fi
 - 🔜 Next: remove old devices from the Tailscale admin console (asset inventory cleanup)
 
 ## What I learned
+
+- **Proving a VPN works:** check your public IP's ISP with the VPN on vs. off. Location lookups are often wrong (mine said the wrong city), but the ISP name is reliable
+
 
 - "Idle" in `tailscale status` just means no traffic right now, not broken
 - "Offline, last seen Xd ago" means that device isn't running Tailscale
