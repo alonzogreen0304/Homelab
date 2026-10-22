@@ -10,8 +10,8 @@ SSH (Secure Shell) lets me open a terminal on my laptop and control the Wyse ove
 
 ## Status
 
-- [ ] One-time setup on the Wyse
-- [ ] First connection from the laptop
+- [x] One-time setup on the Wyse
+- [x] First connection from the laptop (over Tailscale, fingerprint verified, see [log](disk-cleanup-and-ssh-log.md))
 - [ ] Hardening (SSH keys, disable password login)
 
 ---
