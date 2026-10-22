@@ -1,8 +1,8 @@
-# Homelab Log: Disk Space Cleanup + First SSH Connection
+# Homelab Log: Disk Cleanup, SSH, and Hardening
 
 **Date:** October 21, 2026 (night)
 **Device:** Dell Wyse 5060 (Debian 12), Windows laptop
-**Outcome:** Main drive went from **93% → 81%** full, and I can now control the Wyse from my laptop over SSH through Tailscale, from anywhere
+**Outcome:** Main drive went from **93% → 81%** full, I can control the Wyse from my laptop over SSH through Tailscale, SSH is key-only, every open port is audited, and IP forwarding is fixed
 
 **Beginner level:** still learning, documenting as I go.
 
@@ -140,20 +140,127 @@ Logged in, saw `me@Wyse:~$` on my laptop, and ran `df -h /` remotely to confirm 
 
 ---
 
+## Part 3: SSH key login + disabling passwords
+
+### Make a key pair on the laptop (PowerShell)
+
+```powershell
+ssh-keygen -t ed25519
+```
+Pressed Enter for the default location and set a passphrase. This creates:
+- `id_ed25519`: the **private key**, which never leaves my laptop
+- `id_ed25519.pub`: the **public key**, which goes on the server
+
+**Mistake I made:** I pasted the next command into the "Enter file in which to save the key" prompt. Fixed it with **Ctrl+C** and ran it again, this time just pressing Enter. Lesson: wait for each prompt to finish before pasting.
+
+### Copy the public key to the Wyse
+
+Windows has no `ssh-copy-id`, so I piped it over SSH:
+```powershell
+type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh me@<wyse-tailscale-ip> "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+Then `ssh me@<wyse-tailscale-ip>` logged in **without the Wyse password**, so keys worked.
+
+### Turn off password logins (with a safety net)
+
+Kept my working SSH session open the whole time so I couldn't lock myself out. Created a drop-in config file:
+
+```bash
+sudo nano /etc/ssh/sshd_config.d/10-hardening.conf
+```
+```
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitRootLogin no
+```
+```bash
+sudo sshd -t                  # test the config for errors before applying
+sudo systemctl reload ssh     # apply without dropping my session
+```
+
+### Proved it from a new laptop window
+
+```powershell
+ssh -o PubkeyAuthentication=no me@<wyse-tailscale-ip>
+```
+Result: **`Permission denied (publickey)`**. Password logins are blocked, so only my laptop's private key can get in.
+
+**Undo, if ever needed:** `sudo rm /etc/ssh/sshd_config.d/10-hardening.conf && sudo systemctl reload ssh`
+
+---
+
+## Part 4: Open-port audit
+
+```bash
+sudo ss -tlnp
+```
+This lists every program waiting for network connections, which is basically an inventory of every open door on the server.
+
+| Port | Program | Listening on | Verdict |
+|---|---|---|---|
+| 18789, 18791 | OpenClaw gateway (`node`) | `127.0.0.1` / `::1` only | ✅ Only the Wyse itself can reach it |
+| 22 | SSH | All interfaces | ✅ Key-only, and not port-forwarded on the router |
+| 53 | Pi-hole DNS | All interfaces | ✅ Expected for a DNS server |
+| 80, 443 | Pi-hole dashboard | All interfaces | ✅ Home network + tailnet only |
+| (random) | Tailscale | Tailscale IP only | ✅ Normal |
+
+**No changes needed.** The AI agent gateway was the one I was worried about, and it's correctly bound to localhost.
+
+---
+
+## Part 5: IP forwarding (Tailscale exit node fix)
+
+**Problem:** `tailscale status` warned *"Subnet routing is enabled, but IP forwarding is disabled."* Linux won't pass traffic between networks unless forwarding is turned on.
+
+**Another lesson:** my SSH connection dropped while I was inside `nano`, and the lines I pasted after that went into **Windows PowerShell** instead, which threw red errors. The PowerShell window got scrambled, so I closed it, opened a fresh one, and switched to editor-free commands so a dropped connection can't cause damage:
+
+```bash
+echo 'net.ipv4.ip_forward = 1' | sudo tee /etc/sysctl.d/99-tailscale.conf
+echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
+sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
+sudo tailscale status
+```
+The forwarding warning is **gone**, and the settings survive reboots since they live in `/etc/sysctl.d/`.
+
+(I also confirmed last night's typo file, `99-tailscae.conf`, was already gone.)
+
+---
+
+## Part 6: allow-hotplug
+
+**Problem from earlier today:** with `auto enp4s0`, the ethernet port only comes up if the cable is plugged in **at boot**.
+
+```bash
+sudo cp /etc/network/interfaces /etc/network/interfaces.bak
+sudo sed -i 's/^auto enp4s0/allow-hotplug enp4s0/' /etc/network/interfaces
+cat /etc/network/interfaces
+```
+Now it reads `allow-hotplug enp4s0`, so the port comes up whenever a cable is detected. It takes effect on the **next boot**. I didn't restart networking over SSH, because that would cut my own connection.
+
+**Undo, if ever needed:** `sudo cp /etc/network/interfaces.bak /etc/network/interfaces`
+
+---
+
 ## Key takeaways
 
 - **Measure → investigate → act.** `df` showed the problem, `du` found the cause, and `pgrep`/`which`/`npm config` proved what was safe to remove.
 - **Rename before you delete.** A rename is instantly reversible; `rm -rf` isn't.
 - **Check what's running before moving files.** Copying over a live install could have broken it.
 - **Verify SSH fingerprints on first connect.** That one `yes` is a real security decision.
+- **Always keep a way back in.** Keep one SSH session open while changing SSH settings, and test configs (`sshd -t`) before applying them.
+- **Prefer editor-free commands over SSH** (`tee`, `sed`) so a dropped connection can't leave half-finished edits.
+- **Audit what's listening** (`ss -tlnp`). If you don't know why a port is open, find out.
 - **Remote admin over a VPN, not open ports.** SSH is never exposed to the internet; it's only reachable through Tailscale.
 
 ---
 
 ## Next steps
 
-- [ ] Set up SSH keys on the laptop and disable password login ([ssh-setup.md](ssh-setup.md))
-- [ ] Check that the OpenClaw gateway (port 18789) only listens on localhost, not the whole network
-- [ ] Fix IP forwarding so the Tailscale exit node works
-- [ ] Switch the network config to `allow-hotplug`
-- [ ] Consider removing the old fallback kernel once the new one has run stable for a while (~300–400MB)
+- [x] SSH keys + disable password login
+- [x] Check that the OpenClaw gateway only listens on localhost
+- [x] Fix IP forwarding
+- [x] Switch the network config to `allow-hotplug`
+- [ ] After the next reboot, confirm the Wyse still comes online on its own (green dot in Tailscale)
+- [ ] Approve and test the Wyse as an exit node in the Tailscale admin console
+- [ ] Consider limiting SSH to the Tailscale interface only
+- [ ] Consider removing the old fallback kernel once the new one has been stable for a while (~300–400MB)

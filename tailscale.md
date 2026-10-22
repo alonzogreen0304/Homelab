@@ -33,8 +33,8 @@ sudo tailscale ip        # show this device's Tailscale IP
 - ✅ Server connected and online
 - ✅ Reached Pi-hole from my phone through Tailscale ([log](remote-access-log.md))
 - ⚠️ Exit node kept **off** on my phone until forwarding is fixed. When it was on and the Wyse was offline, my phone's internet was blocked
-- ⚠️ Health check warning: **IP forwarding is disabled**, so the exit node feature won't actually work yet
-- 🔜 Next: enable IP forwarding in Linux
+- ✅ IP forwarding enabled (`/etc/sysctl.d/99-tailscale.conf`), health warning gone
+- 🔜 Next: approve and test the exit node
 - 🔜 Next: remove old devices from the Tailscale admin console (asset inventory cleanup)
 
 ## What I learned

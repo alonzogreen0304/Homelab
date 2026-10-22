@@ -31,9 +31,9 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 | Service | What it does | Status |
 |---|---|---|
 | [Pi-hole](pihole.md) | Blocks ads and trackers at the DNS level | ✅ Running in Docker, not yet network-wide |
-| [Tailscale](tailscale.md) | Secure remote access to my network from anywhere | ✅ Reaching Pi-hole from my phone anywhere; DNS fixed; exit node waiting on IP forwarding |
+| [Tailscale](tailscale.md) | Secure remote access to my network from anywhere | ✅ Reaching Pi-hole from my phone anywhere; DNS fixed; IP forwarding fixed, exit node ready to test |
 | Docker | Runs services in isolated containers | ✅ Running |
-| [SSH](ssh-setup.md) | Control the server from my laptop, no monitor needed | ✅ Working from my laptop over Tailscale |
+| [SSH](ssh-setup.md) | Control the server from my laptop, no monitor needed | ✅ Working from my laptop over Tailscale, key-only (passwords disabled) |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
 
 ---
@@ -42,7 +42,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
-| Oct 21, 2026 (night) | Freed disk space from 93% to 81% after a Pi-hole warning, then connected to the Wyse from my laptop over SSH through Tailscale ([log](disk-cleanup-and-ssh-log.md)) |
+| Oct 21, 2026 (night) | Freed disk space from 93% to 81%, set up SSH from my laptop over Tailscale, switched SSH to key-only login, audited every open port, fixed IP forwarding, and switched to `allow-hotplug` ([log](disk-cleanup-and-ssh-log.md)) |
 | Oct 21, 2026 | Ran the Wyse headless for the first time, reached Pi-hole from my phone through Tailscale, and fixed a Tailscale DNS setting that broke my phone's internet off the home network ([log](remote-access-log.md)) |
 | Oct 21, 2026 | Built a 158-acronym cheat sheet and the Acronym Breach practice game, published with GitHub Pages |
 | Oct 21, 2026 | Wrote the SSH setup guide and the Wyse safety net plan |
@@ -54,7 +54,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 - [Wyse boot failure recovery](wyse-boot-recovery.md): fixing emergency mode, network, desktop, and a kernel panic
 - [First headless boot + remote access](remote-access-log.md): exit node kill switch, a missing ethernet cable, and reaching Pi-hole from my phone through Tailscale
-- [Disk cleanup + first SSH connection](disk-cleanup-and-ssh-log.md): finding a 486MB duplicate safely, and verifying an SSH host key fingerprint
+- [Disk cleanup, SSH, and hardening](disk-cleanup-and-ssh-log.md): finding a 486MB duplicate safely, verifying an SSH fingerprint, key-only SSH, and an open-port audit
 - [Wyse safety net](wyse-safety-net.md): production rules and how to set up (and undo) every safety net before running Pi-hole for the whole house
 
 ---
@@ -70,15 +70,16 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 - [ ] Point my router's DNS at Pi-hole so every device gets ad blocking
 - [x] Free up space on the Wyse's drive (93% → 81%)
-- [ ] Fix IP forwarding so the Tailscale exit node works
-- [ ] Switch the network config to `allow-hotplug` so a cable plugged in after boot still works
+- [x] Fix IP forwarding
+- [ ] Approve and test the Wyse as an exit node
+- [x] Switch the network config to `allow-hotplug`
 - [ ] Bring back Pi-hole ad blocking on the go (point Tailscale DNS at the Wyse's Tailscale IP)
 - [ ] Remove old devices from Tailscale
 - [x] Reach the server remotely through Tailscale
 - [x] Run the server headless (no monitor needed)
 - [x] Set up SSH from my laptop
-- [ ] Switch SSH to key-based login and disable passwords ([guide](ssh-setup.md))
-- [ ] Check the OpenClaw gateway port only listens locally
+- [x] Switch SSH to key-based login and disable passwords
+- [x] Audit open ports (OpenClaw gateway is localhost-only)
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 
