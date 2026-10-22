@@ -30,8 +30,35 @@ sudo ss -tulpn | grep :53                        # confirm something is answerin
 ## Current status
 
 - ✅ Running and healthy, starts automatically on boot
-- ⚠️ Only the server itself is using it right now (my phone used it briefly; see dashboard snapshot above)
+- ✅ My laptop and phones use it from anywhere over Tailscale ([log](pihole-docker-recovery-log.md))
 - 🔜 Next: set my router's DNS to Pi-hole so every device on Wi-Fi is covered
+
+## What Pi-hole blocks (and what it can't)
+
+**Simple version:** every device looks up a website's address in a "phone book" (DNS) before connecting. Pi-hole is my own phone book, at my house, with ~82,000 ad and tracker companies crossed out. Tailscale is a private tunnel that lets my phone and laptop use that phone book from anywhere.
+
+Because it works at the phone book level, it covers **every app on the device**, not just the browser:
+
+| Where | What gets blocked | Seen in my own logs |
+|---|---|---|
+| Browsers (Safari, Chrome) | Banner ads, "sponsored stories," trackers | `cdn.taboola.com`, `googletagservices.com` |
+| Apps | In-app ads in free games, weather, news apps | |
+| App analytics | Apps reporting what I tap and how long I stay | `firebaselogging-pa.googleapis.com` |
+| Streaming analytics | Video apps reporting viewing behavior | `conviva.com` |
+| Telemetry | Devices "phoning home" with usage data | |
+
+Blocking trackers and analytics is arguably the bigger win than ads. It's **privacy**: less of my data going to ad companies.
+
+**What it can't block:**
+- **YouTube ads.** Served from the same servers as the videos
+- **Instagram / TikTok / Facebook sponsored posts.** Part of the feed itself
+- **Spotify / Hulu ads**, mostly. Same reason
+
+**Rule of thumb:** if the ad comes from a **separate ad company's domain**, Pi-hole kills it. If it comes from the **same domain as the content**, Pi-hole can't tell them apart.
+
+**If something breaks** (a shopping link, a sponsored search result, an app feature): check the Query Log for a red `blocked` line at that time and **allowlist** the domain.
+
+**Interview version:** "I run Pi-hole as a DNS sinkhole on my homelab server and route my devices' DNS to it over a Tailscale WireGuard tunnel, so I get network-level ad and tracker blocking from anywhere without exposing the server to the internet."
 
 ## Reading the dashboard (snapshot: Oct 22, 2026, ~12:20 AM)
 
