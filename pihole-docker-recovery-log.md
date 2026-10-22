@@ -99,6 +99,21 @@ Result: the live feed immediately showed real lookups from my laptop (`query[A] 
 - ✅ Laptop uses Pi-hole over Tailscale from anywhere
 - ✅ **Phone uses Pi-hole over Tailscale too.** At first it sent nothing, even though the app said "Using Tailscale DNS" (the MagicDNS name `wyse` didn't resolve either). After turning off iCloud Private Relay, the fix was: turn **Use Tailscale DNS** off → **restart the iPhone** → connect Tailscale → turn **Use Tailscale DNS** back on. Right after, the live feed showed `query[A] clients4.google.com from <phone-tailscale-ip>`
 
+### Proof: ads blocked on my phone
+
+Opened an ad-heavy site on my phone and watched the live feed:
+
+```
+query[A] cdn.taboola.com from <phone-tailscale-ip>
+gravity blocked cdn.taboola.com is 0.0.0.0
+query[A] www.googletagservices.com from <phone-tailscale-ip>
+gravity blocked www.googletagservices.com is NODATA
+```
+
+- **Taboola** is the "sponsored stories you might like" ad network
+- **googletagservices.com** is Google's ad-serving domain
+- `gravity blocked` = the domain is on my blocklist (Pi-hole calls its blocklist database "gravity"), so Pi-hole answered with a dead address (`0.0.0.0` / `::`) and the ad never loaded
+
 ---
 
 ## Key takeaways
