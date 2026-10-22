@@ -260,7 +260,7 @@ Now it reads `allow-hotplug enp4s0`, so the port comes up whenever a cable is de
 - [x] Check that the OpenClaw gateway only listens on localhost
 - [x] Fix IP forwarding
 - [x] Switch the network config to `allow-hotplug`
-- [ ] After the next reboot, confirm the Wyse still comes online on its own (green dot in Tailscale)
+- [x] After the next reboot (cable cleanup, Oct 22), the Wyse came back online on its own: green dot in Tailscale
 - [ ] Approve and test the Wyse as an exit node in the Tailscale admin console
 - [ ] Consider limiting SSH to the Tailscale interface only
 - [ ] Consider removing the old fallback kernel once the new one has been stable for a while (~300–400MB)

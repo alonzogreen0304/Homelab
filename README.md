@@ -42,6 +42,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 22, 2026 | Shut the Wyse down cleanly for a cable cleanup; it came back headless on its own after reboot (Tailscale green, `allow-hotplug` working) |
 | Oct 21, 2026 (night) | Freed disk space from 93% to 81%, set up SSH from my laptop over Tailscale, switched SSH to key-only login, audited every open port, fixed IP forwarding, and switched to `allow-hotplug` ([log](disk-cleanup-and-ssh-log.md)) |
 | Oct 21, 2026 | Ran the Wyse headless for the first time, reached Pi-hole from my phone through Tailscale, and fixed a Tailscale DNS setting that broke my phone's internet off the home network ([log](remote-access-log.md)) |
 | Oct 21, 2026 | Built a 158-acronym cheat sheet and the Acronym Breach practice game, published with GitHub Pages |
@@ -72,7 +73,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Free up space on the Wyse's drive (93% → 81%)
 - [x] Fix IP forwarding
 - [ ] Approve and test the Wyse as an exit node
-- [x] Switch the network config to `allow-hotplug`
+- [x] Switch the network config to `allow-hotplug` (survived a full power-down and reboot)
 - [ ] Bring back Pi-hole ad blocking on the go (point Tailscale DNS at the Wyse's Tailscale IP)
 - [ ] Remove old devices from Tailscale
 - [x] Reach the server remotely through Tailscale
