@@ -42,7 +42,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
-| Oct 22, 2026 (evening) | Verified the exit node, recovered Pi-hole after it vanished on reboot (Docker started before its drive mounted), made Docker wait for the drive, and got Pi-hole answering Tailscale devices ([log](pihole-docker-recovery-log.md)) |
+| Oct 22, 2026 (evening) | Verified the exit node, recovered Pi-hole after it vanished on reboot (Docker started before its drive mounted), made Docker wait for the drive, and got Pi-hole blocking ads for my laptop and phone from anywhere over Tailscale ([log](pihole-docker-recovery-log.md)) |
 | Oct 22, 2026 | Shut the Wyse down cleanly for a cable cleanup; it came back headless on its own after reboot (Tailscale green, `allow-hotplug` working) |
 | Oct 21, 2026 (night) | Freed disk space from 93% to 81%, set up SSH from my laptop over Tailscale, switched SSH to key-only login, audited every open port, fixed IP forwarding, and switched to `allow-hotplug` ([log](disk-cleanup-and-ssh-log.md)) |
 | Oct 21, 2026 | Ran the Wyse headless for the first time, reached Pi-hole from my phone through Tailscale, and fixed a Tailscale DNS setting that broke my phone's internet off the home network ([log](remote-access-log.md)) |
@@ -76,8 +76,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Fix IP forwarding
 - [x] Approve and test the Wyse as an exit node (ISP flips from T-Mobile to Comcast)
 - [x] Switch the network config to `allow-hotplug` (survived a full power-down and reboot)
-- [x] Pi-hole over Tailscale (laptop working)
-- [ ] Get my phone using Pi-hole over Tailscale
+- [x] Pi-hole ad blocking on my laptop and phone from anywhere, over Tailscale
 - [ ] Change the weak Pi-hole web password
 - [ ] Remove old devices from Tailscale
 - [x] Reach the server remotely through Tailscale

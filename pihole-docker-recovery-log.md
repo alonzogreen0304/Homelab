@@ -2,7 +2,7 @@
 
 **Date:** October 22, 2026
 **Device:** Dell Wyse 5060 (Debian 12), Pi-hole in Docker, Tailscale
-**Outcome:** Recovered Pi-hole without losing settings, fixed the boot-order bug that caused it, and got Pi-hole answering DNS for Tailscale devices. Laptop is using Pi-hole from anywhere; phone still pending.
+**Outcome:** Recovered Pi-hole without losing settings, fixed the boot-order bug that caused it, and got Pi-hole answering DNS for Tailscale devices. Laptop **and phone** now use Pi-hole from anywhere through Tailscale.
 
 **Beginner level:** still learning, documenting as I go.
 
@@ -97,7 +97,7 @@ Result: the live feed immediately showed real lookups from my laptop (`query[A] 
 ## Status
 
 - ✅ Laptop uses Pi-hole over Tailscale from anywhere
-- ⏳ Phone isn't sending lookups yet even though the app says "Using Tailscale DNS" (the MagicDNS name `wyse` didn't resolve either). Checked: Private Relay off, VPN connected. Next: toggle Tailscale DNS off/on, restart the iPhone, reinstall the app if needed
+- ✅ **Phone uses Pi-hole over Tailscale too.** At first it sent nothing, even though the app said "Using Tailscale DNS" (the MagicDNS name `wyse` didn't resolve either). After turning off iCloud Private Relay, the fix was: turn **Use Tailscale DNS** off → **restart the iPhone** → connect Tailscale → turn **Use Tailscale DNS** back on. Right after, the live feed showed `query[A] clients4.google.com from <phone-tailscale-ip>`
 
 ---
 
@@ -107,10 +107,10 @@ Result: the live feed immediately showed real lookups from my laptop (`query[A] 
 - **Separate config from containers.** Because Pi-hole's settings were in bind mounts, rebuilding the container lost nothing.
 - **Boot order matters.** Services that depend on an external drive need `RequiresMountsFor=`.
 - **Watch logs live** (`pihole -t`). The "ignoring query from non-local network" line pointed straight at the fix.
+- **Sometimes it really is "turn it off and on again."** The iPhone held stale VPN/DNS state until a restart.
 - **Test one device at a time.** The laptop working proved the server side was correct, which narrowed the phone issue to the phone.
 
 ## Next steps
 
-- [ ] Get the phone using Tailscale DNS (restart / reinstall app)
 - [ ] Change the weak Pi-hole web password stored in the compose file
 - [ ] Reclaim internal-drive space used by Docker's old hidden data under `/mnt/agents`
