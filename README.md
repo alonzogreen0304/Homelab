@@ -78,7 +78,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Switch the network config to `allow-hotplug` (survived a full power-down and reboot)
 - [x] Pi-hole ad blocking on my laptop and phone from anywhere, over Tailscale
 - [ ] Change the weak Pi-hole web password
-- [ ] Remove old devices from Tailscale
+- [x] Review Tailscale devices (old iPhones reconnected and in use)
 - [x] Reach the server remotely through Tailscale
 - [x] Run the server headless (no monitor needed)
 - [x] Set up SSH from my laptop

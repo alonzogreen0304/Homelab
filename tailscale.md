@@ -44,7 +44,7 @@ sudo tailscale ip        # show this device's Tailscale IP
 *Location fields and IPs redacted.*
 
 - ⚠️ Exit node is noticeably slower: traffic is limited by home upload speed and the 2.4GHz extender. I only turn it on for public Wi-Fi
-- 🔜 Next: remove old devices from the Tailscale admin console (asset inventory cleanup)
+- ✅ **Asset inventory reviewed (Oct 22, 2026):** the two older iPhones that showed "offline, last seen 138d/163d ago" are back in use, so I reconnected them instead of removing them. All 5 devices (Wyse, laptop, 3 iPhones) are now active and using Pi-hole over Tailscale. Any device I stop using gets removed
 
 ## What I learned
 
