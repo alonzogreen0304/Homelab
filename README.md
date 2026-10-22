@@ -42,6 +42,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 22, 2026 (evening) | Verified the exit node, recovered Pi-hole after it vanished on reboot (Docker started before its drive mounted), made Docker wait for the drive, and got Pi-hole answering Tailscale devices ([log](pihole-docker-recovery-log.md)) |
 | Oct 22, 2026 | Shut the Wyse down cleanly for a cable cleanup; it came back headless on its own after reboot (Tailscale green, `allow-hotplug` working) |
 | Oct 21, 2026 (night) | Freed disk space from 93% to 81%, set up SSH from my laptop over Tailscale, switched SSH to key-only login, audited every open port, fixed IP forwarding, and switched to `allow-hotplug` ([log](disk-cleanup-and-ssh-log.md)) |
 | Oct 21, 2026 | Ran the Wyse headless for the first time, reached Pi-hole from my phone through Tailscale, and fixed a Tailscale DNS setting that broke my phone's internet off the home network ([log](remote-access-log.md)) |
@@ -56,6 +57,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [Wyse boot failure recovery](wyse-boot-recovery.md): fixing emergency mode, network, desktop, and a kernel panic
 - [First headless boot + remote access](remote-access-log.md): exit node kill switch, a missing ethernet cable, and reaching Pi-hole from my phone through Tailscale
 - [Disk cleanup, SSH, and hardening](disk-cleanup-and-ssh-log.md): finding a 486MB duplicate safely, verifying an SSH fingerprint, key-only SSH, and an open-port audit
+- [Pi-hole vanished after reboot + Pi-hole over Tailscale](pihole-docker-recovery-log.md): a Docker boot-order race condition and Pi-hole's listening mode
 - [Wyse safety net](wyse-safety-net.md): production rules and how to set up (and undo) every safety net before running Pi-hole for the whole house
 
 ---
@@ -74,7 +76,9 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Fix IP forwarding
 - [x] Approve and test the Wyse as an exit node (ISP flips from T-Mobile to Comcast)
 - [x] Switch the network config to `allow-hotplug` (survived a full power-down and reboot)
-- [ ] Bring back Pi-hole ad blocking on the go (point Tailscale DNS at the Wyse's Tailscale IP)
+- [x] Pi-hole over Tailscale (laptop working)
+- [ ] Get my phone using Pi-hole over Tailscale
+- [ ] Change the weak Pi-hole web password
 - [ ] Remove old devices from Tailscale
 - [x] Reach the server remotely through Tailscale
 - [x] Run the server headless (no monitor needed)
