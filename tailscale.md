@@ -35,6 +35,14 @@ sudo tailscale ip        # show this device's Tailscale IP
 - ⚠️ If the Wyse is offline while the exit node is on, my phone's internet is blocked (kill switch). Fix: disable the exit node in the app
 - ✅ IP forwarding enabled (`/etc/sysctl.d/99-tailscale.conf`), health warning gone
 - ✅ **Exit node approved and tested (Oct 22, 2026).** On cellular, whatismyip.com showed ISP **Comcast** (my home internet) with the exit node on, and **T-Mobile** (my carrier) with it off. Traffic really does leave through my house
+
+| Exit node **ON** | Exit node **OFF** |
+|---|---|
+| <img src="images/exit-node-on-comcast.png" width="300" alt="whatismyip showing ISP Comcast with exit node on"> | <img src="images/exit-node-off-tmobile.png" width="300" alt="whatismyip showing ISP T-Mobile with exit node off"> |
+| ISP: **Comcast** (my home internet) | ISP: **T-Mobile** (my phone carrier) |
+
+*Location fields and IPs redacted.*
+
 - ⚠️ Exit node is noticeably slower: traffic is limited by home upload speed and the 2.4GHz extender. I only turn it on for public Wi-Fi
 - 🔜 Next: remove old devices from the Tailscale admin console (asset inventory cleanup)
 
