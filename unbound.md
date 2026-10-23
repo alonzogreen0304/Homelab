@@ -56,7 +56,7 @@ sudo docker exec pihole pihole-FTL --config dns.upstreams '["127.0.0.1#5335"]'
 |---|---|---|
 | Unbound answers | `dig pi-hole.net @127.0.0.1 -p 5335` | ✅ `NOERROR`, IP returned. First try timed out while it walked the chain cold; retry answered from cache in **0 ms** |
 | DNSSEC valid site | `dig dnssec.works @127.0.0.1 -p 5335` | ✅ `NOERROR` with the **`ad`** flag (Authenticated Data: signature verified) |
-| DNSSEC broken site | `dig fail01.dnssec.works @127.0.0.1 -p 5335` | Should be `SERVFAIL` (deliberately broken signatures get rejected) |
+| DNSSEC broken site | `dig fail01.dnssec.works @127.0.0.1 -p 5335` | ✅ `SERVFAIL`: Unbound **refused** the deliberately forged answer. DNSSEC protection working |
 | Pi-hole upstream | `pihole-FTL --config dns.upstreams` | ✅ `[ 127.0.0.1#5335 ]` |
 | Full chain | `dig espn.com @127.0.0.1 +short` | ✅ IPs returned through Pi-hole → Unbound |
 
