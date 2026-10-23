@@ -70,6 +70,7 @@ Then Jellyfin installed cleanly (~211s download), and the system drive stayed at
 ## Next steps
 
 - [x] Finish the setup wizard: admin account, separate **Movies** (`/media/movies`) and **Shows** (`/media/tv`) libraries. They're separate because Jellyfin organizes and matches metadata differently per content type
-- [ ] Copy media onto the drive with `scp` from my laptop
+- [x] First movie added and playing: *Big Buck Bunny* (open-licensed Blender film), downloaded straight onto the Wyse with `wget` from archive.org (blender.org returned `403 Forbidden` to wget). Gotcha: an alphabet filter ("C") hid it until I hit **Reset filters**
+- [ ] Copy my own media with `scp` from my laptop (one line: `scp "<file>" me@<wyse>:/mnt/agents/jellyfin/media/movies/`)
 - [ ] Install the Jellyfin app on my phone/TV
 - [ ] Reclaim the old containerd image data still sitting on the internal drive
