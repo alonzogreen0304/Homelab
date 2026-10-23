@@ -69,7 +69,7 @@ Then Jellyfin installed cleanly (~211s download), and the system drive stayed at
 
 ## Next steps
 
-- [ ] Finish the setup wizard (admin account, Movies + Shows libraries)
+- [x] Finish the setup wizard: admin account, separate **Movies** (`/media/movies`) and **Shows** (`/media/tv`) libraries. They're separate because Jellyfin organizes and matches metadata differently per content type
 - [ ] Copy media onto the drive with `scp` from my laptop
 - [ ] Install the Jellyfin app on my phone/TV
 - [ ] Reclaim the old containerd image data still sitting on the internal drive
