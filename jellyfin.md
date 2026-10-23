@@ -21,6 +21,24 @@ My own Netflix. I put movies and shows on my 1.8TB drive, and Jellyfin streams t
 
 Same pattern as Pi-hole: **settings and media live on the drive, not in the container**, so the container can be deleted and rebuilt anytime without losing anything.
 
+## Theme: Abyss (CSS-only)
+
+Applied the [Abyss theme](https://github.com/AumGupta/abyss-jellyfin) with one line in **Dashboard → Branding → Custom CSS**:
+
+```css
+@import url('https://cdn.jsdelivr.net/gh/AumGupta/abyss-jellyfin@main/abyss.css');
+```
+
+**Why CSS-only instead of the setup script:** the theme also ships an `abyss-setup.sh` meant to run with `sudo`. Running someone else's script as root on my server is a real risk (I'd read it first), and it edits files *inside* the container, which get wiped whenever the container is rebuilt. The CSS import needs no root, survives rebuilds (it's saved in Jellyfin's config on my drive), and is undone by deleting one line. The only thing it skips is the optional "Spotlight" home banner.
+
+**If a theme doesn't load:** hard refresh (Ctrl+Shift+R), and check Pi-hole's Query Log in case it's blocking the CDN (`cdn.jsdelivr.net`).
+
+## Plugins: rules I follow
+
+- Official catalog first. Plugins run inside the server with full access, so third-party repos are a **supply-chain risk**
+- Keep it light: the Wyse CPU can't handle heavy video processing
+- Restart Jellyfin after installing (`sudo docker restart jellyfin`)
+
 ## Limitation
 
 The Wyse's CPU is too weak to **transcode** (convert video on the fly). Media should be in widely supported formats (MP4 / H.264) so devices can **direct play** it.
