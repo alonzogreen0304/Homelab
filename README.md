@@ -34,6 +34,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 | [Tailscale](tailscale.md) | Secure remote access to my network from anywhere | ✅ Reaching Pi-hole from my phone anywhere; DNS fixed; exit node working |
 | Docker | Runs services in isolated containers | ✅ Running |
 | [SSH](ssh-setup.md) | Control the server from my laptop, no monitor needed | ✅ Working from my laptop over Tailscale, key-only (passwords disabled) |
+| [Unbound](unbound.md) | My own recursive DNS resolver: Pi-hole asks the internet's root servers directly instead of Google, with DNSSEC validation | ✅ Running, Pi-hole's only upstream |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
 
 ---
@@ -42,6 +43,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 22, 2026 (night) | Installed Unbound as a private recursive DNS resolver with DNSSEC; Pi-hole now asks it instead of Google ([notes](unbound.md)) |
 | Oct 22, 2026 (evening) | Verified the exit node, recovered Pi-hole after it vanished on reboot (Docker started before its drive mounted), made Docker wait for the drive, and got Pi-hole blocking ads for my laptop and phone from anywhere over Tailscale ([log](pihole-docker-recovery-log.md)) |
 | Oct 22, 2026 | Shut the Wyse down cleanly for a cable cleanup; it came back headless on its own after reboot (Tailscale green, `allow-hotplug` working) |
 | Oct 21, 2026 (night) | Freed disk space from 93% to 81%, set up SSH from my laptop over Tailscale, switched SSH to key-only login, audited every open port, fixed IP forwarding, and switched to `allow-hotplug` ([log](disk-cleanup-and-ssh-log.md)) |
@@ -84,6 +86,8 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Set up SSH from my laptop
 - [x] Switch SSH to key-based login and disable passwords
 - [x] Audit open ports (OpenClaw gateway is localhost-only)
+- [x] Set up Unbound (recursive DNS + DNSSEC)
+- [ ] Second Pi-hole on another always-on device, synced with nebula-sync
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 

@@ -15,6 +15,7 @@ Because it works at the network level, it can block ads on devices where you can
 - **Runs on:** Dell Wyse 5060 (Debian 12)
 - **Installed with:** Docker (`pihole/pihole` image)
 - **Network mode:** host (uses the server's network directly)
+- **Upstream DNS:** [Unbound](unbound.md) on `127.0.0.1#5335` (no Google/Cloudflare/ISP)
 - **Blocklist size:** ~82,000 domains
 - **Dashboard:** `http://<server-ip>/admin`
 
