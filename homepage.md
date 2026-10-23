@@ -36,8 +36,29 @@ One start page for my whole homelab: a tile for every service (Pi-hole, Tailscal
 - **No Docker socket mounted.** Homepage *can* show container status if you give it `/var/run/docker.sock`, but that socket is effectively **root access to the whole host**. Skipped for now
 - **API keys stay out of YAML and out of GitHub.** Phase 2 widgets use environment variables from a locked-down `.env` file (see below)
 
+## Phase 2: live widgets
+
+The Pi-hole tile now shows **queries / blocked / % / gravity**, and Jellyfin shows library counts and now-playing.
+
+**How the secrets are handled:**
+- API keys live in `/opt/homepage/.env`, locked with `chmod 600` (root-only), and loaded with `env_file: .env`
+- The YAML only references them: `key: "{{HOMEPAGE_VAR_PIHOLE_KEY}}"`. Keys never appear in config or on GitHub
+- Pi-hole uses an **app password** (separate and revocable), not my real login
+- Typed the key commands with a **leading space** so bash doesn't save them in history
+- **Rotated both keys** after they showed up in a screenshot, then deleted the screenshot
+
+**Troubleshooting the Jellyfin widget:**
+
+| Symptom | Check | Cause | Fix |
+|---|---|---|---|
+| `Unexpected end of JSON input` | Homepage docs | Jellyfin **12.x** needs the newer widget API | Added `version: 2` |
+| Still erroring | `curl -w "%{http_code}"` with the key → **401**, and `docker logs homepage` showed 401s | Jellyfin rejecting the key | |
+| | `awk` to print the key's **length** (not the key) → **6** instead of 32 | The placeholder text got saved instead of the real key | Pasted the real key → length 32 → widget works |
+
+**Lesson:** check secrets *without displaying them*. Measuring a key's length found the problem without ever printing the key.
+
 ## Next steps
 
-- [ ] Phase 2: live widgets (Pi-hole stats, Jellyfin now-playing) using API keys from a `chmod 600` `.env` file
+- [x] Phase 2: live widgets (Pi-hole stats, Jellyfin) with keys in a `chmod 600` `.env` file
 - [ ] Add new services here as I add them (OptiPlex, VM lab, etc.)
 - [ ] Optional: small rack screen showing the dashboard
