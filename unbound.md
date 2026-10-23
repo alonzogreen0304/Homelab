@@ -60,6 +60,28 @@ sudo docker exec pihole pihole-FTL --config dns.upstreams '["127.0.0.1#5335"]'
 | Pi-hole upstream | `pihole-FTL --config dns.upstreams` | ✅ `[ 127.0.0.1#5335 ]` |
 | Full chain | `dig espn.com @127.0.0.1 +short` | ✅ IPs returned through Pi-hole → Unbound |
 
+## DNSSEC explained
+
+**Simple terms:** websites can sign their DNS records with a digital signature. Unbound checks that signature on every answer. If it matches, Unbound passes the answer along. If it's missing when it should be there, or doesn't match, Unbound **refuses** to answer instead of handing my device a possibly fake address.
+
+**Analogy: a sealed envelope.**
+> Imagine asking for someone's address and getting the answer in an envelope with an official wax seal. Unbound is the mail clerk who checks every seal before handing it over.
+> - **Seal intact** → "Here you go" (`NOERROR` with the `ad` flag: *Authenticated Data*)
+> - **Seal broken or forged** → "I'm not giving you this" (`SERVFAIL`)
+>
+> Without the clerk, a scammer could slip in a fake envelope pointing me to a fake bank site, and my device would never know.
+
+**My proof:**
+
+| Test | What it is | Result |
+|---|---|---|
+| `dnssec.works` | Correctly signed site | ✅ `NOERROR` + `ad` flag: seal checked and valid |
+| `fail01.dnssec.works` | Deliberately forged signature | ✅ `SERVFAIL`: Unbound refused it |
+
+**What it protects against:** DNS spoofing / cache poisoning, where an attacker tricks a resolver into handing out a fake IP for a real domain.
+
+**What it doesn't do:** DNSSEC proves answers are **authentic**, not **private**. The lookups themselves aren't encrypted. Unbound's privacy win comes from not sending everything to one company.
+
 ## What I learned
 
 - **Recursive vs. forwarding DNS:** a forwarder asks someone else; a recursive resolver does the whole lookup itself
