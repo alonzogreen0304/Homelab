@@ -45,6 +45,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 23, 2026 (night) | From my phone over SSH: removed 200MB of leftover containerd image data, system drive 82% → 79% ([notes](jellyfin.md)) |
 | Oct 23, 2026 (night) | SSH from my iPhone over Tailscale with its own key, so I can manage the server from anywhere ([notes](ssh-setup.md)) |
 | Oct 23, 2026 | Built a Homepage dashboard for all my services ([notes](homepage.md)) |
 | Oct 22, 2026 (night) | Installed Jellyfin; fixed a `no space left` failure by moving Docker's image storage off the small system drive ([notes](jellyfin.md)) |
@@ -96,7 +97,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Set up Unbound (recursive DNS + DNSSEC)
 - [ ] Second Pi-hole on another always-on device, synced with nebula-sync
 - [x] Install Jellyfin
-- [ ] Reclaim old containerd image data on the internal drive
+- [x] Reclaim old containerd image data on the internal drive (203M → 668K)
 - [x] Homepage dashboard
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls

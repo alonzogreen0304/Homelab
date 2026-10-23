@@ -78,6 +78,37 @@ Before taking Pi-hole down, I turned off **Use Tailscale DNS** on my phones and 
 
 Then Jellyfin installed cleanly (~211s download), and the system drive stayed at **82%**.
 
+### Follow-up: reclaiming the leftover containerd data (Oct 23, 2026, done from my phone over SSH)
+
+Turning the snapshotter off didn't delete what containerd had already stored. An old copy of the Pi-hole image was still sitting on the small drive.
+
+**Measure:**
+```bash
+df -h /                                    # 82%
+sudo du -sh /var/lib/containerd            # 203M
+sudo ctr -n moby images ls -q              # docker.io/pihole/pihole:latest  ← the leftover
+```
+
+**Prove it's not live:** `sudo docker info` showed `Storage Driver: overlay2` and `Docker Root Dir: /mnt/agents/docker`. The running Pi-hole uses the copy on the big drive, so the containerd copy is a ghost.
+
+**Act:**
+```bash
+sudo ctr -n moby images rm docker.io/pihole/pihole:latest   # 203M → 163M
+# image layers (snapshots) stack on each other: only the top one can be removed first,
+# so loop until all are gone
+for i in $(seq 10); do for s in $(sudo ctr -n moby snapshots ls | awk 'NR>1{print $1}'); do sudo ctr -n moby snapshots rm "$s" 2>/dev/null; done; done
+```
+
+**Verify:**
+
+| | Before | After |
+|---|---|---|
+| `/var/lib/containerd` | 203M | **668K** |
+| System drive | 82% (1.2G free) | **79% (1.4G free)** |
+| Containers | 3 up | **3 up (healthy)**: Pi-hole, Jellyfin, Homepage |
+
+**Lesson:** a config change stops *new* data from going somewhere, but it doesn't clean up the *old* data. Always check for leftovers after a migration.
+
 ## What I learned
 
 - **Read the path in the error message.** `/var/lib/containerd` pointed straight at the cause
@@ -91,4 +122,4 @@ Then Jellyfin installed cleanly (~211s download), and the system drive stayed at
 - [x] First movie added and playing: *Big Buck Bunny* (open-licensed Blender film), downloaded straight onto the Wyse with `wget` from archive.org (blender.org returned `403 Forbidden` to wget). Gotcha: an alphabet filter ("C") hid it until I hit **Reset filters**
 - [ ] Copy my own media with `scp` from my laptop (one line: `scp "<file>" me@<wyse>:/mnt/agents/jellyfin/media/movies/`)
 - [ ] Install the Jellyfin app on my phone/TV
-- [ ] Reclaim the old containerd image data still sitting on the internal drive
+- [x] Reclaim the old containerd image data still sitting on the internal drive (203M → 668K, drive 82% → 79%)
