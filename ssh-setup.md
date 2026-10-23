@@ -13,6 +13,25 @@ SSH (Secure Shell) lets me open a terminal on my laptop and control the Wyse ove
 - [x] One-time setup on the Wyse
 - [x] First connection from the laptop (over Tailscale, fingerprint verified, see [log](disk-cleanup-and-ssh-log.md))
 - [x] Hardening: SSH keys, password login disabled, root login disabled ([log](disk-cleanup-and-ssh-log.md))
+- [x] SSH from my iPhone (Termius) over Tailscale, using its own key (Oct 23, 2026)
+
+## SSH from my phone (Oct 23, 2026)
+
+Goal: control the Wyse from my phone anywhere (like at work), without turning password login back on.
+
+1. In **Termius** → Keychain → generated a new **ED25519** key **on the phone**. The private key never leaves the phone.
+2. Opened the key with **Edit** and copied only the **public key** (`ssh-ed25519 AAAA...`). I did **not** use "Share", which could send the private key, or "Export to host", which needs password login and I have that turned off.
+3. Emailed the public key to myself. That's safe: a public key can't log anyone in by itself.
+4. From my laptop, SSH'd into the Wyse and added it to the allowed keys:
+   ```bash
+    echo "ssh-ed25519 AAAA...phone-key" >> ~/.ssh/authorized_keys
+   cat ~/.ssh/authorized_keys     # 2 lines now: laptop + phone
+   ```
+5. In Termius, added a host (Wyse's Tailscale IP, user `me`, ED25519 key), accepted the fingerprint, and got `me@Wyse:~$` on my phone.
+
+**Why this is the secure way:** each device gets its **own** key. If my phone is lost, I delete just its line from `authorized_keys` and the laptop keeps working. That's **revocation**, and it beats sharing one key across devices.
+
+**Extra hardening:** Termius app lock (Face ID), and never pasting secrets into the app's AI command bar.
 
 ---
 

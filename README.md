@@ -45,6 +45,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 23, 2026 (night) | SSH from my iPhone over Tailscale with its own key, so I can manage the server from anywhere ([notes](ssh-setup.md)) |
 | Oct 23, 2026 | Built a Homepage dashboard for all my services ([notes](homepage.md)) |
 | Oct 22, 2026 (night) | Installed Jellyfin; fixed a `no space left` failure by moving Docker's image storage off the small system drive ([notes](jellyfin.md)) |
 | Oct 22, 2026 (night) | Installed Unbound as a private recursive DNS resolver with DNSSEC; Pi-hole now asks it instead of Google ([notes](unbound.md)) |
@@ -90,6 +91,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Run the server headless (no monitor needed)
 - [x] Set up SSH from my laptop
 - [x] Switch SSH to key-based login and disable passwords
+- [x] SSH from my phone with its own key
 - [x] Audit open ports (OpenClaw gateway is localhost-only)
 - [x] Set up Unbound (recursive DNS + DNSSEC)
 - [ ] Second Pi-hole on another always-on device, synced with nebula-sync
