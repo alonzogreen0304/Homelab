@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Know Your Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Know Lab">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0b1220">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a network-diagram "field manual". Top: tab switch (Learn / Quiz). Learn = path of component cards. Quiz = one question card at a time. Single deliberate dark look. */
+:root {
+  --bg: #0b1220;
+  --panel: #111a2e;
+  --panel-2: #16223b;
+  --line: #24324f;
+  --ink: #e6ecf7;
+  --muted: #93a1bd;
+  --faint: #5b6a88;
+  --cyan: #46d3e6;
+  --amber: #ffb547;
+  --good: #57e39b;
+  --bad: #ff6b6b;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px;
+  background-position: -1px -1px;
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 16px;
+  line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 40px;
+}
+@media (display-mode: standalone) { body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); } }
+.wrap { max-width: 820px; margin: 0 auto; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 8px 16px; margin-bottom: 18px; }
+h1 { font-weight: 800; font-size: clamp(30px, 7vw, 44px); line-height: 1; margin: 0; letter-spacing: -0.02em; text-wrap: balance; }
+h1 span { color: var(--cyan); }
+.tag { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.tabs { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px; gap: 4px; }
+.tabs button { border: 0; background: transparent; color: var(--muted); font: 600 14px var(--display); padding: 8px 18px; border-radius: 999px; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--cyan); color: var(--bg); }
+.tabs button:focus-visible, .btn:focus-visible, .opt:focus-visible, .chip:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.flow { font-family: var(--mono); font-size: 12.5px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; white-space: pre; margin-bottom: 18px; }
+.flow b { color: var(--cyan); font-weight: 600; }
+.cards { display: grid; gap: 12px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 4px 14px; }
+.card .n { grid-row: span 4; font-family: var(--mono); font-size: 13px; color: var(--bg); background: var(--cyan); width: 36px; height: 36px; border-radius: 8px; display: grid; place-items: center; font-weight: 600; }
+.card h3 { margin: 0; font-size: 19px; font-weight: 800; }
+.card p { margin: 0; color: var(--ink); }
+.card .an { color: var(--amber); }
+.card .an::before { content: "Analogy: "; color: var(--faint); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+.card .mine { color: var(--muted); font-size: 14.5px; }
+.card .mine::before { content: "In my lab: "; color: var(--faint); font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+.label { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { background: var(--panel); border: 1px solid var(--line); color: var(--ink); border-radius: 999px; padding: 6px 13px; font: 500 13.5px var(--display); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--cyan); border-color: var(--cyan); color: var(--bg); }
+.btn { background: var(--amber); color: #1b1203; border: 0; border-radius: 8px; padding: 11px 20px; font: 800 14px var(--display); letter-spacing: 0.03em; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
+.hint { font-size: 13px; color: var(--muted); }
+.qbox { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.bar { height: 4px; background: var(--line); border-radius: 2px; margin: 10px 0 16px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--cyan); }
+.q { font-size: clamp(18px, 4.6vw, 22px); font-weight: 600; line-height: 1.35; margin: 0 0 14px; text-wrap: balance; }
+.opts { display: grid; gap: 10px; }
+.opt { text-align: left; background: var(--panel-2); border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 12px 14px; font: 400 15.5px var(--display); cursor: pointer; display: flex; gap: 10px; min-width: 0; }
+.opt .k { font-family: var(--mono); font-size: 12px; color: var(--faint); padding-top: 3px; flex: none; }
+.opt span:last-child { min-width: 0; word-break: break-word; }
+.opt:hover:not(:disabled) { border-color: var(--cyan); }
+.opt.right { border-color: var(--good); background: rgba(87, 227, 155, 0.1); }
+.opt.wrong { border-color: var(--bad); background: rgba(255, 107, 107, 0.1); }
+.opt:disabled { cursor: default; }
+.why { margin-top: 14px; border-left: 3px solid var(--line); padding: 6px 0 6px 12px; }
+.why.ok { border-color: var(--good); }
+.why.no { border-color: var(--bad); }
+.why .head { font-weight: 800; }
+.why.ok .head { color: var(--good); }
+.why.no .head { color: var(--bad); }
+.why p { margin: 4px 0 0; color: var(--ink); }
+.why .lab { color: var(--muted); font-size: 14px; }
+.big { font-size: clamp(40px, 11vw, 64px); font-weight: 800; line-height: 1; margin: 8px 0; }
+.big small { font-size: 0.4em; color: var(--muted); font-weight: 600; }
+.missed { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.missed li { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+.missed b { display: block; margin-bottom: 4px; }
+.missed .a { color: var(--good); font-size: 14.5px; }
+.missed .e { color: var(--muted); font-size: 14px; margin-top: 4px; }
+footer { text-align: center; font-family: var(--mono); font-size: 11.5px; color: var(--faint); margin-top: 22px; }
+@media (prefers-reduced-motion: no-preference) { .qbox, .card { animation: rise 0.25s ease-out both; } }
+@keyframes rise { from { transform: translateY(6px); opacity: 0.6; } to { transform: none; opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="tag">Homelab field manual</div>
+      <h1>Know Your <span>Lab</span></h1>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Mode">
+      <button role="tab" id="tab-learn" aria-selected="true">Learn</button>
+      <button role="tab" id="tab-quiz" aria-selected="false">Quiz</button>
+    </div>
+  </header>
+  <main id="app"></main>
+  <footer>Built from my actual homelab build · Wyse · Pi-hole · Unbound · Tailscale · SSH · Docker</footer>
+</div>
+
+<script>
+const LEARN = [
+  ["Homelab", "Your own mini IT setup at home where you practice real skills on real equipment.", "A practice kitchen: you learn to cook by actually cooking, burning stuff included.", "A Dell Wyse server, my laptop, and 3 phones, all documented on GitHub."],
+  ["The server (Wyse)", "A small, low-power computer running Debian Linux 24/7. It hosts all my services.", "The building that houses all the shops.", "Dell Wyse 5060 with a 6.4GB system drive and a 1.8TB external drive at /mnt/agents."],
+  ["Headless", "The server runs with no monitor, keyboard, or login. You manage it remotely.", "A vending machine: it works on its own; you only open it to restock.", "Pi-hole, Tailscale, Docker, and Unbound all start by themselves at boot."],
+  ["SSH", "An encrypted remote terminal. You type on your laptop; commands run on the server.", "A secure intercom into the building.", "ssh me@<wyse-tailscale-ip> from PowerShell."],
+  ["SSH keys", "A key pair: the private key stays on your laptop; the public key goes on the server.", "The public key is a lock you install on the door. The private key is the only key that fits, and it never leaves your pocket.", "Password login and root login are both OFF. Only my laptop's key gets in."],
+  ["DNS", "Turns website names (google.com) into IP addresses computers can connect to.", "The internet's phone book.", "Every app lookup on my devices goes through DNS first."],
+  ["Pi-hole", "A DNS server with a blocklist. When a device asks for an ad or tracker domain, Pi-hole answers 'doesn't exist' (0.0.0.0).", "My own phone book with 82,000 ad companies crossed out.", "Runs in Docker on the Wyse. The live log shows 'gravity blocked' for ads like cdn.taboola.com."],
+  ["Unbound", "A recursive resolver. It looks up answers from the source (root servers, then .com, then the site's own server) instead of asking Google.", "Walking the directory yourself instead of asking an operator who remembers every call you make.", "Listens only on 127.0.0.1:5335. Pi-hole's only upstream."],
+  ["DNSSEC", "Digital signatures on DNS answers. Unbound checks them and rejects forged ones.", "A wax seal on an envelope. Broken seal = not delivered.", "dnssec.works got the 'ad' flag (verified); fail01.dnssec.works got SERVFAIL (rejected)."],
+  ["Tailscale", "An encrypted private network (built on WireGuard) linking all my devices, with no ports opened on the router.", "A private armored-truck tunnel that rides on whatever road (internet) you're on.", "Every device gets a 100.x address that works from anywhere."],
+  ["Exit node", "Optional mode that sends ALL your traffic through the Wyse and out your home internet.", "The truck carries everything home first, then out the front door.", "Proved it: ISP showed Comcast (home) with it on, T-Mobile with it off. Use on public/work Wi-Fi only."],
+  ["Docker", "Runs apps in isolated containers built from a recipe file (docker-compose.yml).", "Shipping containers: each app packed in its own box with everything it needs.", "Pi-hole, Jellyfin, and Homepage. Settings live on the external drive so rebuilds lose nothing."],
+  ["Jellyfin", "A self-hosted media server.", "My own Netflix.", "Movies and Shows libraries on the 1.8TB drive, reachable over Tailscale."],
+  ["Homepage", "A dashboard with a tile and link for every service, plus live stats.", "The building directory in the lobby.", "Port 3000, with CPU, RAM, and disk stats. Runs as my user, not root."],
+  ["Troubleshooting mindset", "Read the exact error, change one thing at a time, and check layers: power, cable, network, service.", "A doctor: symptoms, then tests, then diagnosis, before treating.", "A missing ethernet cable, a DNS misconfig, a Docker boot race, a full disk: every fix came from reading the output."]
+];
+
+const Q = [
+  ["Big Picture", "What is the Wyse's main job in my homelab?", ["Be an always-on server that hosts my services", "Replace my Wi-Fi router", "Run my games", "Back up my phone photos"], 0, "It's the always-on box that hosts Pi-hole, Unbound, Jellyfin, Homepage, and Tailscale.", "Low power, so running it 24/7 costs about $1–2 a month."],
+  ["Big Picture", "What does it mean that the server runs 'headless'?", ["It has no monitor or keyboard; I manage it remotely", "It has no operating system", "It has no internet", "It has no hard drive"], 0, "Headless = no screen or keyboard needed. Services start at boot, and I control it over SSH.", "After the cable cleanup it came back on its own with nobody logged in."],
+  ["Big Picture", "Why do I keep app settings on the external drive instead of inside the containers?", ["So I can delete and rebuild a container without losing anything", "Containers can't store files", "It makes apps faster", "Docker requires it"], 0, "Containers are disposable. Settings in bind-mounted folders on the drive survive rebuilds.", "When Pi-hole's container vanished, I rebuilt it and all my settings and lists came back."],
+
+  ["DNS & Pi-hole", "What does DNS do?", ["Turns names like google.com into IP addresses", "Encrypts my traffic", "Speeds up downloads", "Blocks viruses"], 0, "DNS is the internet's phone book: name in, IP address out.", "Every app on my phone does a DNS lookup before connecting."],
+  ["DNS & Pi-hole", "How does Pi-hole actually block an ad?", ["It answers 'doesn't exist' (0.0.0.0) when a device asks for an ad domain", "It deletes ads from web pages", "It scans images for ads", "It slows ads down"], 0, "It's a DNS sinkhole: the device never learns the ad server's address, so the ad can't load.", "Live log: 'gravity blocked cdn.taboola.com is 0.0.0.0'."],
+  ["DNS & Pi-hole", "Why can't Pi-hole block YouTube ads?", ["They come from the same servers as the videos", "YouTube encrypts ads", "Pi-hole only works on Wi-Fi", "YouTube pays Pi-hole"], 0, "Pi-hole blocks by domain. If the ad and content share a domain, blocking it would break the videos too.", "Same reason Instagram/TikTok sponsored posts get through."],
+  ["DNS & Pi-hole", "Pi-hole's log said 'ignoring query from non-local network 100.x.x.x'. What fixed it?", ["Setting Pi-hole's listening mode to ALL", "Restarting the router", "Reinstalling Tailscale", "Turning on the exit node"], 0, "By default Pi-hole only answers the local network. Tailscale's 100.x addresses looked like strangers.", "Safe because the Wyse isn't exposed to the internet: 'all' = home network + my tailnet."],
+  ["DNS & Pi-hole", "Pi-hole's 'percentage blocked' jumped from 2.7% to 15.6% without blocking more. Why?", ["The total query count dropped as old activity left the 24-hour window", "Pi-hole got a new blocklist", "My phone visited more ad sites", "The dashboard broke"], 0, "Same 92 blocks divided by a smaller total gives a bigger percentage.", "Lesson: always ask what a percentage is a percentage OF."],
+
+  ["Unbound & DNSSEC", "What did Unbound replace?", ["Google's DNS (8.8.8.8) as Pi-hole's upstream", "Pi-hole", "Tailscale", "My router"], 0, "Pi-hole used to ask Google. Now it asks Unbound, which asks the root servers directly.", "No single company gets a list of every site I look up."],
+  ["Unbound & DNSSEC", "Why does Unbound listen on 127.0.0.1 port 5335?", ["Only the Wyse itself can use it, and port 53 is already Pi-hole's", "That's the only port Linux allows", "It's faster", "Tailscale requires it"], 0, "127.0.0.1 = this machine only (least exposure). 5335 avoids fighting Pi-hole for port 53.", "Pi-hole's upstream is set to 127.0.0.1#5335."],
+  ["Unbound & DNSSEC", "dig fail01.dnssec.works returned SERVFAIL. Good or bad?", ["Good: Unbound rejected a deliberately forged answer", "Bad: Unbound is broken", "Bad: the internet is down", "Doesn't matter"], 0, "That domain has broken signatures on purpose. Refusing it proves DNSSEC protection works.", "The real site, dnssec.works, returned NOERROR with the 'ad' flag."],
+  ["Unbound & DNSSEC", "What does the 'ad' flag in dig output mean?", ["Authenticated Data: the DNSSEC signature was verified", "The site has ads", "Admin mode", "Address denied"], 0, "AD = Authenticated Data. The answer's signature checked out.", "Seen on: dig dnssec.works @127.0.0.1 -p 5335."],
+  ["Unbound & DNSSEC", "What does DNSSEC protect against?", ["DNS spoofing / cache poisoning (fake addresses)", "Someone reading my lookups", "Viruses in downloads", "Slow internet"], 0, "DNSSEC proves answers are authentic. It does NOT encrypt them; that's a different problem.", "Wax seal = proves it's real, but the envelope isn't locked."],
+
+  ["Tailscale", "What is Tailscale?", ["An encrypted private network (WireGuard) linking my devices without opening router ports", "A Wi-Fi extender", "An ad blocker", "A cloud backup service"], 0, "It's a mesh VPN. Devices log in with my identity and talk over encrypted tunnels.", "Wyse, laptop, and 3 phones all on one tailnet."],
+  ["Tailscale", "Why use Tailscale instead of port-forwarding SSH on my router?", ["Port-forwarding exposes the service to the entire internet", "Port-forwarding is slower", "Routers can't forward ports", "Tailscale is required for SSH"], 0, "Open ports get scanned and attacked constantly. Tailscale keeps services invisible to the public internet.", "'Your ports were open so I invited myself in' — that's the joke."],
+  ["Tailscale", "100.x.x.x vs 192.168.x.x addresses: which works from work or cellular?", ["100.x (Tailscale) works anywhere; 192.168 only works at home", "192.168 works anywhere", "Both work anywhere", "Neither works away from home"], 0, "192.168 addresses are local to my home network. 100.x addresses ride the Tailscale tunnel.", "Pi-hole from anywhere: http://<wyse-100.x-ip>/admin."],
+  ["Tailscale", "Root cause of my phone losing internet on the main router with Tailscale DNS on?", ["The global nameserver was the Wyse's LOCAL 192.168 IP with override on", "The Wyse was off", "The router was broken", "Pi-hole blocked Google"], 0, "Devices off the extender network couldn't reach a 192.168 address, so every lookup failed.", "Rule: anything Tailscale-wide should point at a 100.x address."],
+  ["Tailscale", "When should I turn the exit node ON?", ["On public or work Wi-Fi I don't control", "Always, even at home", "Only on cellular", "Never"], 0, "It hides all my traffic from that network. At home it just slows things down.", "It's slower: limited by home upload speed and the extender."],
+  ["Tailscale", "Exit node on, and the Wyse goes offline. What happens and what do I do?", ["My phone's internet is blocked; tap Disable on the exit node", "Nothing changes", "My phone switches to the router automatically", "Tailscale uninstalls"], 0, "It's a kill switch: Tailscale blocks traffic rather than leaking it unprotected.", "Happened on day one: 'EXIT NODE OFFLINE'."],
+  ["Tailscale", "How did I prove the exit node works?", ["whatismyip showed ISP Comcast (home) with it on and T-Mobile with it off", "The VPN icon appeared", "Pages loaded slower", "Pi-hole showed it"], 0, "The ISP name is the reliable tell; IP location lookups are often wrong.", "The location said the wrong city, but the ISP flipped correctly."],
+  ["Tailscale", "A phone with no LTE and no Wi-Fi turns on Tailscale. What happens?", ["Nothing connects: Tailscale needs an existing internet connection to ride on", "It gets internet through the Wyse", "It uses the exit node", "It connects over Bluetooth"], 0, "Tailscale is a tunnel on top of a road. No road, no tunnel.", "On any Wi-Fi, it works normally."],
+
+  ["SSH", "Where does my SSH private key live?", ["Only on my laptop", "On the Wyse", "On GitHub", "In Tailscale"], 0, "The private key never leaves my laptop. The Wyse only has the public key in ~/.ssh/authorized_keys.", "If my laptop were stolen, I'd remove that public key from the Wyse."],
+  ["SSH", "After disabling passwords, a forced password login returned 'Permission denied (publickey)'. Meaning?", ["Success: password logins are blocked, only keys work", "SSH is broken", "My key is wrong", "The Wyse is offline"], 0, "That's the proof the hardening worked.", "Test: ssh -o PubkeyAuthentication=no me@<wyse>."],
+  ["SSH", "On first connect, SSH showed a fingerprint I compared to the Wyse's. Why?", ["To make sure I'm talking to the real server, not a man-in-the-middle", "To speed up the connection", "To create my password", "It's just decoration"], 0, "The host key fingerprint is the server's identity. Matching it blocks impostors (MITM).", "My laptop now remembers it in known_hosts."],
+  ["SSH", "Why keep one SSH session open while changing SSH settings?", ["So a bad config can't lock me out", "It makes changes faster", "SSH requires two sessions", "To save the config"], 0, "Always keep a way back in. Test with sshd -t before reloading.", "Same reason I test configs before applying them."],
+  ["SSH", "My prompt says PS C:\\Users\\alonz>. Where am I?", ["On my Windows laptop: Linux commands like sudo won't work here", "On the Wyse", "In Pi-hole", "In Tailscale"], 0, "PS = PowerShell on Windows. On the Wyse the prompt is me@Wyse:~$.", "'Sudo is disabled on this machine' = I was on Windows."],
+
+  ["Docker & Linux", "What is docker-compose.yml?", ["The recipe that defines a container: image, settings, and folders", "A log file", "A backup", "A password file"], 0, "Run 'docker compose up -d' in its folder and Docker builds the container from it.", "/opt/pihole, /opt/jellyfin, /opt/homepage."],
+  ["Docker & Linux", "After a reboot, 'docker ps -a' showed nothing. What was the cause?", ["Docker started before the external drive mounted (a race condition)", "Pi-hole uninstalled itself", "The drive was erased", "Tailscale deleted it"], 0, "Docker's data lives on the drive. Fix: RequiresMountsFor=/mnt/agents so Docker waits.", "Pi-hole's settings were safe the whole time."],
+  ["Docker & Linux", "Jellyfin failed with 'no space left on device' in /var/lib/containerd. Why?", ["Docker's containerd image store saved images on the small system drive", "The 1.8TB drive was full", "Jellyfin is too big for Linux", "Tailscale used the space"], 0, "Fix: turned off the containerd snapshotter so images go to data-root on the big drive.", "Confirmed with docker info: 'overlay2' and 'Docker Root Dir: /mnt/agents/docker'."],
+  ["Docker & Linux", "What does 'nofail' in /etc/fstab do?", ["Lets the system boot even if that drive is missing", "Makes the drive faster", "Prevents drive failure", "Encrypts the drive"], 0, "Without it, a missing USB drive sent the Wyse into emergency mode.", "That was the very first fix."],
+  ["Docker & Linux", "Why rename a folder with mv before deleting it with rm -rf?", ["A rename is instantly reversible; rm -rf isn't", "rm doesn't work otherwise", "It frees space faster", "Linux requires it"], 0, "Rename, test that nothing broke, then delete.", "How I safely removed the old 486MB ~/.npm-global."],
+  ["Docker & Linux", "What does 'allow-hotplug' do for the ethernet port?", ["Brings it up whenever a cable is detected, not only at boot", "Makes ethernet faster", "Turns on Wi-Fi", "Blocks hackers"], 0, "With 'auto', a cable plugged in after boot was ignored.", "Survived a full power-down test."],
+
+  ["Security Concepts", "Running Jellyfin and Homepage as my user (1000) instead of root is an example of…", ["Least privilege", "Encryption", "Redundancy", "Phishing"], 0, "Give software only the access it needs. If it's compromised, the damage is limited.", "Also why Homepage mounts the drive read-only (:ro)."],
+  ["Security Concepts", "Why didn't I give Homepage the Docker socket (docker.sock)?", ["It's effectively root access to the whole server", "It's too slow", "Homepage can't use it", "It costs money"], 0, "Anything that can talk to the Docker socket can take over the host.", "Convenience vs. security: skipped it on purpose."],
+  ["Security Concepts", "Why read a script before running it with sudo?", ["sudo runs it as root: untrusted code could do anything to the server", "Scripts don't run otherwise", "It's faster", "Reading is required by Linux"], 0, "Running unknown code as root is how servers get owned.", "Chose the Abyss theme's CSS-only install over its sudo script."],
+  ["Security Concepts", "Reviewing every device in Tailscale and removing ones I don't use is called…", ["Asset inventory", "Penetration testing", "Encryption", "Load balancing"], 0, "You can't protect what you don't know you have.", "Reviewed: Wyse, laptop, 3 phones, all accounted for."],
+  ["Security Concepts", "If Pi-hole goes down, the house can't load websites. Which part of the CIA triad is that?", ["Availability", "Confidentiality", "Integrity", "Authentication"], 0, "CIA = Confidentiality, Integrity, Availability. Downtime hurts availability.", "A backup Pi-hole on a 2nd machine = redundancy for availability."],
+  ["Security Concepts", "Binding Unbound to 127.0.0.1 and limiting Homepage's allowed hosts both reduce…", ["Attack surface", "Bandwidth", "Disk usage", "Latency"], 0, "Fewer ways in = fewer ways to be attacked.", "Same idea as not opening router ports."]
+];
+
+const CATS = [...new Set(Q.map(q => q[0]))];
+const app = document.getElementById('app');
+const tLearn = document.getElementById('tab-learn');
+const tQuiz = document.getElementById('tab-quiz');
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+let pick = store.get('kyl-cats', []);
+let best = store.get('kyl-best', 0);
+let g = null;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function setTab(t) {
+  tLearn.setAttribute('aria-selected', t === 'learn');
+  tQuiz.setAttribute('aria-selected', t === 'quiz');
+  if (t === 'learn') learn(); else menu();
+  window.scrollTo(0, 0);
+}
+tLearn.onclick = () => setTab('learn');
+tQuiz.onclick = () => setTab('quiz');
+
+function learn() {
+  g = null;
+  app.innerHTML = `
+    <div class="flow">How a lookup travels:
+<b>My phone</b> (anywhere) → <b>Tailscale</b> tunnel → <b>Pi-hole</b> on the Wyse (ad? blocked)
+  → <b>Unbound</b> (checks DNSSEC seal) → root servers → .com → the site's own server</div>
+    <div class="cards">${LEARN.map((c, i) => `
+      <article class="card">
+        <div class="n">${String(i + 1).padStart(2, '0')}</div>
+        <h3>${esc(c[0])}</h3>
+        <p>${esc(c[1])}</p>
+        <p class="an">${esc(c[2])}</p>
+        <p class="mine">${esc(c[3])}</p>
+      </article>`).join('')}
+    </div>
+    <div class="row"><button class="btn" id="go-quiz">Test yourself</button><span class="hint">${Q.length} questions across ${CATS.length} topics</span></div>`;
+  document.getElementById('go-quiz').onclick = () => setTab('quiz');
+}
+
+function pool() { return pick.length ? Q.filter(q => pick.includes(q[0])) : Q; }
+
+function menu() {
+  g = null;
+  app.innerHTML = `
+    <div class="qbox">
+      <p class="q" style="margin-bottom:6px">Quiz yourself on your own build.</p>
+      <p class="hint" style="margin:0">Every question comes from something you actually set up or fixed. After each answer you get the why, plus where it shows up in your lab.</p>
+      <div class="label">Topics <span style="text-transform:none;letter-spacing:0">(none picked = all)</span></div>
+      <div class="chips">${CATS.map((c, i) => `<button class="chip" id="cat-${i}" data-c="${esc(c)}" aria-pressed="${pick.includes(c)}">${esc(c)} · ${Q.filter(q => q[0] === c).length}</button>`).join('')}</div>
+      <div class="label">Length</div>
+      <div class="chips">
+        <button class="chip" id="len-10" data-n="10" aria-pressed="true">10 questions</button>
+        <button class="chip" id="len-all" data-n="999" aria-pressed="false">All in topic</button>
+      </div>
+      <div class="row"><button class="btn" id="start">Start</button><span class="hint">Best: ${best}% · keys 1–4 to answer, Enter for next</span></div>
+    </div>`;
+  let n = 10;
+  app.querySelectorAll('[data-c]').forEach(b => b.onclick = () => {
+    const c = b.dataset.c;
+    pick = pick.includes(c) ? pick.filter(x => x !== c) : [...pick, c];
+    store.set('kyl-cats', pick);
+    b.setAttribute('aria-pressed', pick.includes(c));
+  });
+  app.querySelectorAll('[data-n]').forEach(b => b.onclick = () => {
+    n = +b.dataset.n;
+    app.querySelectorAll('[data-n]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  });
+  document.getElementById('start').onclick = () => start(n);
+}
+
+function start(n) {
+  const qs = shuffle(pool()).slice(0, n).map(q => {
+    const order = shuffle([0, 1, 2, 3]);
+    return { cat: q[0], text: q[1], opts: order.map(i => q[2][i]), right: order.indexOf(q[3]), why: q[4], lab: q[5] };
+  });
+  g = { qs, i: 0, score: 0, missed: [], done: false };
+  show();
+}
+
+function show() {
+  const q = g.qs[g.i];
+  g.done = false;
+  app.innerHTML = `
+    <div class="qbox">
+      <div class="meta"><span>${esc(q.cat)}</span><span>${g.i + 1} / ${g.qs.length} · ${g.score} right</span></div>
+      <div class="bar"><i style="width:${(g.i / g.qs.length) * 100}%"></i></div>
+      <p class="q">${esc(q.text)}</p>
+      <div class="opts">${q.opts.map((o, k) => `<button class="opt" id="o${k}" data-k="${k}"><span class="k">${k + 1}</span><span>${esc(o)}</span></button>`).join('')}</div>
+      <div id="why"></div>
+      <div class="row"><button class="btn ghost" id="quit">Quit</button></div>
+    </div>`;
+  app.querySelectorAll('.opt').forEach(b => b.onclick = () => answer(+b.dataset.k));
+  document.getElementById('quit').onclick = menu;
+}
+
+function answer(k) {
+  if (!g || g.done) return;
+  g.done = true;
+  const q = g.qs[g.i];
+  const ok = k === q.right;
+  if (ok) g.score++; else g.missed.push(q);
+  app.querySelectorAll('.opt').forEach(b => b.disabled = true);
+  document.getElementById('o' + q.right).classList.add('right');
+  if (!ok) document.getElementById('o' + k).classList.add('wrong');
+  const last = g.i + 1 >= g.qs.length;
+  document.getElementById('why').innerHTML = `
+    <div class="why ${ok ? 'ok' : 'no'}">
+      <div class="head">${ok ? 'Correct' : 'Not quite'}</div>
+      <p>${esc(q.why)}</p>
+      <p class="lab">In your lab: ${esc(q.lab)}</p>
+    </div>
+    <div class="row"><button class="btn" id="next">${last ? 'See results' : 'Next'}</button></div>`;
+  const nx = document.getElementById('next');
+  nx.onclick = () => { if (last) results(); else { g.i++; show(); } };
+  nx.focus();
+}
+
+function results() {
+  const pct = Math.round(g.score / g.qs.length * 100);
+  if (pct > best) { best = pct; store.set('kyl-best', best); }
+  const msg = pct >= 90 ? 'You know your lab.' : pct >= 70 ? 'Solid. Review the misses below.' : 'Good start. Read the Learn cards, then run it back.';
+  app.innerHTML = `
+    <div class="qbox">
+      <div class="meta"><span>Results</span><span>Best ${best}%</span></div>
+      <div class="big">${pct}% <small>${g.score}/${g.qs.length}</small></div>
+      <p style="margin:0 0 6px">${msg}</p>
+      ${g.missed.length ? `<div class="label">Review these</div><ul class="missed">${g.missed.map(m => `<li><b>${esc(m.text)}</b><div class="a">${esc(m.opts[m.right])}</div><div class="e">${esc(m.why)}</div></li>`).join('')}</ul>` : ''}
+      <div class="row"><button class="btn" id="again">Run it back</button><button class="btn ghost" id="menu">Change topics</button><button class="btn ghost" id="learn">Learn cards</button></div>
+    </div>`;
+  document.getElementById('again').onclick = () => start(g.qs.length);
+  document.getElementById('menu').onclick = menu;
+  document.getElementById('learn').onclick = () => setTab('learn');
+}
+
+document.addEventListener('keydown', e => {
+  if (!g || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (!g.done && /^[1-4]$/.test(e.key) && document.getElementById('o0')) answer(+e.key - 1);
+});
+
+learn();
+</script>
+</body>
+</html>
