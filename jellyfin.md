@@ -1,0 +1,75 @@
+# Jellyfin: My Own Streaming Server
+
+**Beginner level:** still learning, documenting as I go.
+**Set up:** October 22, 2026, on the Dell Wyse 5060 in Docker
+**Project:** [Jellyfin](https://github.com/jellyfin/jellyfin) (free, open-source media server)
+
+## What it is (simple version)
+
+My own Netflix. I put movies and shows on my 1.8TB drive, and Jellyfin streams them to my phone, laptop, or TV, from anywhere, through Tailscale. No subscription, no ads, no tracking.
+
+## My setup
+
+| Setting | Value |
+|---|---|
+| Runs in | Docker (`jellyfin/jellyfin`), host networking |
+| Recipe | `/opt/jellyfin/docker-compose.yml` |
+| Runs as | My normal user (`1000:1000`), **not root**: least privilege |
+| Settings | `/mnt/agents/jellyfin/config` (external drive) |
+| Media | `/mnt/agents/jellyfin/media/movies`, `/media/tv` (external drive) |
+| Web UI | `http://<wyse-tailscale-ip>:8096` (only reachable on my tailnet / home network) |
+
+Same pattern as Pi-hole: **settings and media live on the drive, not in the container**, so the container can be deleted and rebuilt anytime without losing anything.
+
+## Limitation
+
+The Wyse's CPU is too weak to **transcode** (convert video on the fly). Media should be in widely supported formats (MP4 / H.264) so devices can **direct play** it.
+
+## The problem I hit installing it
+
+The first install failed with `no space left on device` in `/var/lib/containerd/...`.
+
+**Root cause:** newer Docker versions store images through **containerd's image store**, which keeps image layers in `/var/lib/containerd` on the small internal drive. My `data-root` setting (`/mnt/agents/docker`) didn't cover that, so the ~500MB Jellyfin download filled the 6.4GB system drive.
+
+**Confirmed with:**
+```bash
+sudo docker info | grep -iE "storage driver|driver-type"
+# Storage Driver: overlayfs
+#  driver-type: io.containerd.snapshotter.v1
+```
+
+**Fix:** switched Docker back to its classic storage driver so *everything* lives in `data-root` on the external drive:
+```bash
+cd /opt/pihole && sudo docker compose down          # stop Pi-hole cleanly
+sudo cp /etc/docker/daemon.json /etc/docker/daemon.json.bak
+# daemon.json:
+# {
+#   "data-root": "/mnt/agents/docker",
+#   "features": { "containerd-snapshotter": false }
+# }
+sudo systemctl restart docker
+sudo docker info | grep -iE "storage driver|root dir"
+# Storage Driver: overlay2
+# Docker Root Dir: /mnt/agents/docker
+cd /opt/pihole && sudo docker compose up -d          # re-pulled onto the big drive
+```
+
+Before taking Pi-hole down, I turned off **Use Tailscale DNS** on my phones and laptop so their internet kept working during the ~2 minutes it was offline. That's planned maintenance with a workaround.
+
+**Verified nothing was lost:** Pi-hole's upstream was still Unbound (`127.0.0.1#5335`) and its listening mode was still `ALL`, because those settings live in its config on the drive.
+
+Then Jellyfin installed cleanly (~211s download), and the system drive stayed at **82%**.
+
+## What I learned
+
+- **Read the path in the error message.** `/var/lib/containerd` pointed straight at the cause
+- A config setting (`data-root`) doesn't always cover everything you think it does. **Verify with `docker info`**
+- **Plan maintenance windows:** know what depends on a service before stopping it
+- **Separate data from containers** so rebuilds are safe
+
+## Next steps
+
+- [ ] Finish the setup wizard (admin account, Movies + Shows libraries)
+- [ ] Copy media onto the drive with `scp` from my laptop
+- [ ] Install the Jellyfin app on my phone/TV
+- [ ] Reclaim the old containerd image data still sitting on the internal drive
