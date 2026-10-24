@@ -78,6 +78,23 @@ What changed:
 
 **How I changed it safely:** backed up the whole config folder first (`sudo cp -r .../config .../config.bak`), then rewrote each YAML file with `sudo tee` heredocs. Homepage reloads config changes on its own. API keys stayed in `.env`; the YAML only references them.
 
+## Phase 4: MagicDNS name + Lab House (Oct 24, 2026)
+
+**Problem:** opening the dashboard by its new Tailscale name (`http://wyse:3000`) returned `{"error":"Host validation failed."}`.
+
+**Why:** `HOMEPAGE_ALLOWED_HOSTS` is Homepage's guest list of names it will answer to. It only had the IP-based ones. This protects against **DNS rebinding**, an attack where a malicious website tricks your browser into reaching your home server under a fake name. So the error was the security feature doing its job.
+
+**Analogy:** the doorman only lets in names on the guest list. I added my nickname to the list. The doorman reads the list at the start of each shift, so the container had to be re-created (`up -d`), not just restarted.
+
+```bash
+sudo cp /opt/homepage/docker-compose.yml /opt/homepage/docker-compose.yml.bak
+sudo sed -i 's|localhost:3000"|localhost:3000,wyse:3000,wyse.<tailnet>.ts.net:3000"|' /opt/homepage/docker-compose.yml
+grep -n ALLOWED /opt/homepage/docker-compose.yml
+cd /opt/homepage && sudo docker compose up -d
+```
+
+**Also:** added [Lab House](https://alonzogreen0304.github.io/Homelab/games/lab-house.html) as the first tile in the Study row (now a 2x2 grid with Command Center, Know Your Lab, Acronym Breach), and switched the Uptime Kuma bookmark to `http://wyse:3001`.
+
 ## Next steps
 
 - [x] Phase 2: live widgets (Pi-hole stats, Jellyfin) with keys in a `chmod 600` `.env` file

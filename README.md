@@ -47,6 +47,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 24, 2026 | MagicDNS: reach everything by name (`http://wyse:3000`); added the name to Homepage's allowed hosts (DNS-rebinding protection); Lab House added to the dashboard ([notes](tailscale.md)) |
 | Oct 24, 2026 | Login screen flagged disk growth (79% → 86%); measured it, removed Discord, Firefox (least functionality) and the apt cache: back to 81% ([log](disk-cleanup-and-ssh-log.md)) |
 | Oct 24, 2026 | Custom neofetch logo (AZ + Matrix rain + heart + bat) shown at every login ([notes](ssh-setup.md)) |
 | Oct 24, 2026 | Custom purple login screen with live stats (uptime, disk, containers, CrowdSec bans); it immediately flagged the main disk at 86% ([notes](ssh-setup.md)) |

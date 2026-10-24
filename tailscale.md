@@ -52,6 +52,18 @@ sudo tailscale ip        # show this device's Tailscale IP
 - ⚠️ Exit node is noticeably slower: traffic is limited by home upload speed and the 2.4GHz extender. I only turn it on for public Wi-Fi
 - ✅ **Asset inventory reviewed (Oct 22, 2026):** the two older iPhones that showed "offline, last seen 138d/163d ago" are back in use, so I reconnected them instead of removing them. All 5 devices (Wyse, laptop, 3 iPhones) are now active and using Pi-hole over Tailscale. Any device I stop using gets removed
 
+## MagicDNS: names instead of IPs (Oct 24, 2026)
+
+**Analogy:** saving a contact as "Mom" instead of memorizing her number. Same phone, same person, easier to remember.
+
+Tailscale gives every device on my tailnet a name. `tailscale status` shows them (second column), and the full name is in `tailscale status --json | grep -m1 DNSName`:
+- Short name: `wyse`
+- Full name: `wyse.<tailnet>.ts.net`
+
+Now `http://wyse:3000` (dashboard), `http://wyse:3001` (Uptime Kuma), and `ssh me@wyse` all work from any device on my tailnet. No more typing `100.x.x.x`.
+
+**Gotcha: Homepage said "Host validation failed."** MagicDNS worked fine. Homepage was protecting itself. Its `HOMEPAGE_ALLOWED_HOSTS` setting only listed the IP-based addresses, so a request for "wyse" got refused. **Analogy:** a doorman with a guest list. I showed up under a nickname he'd never heard, so we added the nickname to the list. See [homepage.md](homepage.md).
+
 ## What I learned
 
 - **Proving a VPN works:** check your public IP's ISP with the VPN on vs. off. Location lookups are often wrong (mine said the wrong city), but the ISP name is reliable
