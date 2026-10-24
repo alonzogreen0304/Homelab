@@ -12,7 +12,8 @@
 "Your phone"
 ],
 "Pi-hole answers these lookups for your house and refuses ad domains.",
-0
+0,
+"You type espn.com; DNS answers 199.181.132.250. Pi-hole, Google 8.8.8.8, Cloudflare 1.1.1.1."
 ],
 [
 "DHCP",
@@ -27,7 +28,8 @@
 "New device"
 ],
 "Your TV joins Wi-Fi and gets an IP without you typing anything.",
-0
+0,
+"Your Comcast router handing your phone 10.0.0.23 when it joins Wi-Fi."
 ],
 [
 "IP",
@@ -42,7 +44,8 @@
 "Server 93.184.216.34"
 ],
 "Like a mailing address: every packet carries a from and a to IP.",
-0
+0,
+"192.168.1.20 (private, at home) or 100.119.39.63 (the Wyse's Tailscale IP)."
 ],
 [
 "LAN",
@@ -57,7 +60,8 @@
 "Wyse"
 ],
 "Everything on your home Wi-Fi and ethernet is one LAN.",
-0
+0,
+"Your phone, TV, PS5 and the Wyse all on your home Wi-Fi."
 ],
 [
 "WAN",
@@ -72,7 +76,8 @@
 "Internet"
 ],
 "Your router's WAN port is the cable going out to your ISP.",
-0
+0,
+"The Comcast cable from your router out to the internet."
 ],
 [
 "VPN",
@@ -87,7 +92,8 @@
 "Home network"
 ],
 "Tailscale builds this tunnel between your phone and the Wyse.",
-0
+0,
+"Tailscale, NordVPN, or a company's Cisco AnyConnect."
 ],
 [
 "NAT",
@@ -102,7 +108,8 @@
 "Internet"
 ],
 "Every device in your house shows up online as the same public IP.",
-0
+0,
+"10 devices at home all show up online as one Comcast IP."
 ],
 [
 "MAC",
@@ -117,7 +124,8 @@
 "Switch on the LAN"
 ],
 "Your router uses the MAC to reserve the Wyse's IP.",
-0
+0,
+"A hardware ID like 3C:22:FB:9A:10:4E burned into a network card."
 ],
 [
 "TCP",
@@ -132,7 +140,8 @@
 "Client"
 ],
 "Three-way handshake (SYN, SYN-ACK, ACK), then every packet is confirmed.",
-0
+0,
+"Loading a web page or an SSH session: every packet is confirmed."
 ],
 [
 "UDP",
@@ -147,7 +156,8 @@
 "done"
 ],
 "DNS lookups and video calls use UDP because speed beats perfection.",
-0
+0,
+"A Zoom call or an online game: speed over perfection."
 ],
 [
 "ICMP",
@@ -162,7 +172,8 @@
 "You"
 ],
 "Last night 'Network is unreachable' came back from a ping.",
-0
+0,
+"ping 1.1.1.1 and traceroute both use ICMP."
 ],
 [
 "HTTP",
@@ -177,7 +188,8 @@
 "Browser"
 ],
 "Anyone on the network path can read HTTP traffic.",
-0
+0,
+"http://100.119.39.63:3000: your Homepage over plain HTTP."
 ],
 [
 "HTTPS",
@@ -192,7 +204,8 @@
 "Browser"
 ],
 "The padlock in the address bar means HTTPS.",
-0
+0,
+"https://github.com, with the padlock in the address bar."
 ],
 [
 "SSH",
@@ -207,7 +220,8 @@
 "Laptop"
 ],
 "How you'll control the Wyse without a monitor.",
-0
+0,
+"ssh me@100.119.39.63 from your laptop or Termius."
 ],
 [
 "RDP",
@@ -222,7 +236,8 @@
 "Your PC"
 ],
 "Never expose 3389 to the internet: it's brute-forced constantly.",
-0
+0,
+"Windows Remote Desktop Connection on port 3389."
 ],
 [
 "FTP",
@@ -237,7 +252,8 @@
 "Client"
 ],
 "Attackers sniffing the network can read FTP logins.",
-0
+0,
+"FileZilla connecting to an old web host on port 21."
 ],
 [
 "SFTP",
@@ -252,7 +268,8 @@
 "Client"
 ],
 "The safe replacement for FTP.",
-0
+0,
+"WinSCP or FileZilla in SFTP mode, over port 22."
 ],
 [
 "SMB",
@@ -267,7 +284,8 @@
 "Windows PC"
 ],
 "WannaCry spread through an SMB vulnerability.",
-0
+0,
+"A Windows shared folder like \\\\server\\files on port 445."
 ],
 [
 "SMTP",
@@ -282,7 +300,8 @@
 "Recipient's server"
 ],
 "SMTP sends, IMAP reads.",
-0
+0,
+"Gmail's servers handing your email to Outlook's servers."
 ],
 [
 "IMAP",
@@ -297,7 +316,8 @@
 "Phone + laptop"
 ],
 "Read an email on your phone and it's marked read on your laptop.",
-0
+0,
+"The iPhone Mail app syncing your Gmail inbox."
 ],
 [
 "SNMP",
@@ -312,7 +332,8 @@
 "Monitoring tool"
 ],
 "Use SNMPv3: older versions send community strings in clear text.",
-0
+0,
+"A monitoring tool asking a switch how busy its ports are."
 ],
 [
 "NTP",
@@ -327,7 +348,8 @@
 "Server"
 ],
 "If clocks drift, log timelines in an investigation don't line up.",
-0
+0,
+"Your phone setting its clock from time.apple.com."
 ],
 [
 "LDAP",
@@ -342,7 +364,8 @@
 "App login"
 ],
 "Active Directory answers LDAP queries about users.",
-0
+0,
+"A company login page checking your username in Active Directory."
 ],
 [
 "VLAN",
@@ -357,7 +380,8 @@
 "IoT devices"
 ],
 "Put smart TVs on their own VLAN so they can't reach your PC.",
-0
+0,
+"VLAN 10 = your PCs, VLAN 20 = smart TVs and IoT, VLAN 30 = guests."
 ],
 [
 "SSID",
@@ -372,7 +396,8 @@
 "Access point"
 ],
 "The network name you pick from the Wi-Fi list.",
-0
+0,
+"\"MySpectrumWiFi\" or \"xfinitywifi\" in the Wi-Fi list."
 ],
 [
 "ISP",
@@ -387,7 +412,8 @@
 "Internet"
 ],
 "The ISP can see which IPs you connect to.",
-0
+0,
+"Comcast (home internet), T-Mobile (phone data)."
 ],
 [
 "SDN",
@@ -402,7 +428,8 @@
 "Switch B"
 ],
 "Change the whole network from one dashboard.",
-0
+0,
+"A UniFi controller changing every switch from one app."
 ],
 [
 "OS",
@@ -417,7 +444,8 @@
 "Hardware"
 ],
 "Debian 12 is the OS on your Wyse.",
-0
+0,
+"Windows 11, macOS, iOS, Debian 12 on the Wyse."
 ],
 [
 "CLI",
@@ -432,7 +460,8 @@
 "You read"
 ],
 "The terminal you used to fix the Wyse.",
-0
+0,
+"PowerShell on your laptop, bash on the Wyse."
 ],
 [
 "GUI",
@@ -447,7 +476,8 @@
 "Program"
 ],
 "XFCE gave the Wyse a GUI.",
-0
+0,
+"Windows desktop, the XFCE desktop, any app with buttons."
 ],
 [
 "VM",
@@ -462,7 +492,8 @@
 "Kali VM + Ubuntu VM"
 ],
 "Break a VM and restore its snapshot in seconds.",
-0
+0,
+"Kali Linux running inside VirtualBox on your gaming PC."
 ],
 [
 "BIOS",
@@ -477,7 +508,8 @@
 "Bootloader"
 ],
 "Where you'll set AC Recovery on the Wyse (F2).",
-0
+0,
+"The blue setup screen you get by tapping Delete at boot."
 ],
 [
 "UEFI",
@@ -492,7 +524,8 @@
 "Bootloader"
 ],
 "Secure Boot blocks unsigned bootloaders.",
-0
+0,
+"The modern BIOS screen on any PC from the last 10 years."
 ],
 [
 "GRUB",
@@ -507,7 +540,8 @@
 "Linux boots"
 ],
 "You picked the 6.1.0-44 kernel in GRUB to recover.",
-0
+0,
+"The boot menu that let you pick the older Debian kernel."
 ],
 [
 "TTY",
@@ -522,7 +556,8 @@
 "Shell"
 ],
 "You logged in from a TTY when the desktop was missing.",
-0
+0,
+"The black text login (Ctrl+Alt+F3) with no desktop."
 ],
 [
 "RAM",
@@ -537,7 +572,8 @@
 "wiped"
 ],
 "Memory forensics grabs RAM before a machine is shut down.",
-0
+0,
+"The Wyse's memory: about 1.5GB free on your dashboard."
 ],
 [
 "SSD",
@@ -552,7 +588,8 @@
 "No moving parts"
 ],
 "The Wyse's 7.5GB internal drive is flash storage.",
-0
+0,
+"Your laptop's drive, or the Wyse's small internal flash."
 ],
 [
 "NAS",
@@ -567,7 +604,8 @@
 "Files and backups"
 ],
 "Your 1.8TB drive could become simple NAS storage.",
-0
+0,
+"A Synology box sharing files to every device at home."
 ],
 [
 "UPS",
@@ -582,7 +620,8 @@
 "Wyse + router"
 ],
 "Safety net #7 for keeping Pi-hole up.",
-0
+0,
+"Your APC Back-UPS 350."
 ],
 [
 "PDU",
@@ -597,7 +636,8 @@
 "Every device in the rack"
 ],
 "Rack-mounted power strip.",
-0
+0,
+"The power strip that mounts inside a server rack."
 ],
 [
 "TPM",
@@ -612,7 +652,8 @@
 "Drive unlocks"
 ],
 "Your Wyse logged 'Error communicating to TPM chip' at boot.",
-0
+0,
+"The security chip Windows 11 requires; it stores BitLocker keys."
 ],
 [
 "HSM",
@@ -627,7 +668,8 @@
 "App"
 ],
 "Banks and CAs keep their most important keys in HSMs.",
-0
+0,
+"A locked hardware box at a bank that holds signing keys."
 ],
 [
 "RAID",
@@ -642,7 +684,8 @@
 "Disk 2"
 ],
 "RAID 1 survives a dead drive. It is NOT a backup.",
-0
+0,
+"Two drives mirrored (RAID 1) in a NAS: one dies, data survives."
 ],
 [
 "VDI",
@@ -657,7 +700,8 @@
 "Windows desktop"
 ],
 "Wyse thin clients were built for VDI.",
-0
+0,
+"Logging into a work Windows desktop that runs in a data center."
 ],
 [
 "CIA",
@@ -672,7 +716,8 @@
 "Availability"
 ],
 "Ransomware hits availability; a leak hits confidentiality.",
-0
+0,
+"Leaked passwords (C), a changed bank balance (I), a site knocked offline (A)."
 ],
 [
 "AAA",
@@ -687,7 +732,8 @@
 "Accounting"
 ],
 "Login, permissions, then a log of what you did.",
-0
+0,
+"Log in (authN), allowed into the HR folder (authZ), logged (accounting)."
 ],
 [
 "PII",
@@ -702,7 +748,8 @@
 "Protected"
 ],
 "Leaked PII triggers breach notification laws.",
-0
+0,
+"Your name, SSN, address, date of birth, or email."
 ],
 [
 "PHI",
@@ -717,7 +764,8 @@
 "HIPAA"
 ],
 "Health data tied to a person.",
-0
+0,
+"Your diagnosis or prescription linked to your name at a clinic."
 ],
 [
 "BYOD",
@@ -732,7 +780,8 @@
 "MDM policy"
 ],
 "Convenient for staff, riskier for IT.",
-0
+0,
+"Checking work email on your personal iPhone."
 ],
 [
 "MDM",
@@ -747,7 +796,8 @@
 "Lock / wipe"
 ],
 "Lost work phone? MDM wipes it.",
-0
+0,
+"Microsoft Intune or Jamf managing company phones."
 ],
 [
 "AUP",
@@ -762,7 +812,8 @@
 "Allowed system use"
 ],
 "Usually signed on your first day at a job.",
-0
+0,
+"\"Don't use work laptops for personal crypto mining.\""
 ],
 [
 "EOL",
@@ -777,7 +828,8 @@
 "Unpatched forever"
 ],
 "EOL systems are a top audit finding.",
-0
+0,
+"Windows 10 after Oct 2025: no more security updates."
 ],
 [
 "IoT",
@@ -792,7 +844,8 @@
 "Botnet member"
 ],
 "The Mirai botnet was built from hacked IoT cameras.",
-0
+0,
+"Ring doorbells, smart plugs, smart TVs."
 ],
 [
 "ICS",
@@ -807,7 +860,8 @@
 "Pumps, valves, motors"
 ],
 "Stuxnet targeted ICS equipment.",
-0
+0,
+"Machines controlling a factory line or a water plant."
 ],
 [
 "SCADA",
@@ -822,7 +876,8 @@
 "Power grid / pipeline"
 ],
 "Critical infrastructure runs on SCADA.",
-0
+0,
+"The control room software for a power grid."
 ],
 [
 "MFA",
@@ -837,7 +892,8 @@
 "Fingerprint"
 ],
 "Even if your password leaks, the attacker needs your phone.",
-0
+0,
+"Password + a code from your phone + Face ID."
 ],
 [
 "2FA",
@@ -852,7 +908,8 @@
 "Access"
 ],
 "Turn it on for Instagram and GitHub.",
-0
+0,
+"Instagram login + a 6-digit code from an app."
 ],
 [
 "SSO",
@@ -867,7 +924,8 @@
 "Email, Slack, HR app"
 ],
 "One login, many apps.",
-0
+0,
+"\"Sign in with Microsoft\" opening Teams, Outlook and Canvas."
 ],
 [
 "IAM",
@@ -882,7 +940,8 @@
 "Only needed access"
 ],
 "Joiner, mover, leaver: accounts change as people do.",
-0
+0,
+"Okta or Microsoft Entra ID managing every employee account."
 ],
 [
 "PAM",
@@ -897,7 +956,8 @@
 "Server"
 ],
 "Admin passwords rotate and every session is logged.",
-0
+0,
+"CyberArk checking out the admin password for 1 hour."
 ],
 [
 "RBAC",
@@ -912,7 +972,8 @@
 "SIEM access"
 ],
 "Change the role, everyone in it changes.",
-0
+0,
+"\"Nurse\" role can view charts; \"Billing\" role can't."
 ],
 [
 "ABAC",
@@ -927,7 +988,8 @@
 "Access"
 ],
 "Rules based on attributes, not just roles.",
-0
+0,
+"Access allowed only from a company laptop, in the US, 9 to 5."
 ],
 [
 "DAC",
@@ -942,7 +1004,8 @@
 "Other users"
 ],
 "Linux chmod is DAC.",
-0
+0,
+"chmod 600 on your .env file: the owner decides who gets in."
 ],
 [
 "SAML",
@@ -957,7 +1020,8 @@
 "App lets you in"
 ],
 "Enterprise SSO usually runs on SAML.",
-0
+0,
+"Your school login page that lets you into Canvas."
 ],
 [
 "OAuth",
@@ -972,7 +1036,8 @@
 "App"
 ],
 "'Sign in with Google' buttons.",
-0
+0,
+"\"Sign in with Google\" on a new app."
 ],
 [
 "RADIUS",
@@ -987,7 +1052,8 @@
 "RADIUS server"
 ],
 "Enterprise Wi-Fi logins check against RADIUS.",
-0
+0,
+"Typing your school username and password to join campus Wi-Fi."
 ],
 [
 "TACACS+",
@@ -1002,7 +1068,8 @@
 "TACACS+ server"
 ],
 "Separates authentication, authorization and accounting.",
-0
+0,
+"Network admins logging into Cisco routers."
 ],
 [
 "EAP",
@@ -1017,7 +1084,8 @@
 "Auth server"
 ],
 "The authentication method inside WPA Enterprise.",
-0
+0,
+"The login method under the hood of campus/work Wi-Fi."
 ],
 [
 "OTP",
@@ -1032,7 +1100,8 @@
 "Login"
 ],
 "Reuse fails: the code only works one time.",
-0
+0,
+"A 6-digit code your bank texts you."
 ],
 [
 "TOTP",
@@ -1047,7 +1116,8 @@
 "Login"
 ],
 "Google Authenticator codes.",
-0
+0,
+"Google Authenticator codes that change every 30 seconds."
 ],
 [
 "PKI",
@@ -1062,7 +1132,8 @@
 "Website certificate"
 ],
 "Your browser trusts the chain back to a root CA.",
-0
+0,
+"The system of CAs that makes the padlock on https sites trustworthy."
 ],
 [
 "CA",
@@ -1077,7 +1148,8 @@
 "Website"
 ],
 "Let's Encrypt is a free CA.",
-0
+0,
+"Let's Encrypt, DigiCert."
 ],
 [
 "CSR",
@@ -1092,7 +1164,8 @@
 "CA"
 ],
 "The private key never leaves your server.",
-0
+0,
+"The file you send Let's Encrypt to ask for a certificate."
 ],
 [
 "CRL",
@@ -1107,7 +1180,8 @@
 "Browser"
 ],
 "Stolen key? The cert gets revoked.",
-0
+0,
+"A published list of certificates that are no longer trusted."
 ],
 [
 "OCSP",
@@ -1122,7 +1196,8 @@
 "Browser"
 ],
 "Real-time version of a CRL.",
-0
+0,
+"Your browser checking \"is this cert still valid?\" in real time."
 ],
 [
 "TLS",
@@ -1137,7 +1212,8 @@
 "Browser"
 ],
 "TLS 1.3 is current. SSL is dead.",
-0
+0,
+"What protects https sites and email in transit."
 ],
 [
 "SSL",
@@ -1152,7 +1228,8 @@
 "TLS"
 ],
 "People still say 'SSL certificate' out of habit.",
-0
+0,
+"The old version of TLS; \"SSL certificate\" is a leftover name."
 ],
 [
 "AES",
@@ -1167,7 +1244,8 @@
 "Ciphertext"
 ],
 "Symmetric: one key locks and unlocks.",
-0
+0,
+"BitLocker and Wi-Fi WPA2/WPA3 encrypt with AES."
 ],
 [
 "RSA",
@@ -1182,7 +1260,8 @@
 "Receiver"
 ],
 "Asymmetric: public key locks, private key unlocks.",
-0
+0,
+"Older SSH keys (ssh-rsa) and many website certificates."
 ],
 [
 "ECC",
@@ -1197,7 +1276,8 @@
 "Faster, lighter"
 ],
 "Great for phones and IoT.",
-0
+0,
+"Your ED25519 SSH keys use elliptic curves."
 ],
 [
 "SHA",
@@ -1212,7 +1292,8 @@
 "Totally different hash"
 ],
 "Compare hashes to check a download wasn't tampered with.",
-0
+0,
+"SHA-256 checksums on Linux download pages."
 ],
 [
 "MD5",
@@ -1227,7 +1308,8 @@
 "Not secure"
 ],
 "Still seen for non-security checksums.",
-0
+0,
+"Old checksums; broken for security, still used for quick file checks."
 ],
 [
 "HMAC",
@@ -1242,7 +1324,8 @@
 "Match = authentic"
 ],
 "Proves integrity AND that the sender had the key.",
-0
+0,
+"How an API checks a webhook request really came from GitHub."
 ],
 [
 "IPsec",
@@ -1257,7 +1340,8 @@
 "Office B"
 ],
 "Site-to-site VPNs.",
-0
+0,
+"A tunnel linking a company's two offices."
 ],
 [
 "WPA3",
@@ -1272,7 +1356,8 @@
 "Password guessing"
 ],
 "Pick WPA3 in your router's Wi-Fi settings if available.",
-0
+0,
+"The security setting on a modern home router's Wi-Fi."
 ],
 [
 "FDE",
@@ -1287,7 +1372,8 @@
 "Data unreadable"
 ],
 "Why lost laptops aren't always breaches.",
-0
+0,
+"BitLocker (Windows) or FileVault (Mac)."
 ],
 [
 "APT",
@@ -1302,7 +1388,8 @@
 "Months inside the network"
 ],
 "Long, stealthy, well funded.",
-0
+0,
+"APT29 (Cozy Bear), APT41: nation-state hacking groups."
 ],
 [
 "DoS",
@@ -1317,7 +1404,8 @@
 "Real users can't connect"
 ],
 "Hits the A in CIA.",
-0
+0,
+"Flooding one website from one machine until it crashes."
 ],
 [
 "DDoS",
@@ -1332,7 +1420,8 @@
 "Offline"
 ],
 "Mitigated by services like Cloudflare.",
-0
+0,
+"A botnet of 100,000 hacked cameras flooding a game server."
 ],
 [
 "MITM",
@@ -1347,7 +1436,8 @@
 "Bank"
 ],
 "Why HTTPS and certificate checks matter.",
-0
+0,
+"A fake \"Free Airport Wi-Fi\" reading your traffic."
 ],
 [
 "XSS",
@@ -1362,7 +1452,8 @@
 "Victim's browser"
 ],
 "Steals cookies or sessions.",
-0
+0,
+"A comment box that runs a hacker's script in every visitor's browser."
 ],
 [
 "CSRF",
@@ -1377,7 +1468,8 @@
 "Bank transfers money"
 ],
 "Defended with anti-CSRF tokens.",
-0
+0,
+"A hidden link that makes your logged-in bank transfer money."
 ],
 [
 "SQLi",
@@ -1392,7 +1484,8 @@
 "Every user"
 ],
 "Fixed with parameterized queries.",
-0
+0,
+"Typing ' OR 1=1 -- into a login box to skip the password."
 ],
 [
 "RCE",
@@ -1407,7 +1500,8 @@
 "Attacker's commands"
 ],
 "Usually rated critical on CVSS.",
-0
+0,
+"Log4Shell (2021): one text string let attackers run code on servers."
 ],
 [
 "BEC",
@@ -1422,7 +1516,8 @@
 "Attacker"
 ],
 "No malware needed: pure social engineering.",
-0
+0,
+"A fake \"CEO\" email asking finance to wire $50K today."
 ],
 [
 "RAT",
@@ -1437,7 +1532,8 @@
 "Attacker control panel"
 ],
 "Webcam, keylogger, files: full control.",
-0
+0,
+"Malware that lets a hacker watch your webcam and control your PC."
 ],
 [
 "PUP",
@@ -1452,7 +1548,8 @@
 "Your PC"
 ],
 "Read every installer screen.",
-0
+0,
+"A toolbar or \"PC cleaner\" bundled into a free installer."
 ],
 [
 "CVE",
@@ -1467,7 +1564,8 @@
 "Everyone patching"
 ],
 "CVE-2024-3094 was the xz backdoor.",
-0
+0,
+"CVE-2021-44228 (Log4Shell), CVE-2024-3094 (xz backdoor)."
 ],
 [
 "CVSS",
@@ -1482,7 +1580,8 @@
 "Patch immediately"
 ],
 "0-3.9 low, 4-6.9 medium, 7-8.9 high, 9-10 critical.",
-0
+0,
+"Log4Shell scored 10.0, the maximum."
 ],
 [
 "IoC",
@@ -1497,7 +1596,8 @@
 "Threat intel"
 ],
 "SOC analysts hunt for IoCs all day.",
-0
+0,
+"A malicious IP, a bad file hash, or a weird domain in your logs."
 ],
 [
 "TTP",
@@ -1512,7 +1612,8 @@
 "Detection rules"
 ],
 "Detect behavior, not just single IoCs.",
-0
+0,
+"Phishing for access, then using PowerShell to move around."
 ],
 [
 "OSINT",
@@ -1527,7 +1628,8 @@
 "Names, roles, emails"
 ],
 "Why you blur IPs in screenshots.",
-0
+0,
+"Googling a target, checking LinkedIn, SpiderFoot scans."
 ],
 [
 "0-day",
@@ -1542,7 +1644,8 @@
 "No patch yet"
 ],
 "Day zero: defenders had zero days to fix it.",
-0
+0,
+"A bug attackers use before the vendor even knows about it."
 ],
 [
 "SOC",
@@ -1557,7 +1660,8 @@
 "Respond / escalate"
 ],
 "The job you're aiming for.",
-0
+0,
+"The 24/7 team watching alerts, the job you're aiming for."
 ],
 [
 "SIEM",
@@ -1572,7 +1676,8 @@
 "Alert"
 ],
 "Splunk, Sentinel, Wazuh.",
-0
+0,
+"Splunk, Microsoft Sentinel, Wazuh."
 ],
 [
 "SOAR",
@@ -1587,7 +1692,8 @@
 "Opens ticket"
 ],
 "Automates the repetitive SOC work.",
-0
+0,
+"Splunk SOAR auto-blocking an IP after a phishing alert."
 ],
 [
 "EDR",
@@ -1602,7 +1708,8 @@
 "Isolates host"
 ],
 "CrowdStrike, Defender for Endpoint.",
-0
+0,
+"CrowdStrike Falcon, Microsoft Defender for Endpoint."
 ],
 [
 "XDR",
@@ -1617,7 +1724,8 @@
 "Incident view"
 ],
 "EDR's bigger sibling.",
-0
+0,
+"Palo Alto Cortex XDR tying endpoint + network + email together."
 ],
 [
 "IDS",
@@ -1632,7 +1740,8 @@
 "Alert only"
 ],
 "Watches but doesn't block. Snort and Suricata can run as IDS.",
-0
+0,
+"Snort or Suricata watching traffic; CrowdSec's detection engine."
 ],
 [
 "IPS",
@@ -1647,7 +1756,8 @@
 "Blocked"
 ],
 "Sits in the path and drops bad traffic.",
-0
+0,
+"CrowdSec's firewall bouncer banning an attacker's IP."
 ],
 [
 "HIDS",
@@ -1662,7 +1772,8 @@
 "Alert"
 ],
 "Wazuh agents work as a HIDS.",
-0
+0,
+"A Wazuh agent on a server watching its own logs and files."
 ],
 [
 "NIDS",
@@ -1677,7 +1788,8 @@
 "Alert"
 ],
 "Watches the whole network segment.",
-0
+0,
+"Suricata watching all traffic on a network segment."
 ],
 [
 "WAF",
@@ -1692,7 +1804,8 @@
 "Web app"
 ],
 "Layer 7 firewall for websites.",
-0
+0,
+"Cloudflare WAF blocking SQL injection against a website."
 ],
 [
 "NGFW",
@@ -1707,7 +1820,8 @@
 "Network"
 ],
 "Palo Alto, Fortinet.",
-0
+0,
+"Palo Alto, Fortinet FortiGate."
 ],
 [
 "UTM",
@@ -1722,7 +1836,8 @@
 "LAN"
 ],
 "All-in-one security appliance.",
-0
+0,
+"A Sophos box doing firewall + antivirus + web filter."
 ],
 [
 "DLP",
@@ -1737,7 +1852,8 @@
 "Data stays inside"
 ],
 "Stops data from walking out.",
-0
+0,
+"Blocking an email that contains 50 credit card numbers."
 ],
 [
 "ACL",
@@ -1752,7 +1868,8 @@
 "Dropped"
 ],
 "Ordered rules: first match wins.",
-0
+0,
+"\"Allow laptop to Wyse port 22, deny everything else.\""
 ],
 [
 "DMZ",
@@ -1767,7 +1884,8 @@
 "Internal LAN"
 ],
 "Public servers live between two firewalls.",
-0
+0,
+"A company's public web server sitting between two firewalls."
 ],
 [
 "NAC",
@@ -1782,7 +1900,8 @@
 "Network or quarantine"
 ],
 "Unknown devices get a quarantine VLAN.",
-0
+0,
+"An unknown laptop plugged into the office gets quarantined."
 ],
 [
 "IR",
@@ -1797,7 +1916,8 @@
 "Recovery + lessons learned"
 ],
 "Your Wyse write-up followed this flow.",
-1
+1,
+"Your Wyse boot-failure write-up: detect, fix, document."
 ],
 [
 "IRP",
@@ -1812,7 +1932,8 @@
 "Coordinated response"
 ],
 "Written before you need it.",
-0
+0,
+"A playbook: \"ransomware hits? Step 1, isolate the machine.\""
 ],
 [
 "DFIR",
@@ -1827,7 +1948,8 @@
 "Root cause + cleanup"
 ],
 "Preserve evidence before you wipe.",
-0
+0,
+"Imaging a hacked laptop's drive before wiping it."
 ],
 [
 "BCP",
@@ -1842,7 +1964,8 @@
 "Backup site / home"
 ],
 "Keeps the business running.",
-0
+0,
+"\"If the office floods, staff work from home with laptops.\""
 ],
 [
 "DRP",
@@ -1857,7 +1980,8 @@
 "Backups"
 ],
 "BCP = the business, DRP = the IT.",
-0
+0,
+"\"Restore servers from backup in the cloud within 8 hours.\""
 ],
 [
 "BIA",
@@ -1872,7 +1996,8 @@
 "RTO + RPO"
 ],
 "Payroll down 1 day vs. 1 week costs differ.",
-0
+0,
+"\"Payroll down 1 day costs $10K, 1 week costs $200K.\""
 ],
 [
 "RTO",
@@ -1887,7 +2012,8 @@
 "Business harm"
 ],
 "How long you can be down.",
-0
+0,
+"\"The website must be back within 4 hours.\""
 ],
 [
 "RPO",
@@ -1902,7 +2028,8 @@
 "1 hour"
 ],
 "How much data you can lose.",
-0
+0,
+"\"We can lose at most 1 hour of data\" = backups every hour."
 ],
 [
 "MTTR",
@@ -1917,7 +2044,8 @@
 "Back online"
 ],
 "Lower is better.",
-0
+0,
+"Pi-hole down at 9:00, fixed at 9:20: MTTR 20 minutes."
 ],
 [
 "MTBF",
@@ -1932,7 +2060,8 @@
 "Fails"
 ],
 "Higher is better.",
-0
+0,
+"A drive rated for 1,000,000 hours between failures."
 ],
 [
 "MTTD",
@@ -1947,7 +2076,8 @@
 "Response begins"
 ],
 "SOC teams try to shrink this.",
-0
+0,
+"Uptime Kuma got your MTTD down to about 2 minutes."
 ],
 [
 "GRC",
@@ -1962,7 +2092,8 @@
 "Compliance"
 ],
 "Your second career track.",
-0
+0,
+"Writing policies, running risk assessments, passing audits."
 ],
 [
 "NIST",
@@ -1977,7 +2108,8 @@
 "Orgs worldwide"
 ],
 "The US standards body for security frameworks.",
-0
+0,
+"NIST SP 800-53, the NIST Cybersecurity Framework."
 ],
 [
 "CSF",
@@ -1992,7 +2124,8 @@
 "Respond / Recover"
 ],
 "NIST CSF 2.0 functions.",
-1
+1,
+"NIST CSF 2.0: Govern, Identify, Protect, Detect, Respond, Recover."
 ],
 [
 "RMF",
@@ -2007,7 +2140,8 @@
 "Monitor"
 ],
 "Federal systems follow RMF.",
-1
+1,
+"The 7-step process federal agencies use to approve a system."
 ],
 [
 "CIS",
@@ -2022,7 +2156,8 @@
 "CIS Controls"
 ],
 "Planned: audit your homelab against CIS Controls.",
-0
+0,
+"CIS Controls, CIS Benchmarks for hardening Debian or Windows."
 ],
 [
 "ISO",
@@ -2037,7 +2172,8 @@
 "Auditor"
 ],
 "International security management standard.",
-0
+0,
+"ISO 27001 certification for a company's security program."
 ],
 [
 "PCI DSS",
@@ -2052,7 +2188,8 @@
 "Fines"
 ],
 "Anyone taking credit cards.",
-0
+0,
+"Rules every store that takes credit cards must follow."
 ],
 [
 "HIPAA",
@@ -2067,7 +2204,8 @@
 "Fines + notification"
 ],
 "US healthcare privacy law.",
-0
+0,
+"Why your doctor's office can't post your records online."
 ],
 [
 "GDPR",
@@ -2082,7 +2220,8 @@
 "Access, deletion, consent"
 ],
 "Fines up to 4% of global revenue.",
-0
+0,
+"EU privacy law behind all those cookie consent pop-ups."
 ],
 [
 "SLA",
@@ -2097,7 +2236,8 @@
 "Service credits"
 ],
 "99.9% = about 8.8 hours of downtime per year.",
-0
+0,
+"\"99.9% uptime or you get a refund\" from a cloud provider."
 ],
 [
 "NDA",
@@ -2112,7 +2252,8 @@
 "Disclose"
 ],
 "Common before internships.",
-0
+0,
+"Signing that you won't share a company's secrets."
 ],
 [
 "MOU",
@@ -2127,7 +2268,8 @@
 "Org B"
 ],
 "Statement of intent.",
-0
+0,
+"Two organizations agreeing to share threat intel, not legally binding."
 ],
 [
 "SOW",
@@ -2142,7 +2284,8 @@
 "Exactly that"
 ],
 "Pentest scopes live in the SOW.",
-0
+0,
+"A pentest contract: which IPs, what dates, what's off-limits."
 ],
 [
 "SLE",
@@ -2157,7 +2300,8 @@
 "$5,000 per incident"
 ],
 "Cost of a single incident.",
-0
+0,
+"One stolen laptop = $5,000 loss."
 ],
 [
 "ARO",
@@ -2172,7 +2316,8 @@
 "ARO 2"
 ],
 "How often per year.",
-0
+0,
+"Laptops stolen 3 times a year = ARO of 3."
 ],
 [
 "ALE",
@@ -2187,7 +2332,8 @@
 "$10,000 per year"
 ],
 "If a control costs less than ALE, it's worth it.",
-0
+0,
+"SLE $5,000 x ARO 3 = ALE $15,000 a year."
 ],
 [
 "KRI",
@@ -2202,7 +2348,8 @@
 "Risk review"
 ],
 "An early warning number.",
-0
+0,
+"\"Unpatched critical servers\" rising from 2 to 20."
 ],
 [
 "IaaS",
@@ -2217,7 +2364,8 @@
 "Hardware"
 ],
 "AWS EC2, Azure VMs.",
-0
+0,
+"AWS EC2, Azure virtual machines."
 ],
 [
 "PaaS",
@@ -2232,7 +2380,8 @@
 "OS + servers"
 ],
 "Heroku, Azure App Service.",
-0
+0,
+"Heroku, Azure App Service, Google App Engine."
 ],
 [
 "SaaS",
@@ -2247,7 +2396,8 @@
 "Everything else"
 ],
 "Gmail, Office 365.",
-0
+0,
+"Gmail, Microsoft 365, Canvas, Spotify."
 ],
 [
 "CASB",
@@ -2262,7 +2412,8 @@
 "Cloud apps"
 ],
 "Sees shadow IT and blocks risky uploads.",
-0
+0,
+"Microsoft Defender for Cloud Apps blocking uploads to personal Dropbox."
 ],
 [
 "SASE",
@@ -2277,7 +2428,8 @@
 "Apps"
 ],
 "Security moves to the cloud edge.",
-0
+0,
+"Zscaler or Cloudflare One securing staff wherever they work."
 ],
 [
 "ZTNA",
@@ -2292,7 +2444,8 @@
 "One specific app"
 ],
 "Tailscale ACLs are zero-trust style.",
-0
+0,
+"Tailscale: every device proves who it is before it can connect."
 ],
 [
 "IaC",
@@ -2307,7 +2460,8 @@
 "Servers + network"
 ],
 "Infrastructure you can version in Git.",
-0
+0,
+"Your docker-compose.yml files; Terraform at bigger companies."
 ],
 [
 "API",
@@ -2322,7 +2476,8 @@
 "App"
 ],
 "How programs talk to each other.",
-0
+0,
+"The Pi-hole API key your Homepage widget uses for stats."
 ],
 [
 "CI/CD",
@@ -2337,7 +2492,8 @@
 "Production"
 ],
 "Add security scans to the pipeline.",
-0
+0,
+"GitHub Actions testing and deploying code on every push."
 ],
 [
 "SDLC",
@@ -2352,7 +2508,8 @@
 "Deploy + maintain"
 ],
 "Security belongs in every phase.",
-1
+1,
+"Plan, design, build, test, deploy, maintain."
 ],
 [
 "SBOM",
@@ -2367,6 +2524,7 @@
 "Vulnerable library"
 ],
 "Find Log4j fast when it hits the news.",
-0
+0,
+"A list of every library inside an app, like an ingredients label."
 ]
 ]
