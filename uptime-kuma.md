@@ -82,6 +82,18 @@ Uptime Kuma pushes an alert to my phone when any monitor goes **down**, and agai
 
 **Why the topic is random (and not in this repo):** the free ntfy server is public. Anyone who **guesses** a topic name can read those alerts or send fake ones. A long random name works like a password. Fake "all clear" alerts would be a real attack on a monitoring system, so the topic is treated as a **secret**.
 
+**Troubleshooting the alert:** the **Test** button buzzed my phone, but stopping Jellyfin didn't. I worked through the alert chain one link at a time:
+
+| Link | Test | Result |
+|---|---|---|
+| ntfy server → phone | `curl -d "test from wyse" ntfy.sh/<topic>` from the Wyse | ✅ Buzzed |
+| Uptime Kuma → ntfy | **Test** button in the notification settings | ✅ Buzzed |
+| Monitor → alert | `sudo docker logs uptime-kuma --tail 30` | ❌ Found it |
+
+The logs showed `Failing: connect ECONNREFUSED ...:8096 | Down Count: 0`. Uptime Kuma *saw* Jellyfin was off (connection refused), but the monitor's **retries** kept it in **Pending** (orange), so it never officially went **DOWN** and never alerted. Retries exist to prevent false alarms from one blip. I set **Retries = 1** and **Retry Interval = 60s**, which means an alert in about 2 minutes. That's a balance between **alert fatigue** and **detection speed**, a real SOC tuning decision.
+
+**Bonus finding in the same logs:** `[AUTH] Successfully logged in user ... IP=<my iPhone's Tailscale IP>`. That's an **authentication log** showing who logged in and from where. A login from an IP I don't recognize would be a red flag.
+
 **Fire drill:** stopped a container on purpose (`sudo docker stop jellyfin`) to prove alerts work end to end, then started it again (`sudo docker start jellyfin`). Testing your alerting by breaking something on purpose is how real ops/SOC teams validate it.
 
 ## Phone access
