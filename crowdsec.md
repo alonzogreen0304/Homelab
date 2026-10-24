@@ -17,6 +17,8 @@ In security terms, that's an **IDS** (detect) plus an **IPS** (prevent).
 
 ## Install
 
+**Analogy:** hiring the camera guard (the engine) and the bouncer (the firewall bouncer), then giving the bouncer a walkie-talkie so the guard can say "don't let this person in."
+
 ```bash
 df -h /                                         # installs on the small drive, so check space first
 sudo apt update
@@ -41,6 +43,8 @@ My first test attack produced **no alerts**.
 
 **Root cause:** CrowdSec watches `/var/log/auth.log` for SSH by default, but **Debian 12 doesn't create that file**. SSH logs live in the **systemd journal** instead. CrowdSec was watching a file that didn't exist.
 
+**Analogy:** the guard was staring at a camera feed for a hallway that doesn't exist in this building. The real footage was on a different screen (the journal). The fix pointed him at the right screen.
+
 **Fix:** added a journal source for SSH:
 ```bash
 sudo tee /etc/crowdsec/acquis.d/ssh-journal.yaml > /dev/null <<'EOF'
@@ -56,6 +60,8 @@ sudo systemctl restart crowdsec
 **Lesson:** a detection tool is only as good as the logs it can see. "No alerts" can mean "no attacks" **or** "not looking." Always verify that log ingestion is working (`Acquisition Metrics`) before trusting silence.
 
 ## Attack simulation (red team vs. blue team)
+
+**Analogy:** a fire drill, but for burglars. I played the burglar (my phone trying fake keys on the door) to see if the guard would notice and the bouncer would throw me out.
 
 - **Attacker:** my iPhone (Termius), connecting over Tailscale as a fake user `hacker` with no key, failing 6–8 times
 - **Defender:** my laptop, SSH'd into the Wyse
@@ -81,6 +87,8 @@ While my phone was banned, **SSH was blocked, but Uptime Kuma (a Docker containe
 
 **Why:** the bouncer blocks banned IPs in the **INPUT** chain, which covers services running directly on the host (SSH). Traffic to **Docker-published ports** is forwarded to containers through Docker's own rules and **never passes INPUT**. The attacker was banned at the front door and walked in the side door.
 
+**Analogy:** the bouncer was only standing at the **front door** (INPUT). But Docker built a **garage door** around the side of the house (DOCKER-USER) for its apps, and nobody was guarding it. A banned person couldn't use the front door but could just walk in through the garage. The fix: post the same bouncer, with the same banned list, at the garage door too.
+
 **Fix:** add Docker's `DOCKER-USER` chain to the bouncer:
 ```bash
 sudo sed -i 's/^  - INPUT$/  - INPUT\n  - DOCKER-USER/' /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
@@ -88,7 +96,9 @@ sudo grep -A4 iptables_chains /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.y
 sudo systemctl restart crowdsec-firewall-bouncer
 sudo iptables -L DOCKER-USER -n     # now shows: CROWDSEC_CHAIN  0.0.0.0/0  0.0.0.0/0
 ```
-Docker's side door now sends every packet through CrowdSec's ban list first.
+Docker's side door now sends every packet through CrowdSec's ban list first. (`CROWDSEC_CHAIN` = the bouncer's clipboard of banned faces, now checked at the garage door too.)
+
+**Analogy for the 2-minute ban:** like putting yourself in timeout with a timer instead of locking yourself out and losing the key. You get to test the lock, and the door reopens by itself.
 
 **Re-test (Oct 24, 2026), done safely from my phone:** a real ban on my phone would have cut off my own SSH session, so I used a ban that **expires on its own**:
 ```bash
@@ -108,6 +118,15 @@ Result: Termius froze (front door blocked), and Uptime Kuma, a Docker container,
 **Lesson:** "the ban fired" isn't the same as "the attacker is blocked everywhere." Test the **effect** of a control, not just that it triggered. Docker bypassing host firewall rules is a well-known gotcha.
 
 ## Security concepts
+
+| Concept | Analogy |
+|---|---|
+| **IDS** (detect) | The camera guard who spots someone trying every key |
+| **IPS** (prevent) | The bouncer who actually stops them at the door |
+| **Log ingestion** | Making sure the guard is watching the right camera feeds |
+| **Defense in depth** | A gate (Tailscale), a key-only lock (SSH), *and* a guard (CrowdSec): break one, still stuck |
+| **Threat intel sharing** | Neighbors sharing a board of known burglars' photos |
+| **Testing the effect of a control** | Don't just check the alarm beeped, check the burglar actually couldn't get in |
 
 - **IDS vs. IPS:** the engine detects; the bouncer prevents
 - **Brute force detection:** a leaky-bucket scenario. Too many failures in a short window triggers it
