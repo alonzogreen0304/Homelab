@@ -112,6 +112,22 @@ h1 span { color: var(--purple); }
 .defbox .full, .gl .full { font-family: var(--mono); font-size: 13px; color: var(--purple); margin: 0 0 6px; }
 .defbox p, .gl p { margin: 0 0 6px; font-size: 15px; }
 .defbox .eg, .gl .eg { color: var(--amber); font-size: 14px; }
+.deep { padding: 2px 0 10px 40px; }
+.stack { display: grid; gap: 4px; margin: 4px 0 8px; }
+.ly { border-radius: 8px; padding: 8px 12px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 10px; font-size: 14px; }
+.ly b { font-size: 15px; }
+.ly span { font-family: var(--mono); font-size: 12px; opacity: .85; }
+.l3 { background: #2a2150; border: 1px solid var(--purple); }
+.l2 { background: #0f2f33; border: 1px solid var(--teal); }
+.l1 { background: #2a2532; border: 1px solid #8a83a8; }
+.hint { color: var(--muted); font-size: 14.5px; margin: 0 0 6px; }
+.dd { border-top: 1px solid var(--line); }
+.dd summary { cursor: pointer; font-weight: 600; font-size: 15px; padding: 9px 0; color: var(--purple); }
+.dd p { margin: 0 0 8px; font-size: 15px; }
+.dd .eg { color: var(--amber); font-size: 14px; }
+.dd .eg::before { content: "EXAMPLE  "; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.dd code { font-family: var(--mono); font-size: 13px; color: var(--teal); background: var(--bg); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; }
+@media (max-width: 480px) { .deep { padding-left: 0; } }
 .gloss { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px; margin-top: 14px; }
 .gl { padding: 10px 0; border-top: 1px solid var(--line); }
 </style>
@@ -127,7 +143,58 @@ h1 span { color: var(--purple); }
     <summary>Start here: never heard of a homelab?</summary>
     <div class="step"><span class="n">1</span><b>What's a homelab?</b><p>Your own mini data center at home: a computer that runs 24/7 so you can practice the same things IT and security pros do at work, without breaking anything important.</p><p class="eg">A $40 used thin client in my room running ad blocking, a VPN, monitoring, and an attack blocker.</p></div>
     <div class="step"><span class="n">2</span><b>What's a server?</b><p>A computer whose job is to <i>serve</i> things to other devices, all day, usually with no screen or keyboard. "Server" describes the job, not a special kind of machine.</p><p class="eg">My Dell Wyse 5060 sits in a corner with no monitor. My phone and laptop use what it serves.</p></div>
-    <div class="step"><span class="n">3</span><b>What runs on it?</b><p>An operating system (Linux), and on top of that, programs. Some run silently in the background (services). Others run in sealed boxes (Docker containers) and have a web page you open in a browser.</p><p class="eg">Pi-hole is a program. Its dashboard is a web page served by the Wyse, not a website on the internet.</p></div>
+    <div class="step"><span class="n">3</span><b>What runs on it?</b><p>Three layers stacked on each other: the hardware, an operating system (Linux), and programs on top. Some programs run silently in the background (services). Others run in sealed boxes (Docker containers) and have a web page you open in a browser.</p><p class="eg">Pi-hole is a program. Its dashboard is a web page served by the Wyse, not a website on the internet.</p></div>
+    <div class="deep">
+      <div class="stack" aria-label="Layers: hardware at the bottom, Linux in the middle, programs on top">
+        <div class="ly l3"><b>Programs</b><span>Pi-hole, Jellyfin, SSH, CrowdSec…</span></div>
+        <div class="ly l2"><b>Operating system</b><span>Debian Linux: the manager</span></div>
+        <div class="ly l1"><b>Hardware</b><span>Wyse: CPU, RAM, drives, network port</span></div>
+      </div>
+      <p class="hint">Analogy: the hardware is a restaurant building and its kitchen equipment. The operating system is the manager who runs the place. Programs are the cooks and staff, each with one job.</p>
+
+      <details class="dd"><summary>Layer 1: hardware (the physical stuff)</summary>
+        <p>The parts you can touch. The <b>CPU</b> does the thinking, <b>RAM</b> is short-term memory (wiped when power goes off), the <b>drive</b> is long-term storage, and the <b>network port</b> connects it to everything else.</p>
+        <p class="eg">The Wyse: a small CPU, a few GB of RAM, a tiny 6.4GB internal drive, plus my 1.8TB external drive for the big stuff.</p>
+        <p>Hardware alone does nothing. It needs software telling it what to do.</p>
+      </details>
+
+      <details class="dd"><summary>Layer 2: what an operating system is</summary>
+        <p>The <b>operating system (OS)</b> is the main software that boots first and manages the hardware for everyone else. It decides which program gets the CPU, hands out memory, saves files to the drive, talks to the network, and keeps programs from messing with each other.</p>
+        <p>Without an OS, every app would have to know how to control the exact hardware it's on. The OS hides all that, so programs just ask "save this file" or "send this over the network."</p>
+        <p class="eg">Windows on most laptops, macOS on Macs, iOS on iPhones, Android on most other phones, and Linux on the Wyse.</p>
+      </details>
+
+      <details class="dd"><summary>So what is Linux?</summary>
+        <p><b>Linux</b> is a free, open-source operating system. "Open source" means anyone can read and change its code, so companies and volunteers all over the world improve it.</p>
+        <p>Strictly, "Linux" is the <b>kernel</b>: the core that talks directly to the hardware. A full system bundles that kernel with tools, a package manager, and settings. That bundle is a <b>distribution</b> (distro). There are many flavors that share the same core.</p>
+        <p class="eg">Debian 12 (the Wyse), Ubuntu, Kali (built for hacking practice), Fedora, and the Linux inside Android and most smart TVs.</p>
+        <p><b>Why servers run Linux:</b> it's free, it's light enough for tiny machines like the Wyse, it runs for months without a reboot, and it's controlled entirely by typing commands, which is perfect for managing it remotely over SSH. Most of the internet, the cloud, and supercomputers run Linux, so SOC analysts read Linux logs all day.</p>
+        <p><b>How you use it:</b> mostly through the <b>terminal</b> (command line). You type a command, press Enter, and it runs.</p>
+        <p class="eg"><code>df -h</code> shows disk space. <code>sudo apt install crowdsec</code> installs a program. <code>sudo</code> means "do this as the admin."</p>
+      </details>
+
+      <details class="dd"><summary>Layer 3: what a program actually is</summary>
+        <p>A <b>program</b> is a file full of instructions for the computer. Sitting on the drive, it's just a file, like a recipe in a cookbook. When you start it, the OS loads it into RAM and the CPU follows the instructions. A running program is called a <b>process</b>, the cook actually cooking.</p>
+        <p class="eg">Pi-hole is files on the drive. When the Wyse boots, it starts, and now it's a process answering DNS questions.</p>
+        <p><b>Where programs come from:</b> on Linux you install them with a <b>package manager</b>, which works like an app store you control by typing.</p>
+        <p class="eg"><code>sudo apt install unbound</code> downloaded and installed Unbound on the Wyse.</p>
+      </details>
+
+      <details class="dd"><summary>The 3 kinds of programs in my lab</summary>
+        <p><b>1. Commands you run once.</b> They do one job, print a result, and stop.</p>
+        <p class="eg"><code>df -h</code>, <code>ls</code>, <code>docker ps</code>.</p>
+        <p><b>2. Services, also called daemons.</b> Programs that start when the computer boots and run in the background forever, waiting for work. No window, no screen. Linux's <b>systemd</b> starts them and restarts them if they crash.</p>
+        <p class="eg">SSH waits for logins, Tailscale keeps the tunnel up, Unbound waits for lookups, CrowdSec watches logs. Check one with <code>systemctl status ssh</code>.</p>
+        <p><b>3. Containers (Docker).</b> A program packed into a sealed box with everything it needs: its own files, settings, and pieces. It runs the same anywhere and can't trash the rest of the system. Like a shipping container: the ship doesn't care what's inside.</p>
+        <p class="eg">Pi-hole, Jellyfin, Homepage, and Uptime Kuma each run in their own container. <code>docker ps</code> lists them.</p>
+      </details>
+
+      <details class="dd"><summary>Why some programs have a web page</summary>
+        <p>Programs with no screen still need a way for you to control them. Many include a tiny built-in <b>web server</b>, so you open their control panel in any browser instead of installing an app. The Wyse <i>serves</i> the page; your phone just displays it.</p>
+        <p>The <b>port</b> picks which program answers: same address, different door.</p>
+        <p class="eg">:80 = Pi-hole, :8096 = Jellyfin, :3000 = Homepage, :3001 = Uptime Kuma. SSH, Unbound, and CrowdSec have no web page: you use them by typing commands.</p>
+      </details>
+    </div>
     <div class="step"><span class="n">4</span><b>How do I reach it?</b><p>Every device has an address (an IP). Each program on the server listens on its own numbered door (a port). Address + port = which program you're talking to.</p><p class="eg">100.119.39.63:3000 = the Wyse, door 3000 = my dashboard.</p></div>
   </details>
   <p class="intro" style="margin-top:4px">Tap a room, hit Tour, or follow one website visit through the house.</p>
@@ -224,7 +291,18 @@ const TERMS = {
   "API key": ["Application Programming Interface key", "A password one program uses to talk to another program.", "Homepage uses Pi-hole's API key to pull the blocked-ads number.", "\\bAPI keys?\\b"],
   "chmod 600": ["File permissions", "A Linux command that locks a file so only its owner can read or change it.", "My .env file holding API keys is chmod 600.", "\\bchmod 600\\b"],
   "GitHub": ["Code hosting site", "A website for storing and sharing code and docs. Public repos double as a portfolio.", "This whole guide lives in my GitHub repo.", "\\bGitHub\\b"],
-  "Linux": ["Operating system", "A free operating system that runs most of the world's servers.", "My Wyse runs Debian 12, a version of Linux.", "\\bLinux\\b"],
+  "Linux": ["Operating system", "A free, open-source operating system that runs most of the world's servers.", "My Wyse runs Debian 12, a version (distro) of Linux.", "\\bLinux\\b"],
+  "operating system": ["OS", "The main software that boots first and manages the hardware for every other program.", "Windows, macOS, iOS, Android, Linux.", "\\boperating system\\b"],
+  "kernel": ["Core of the OS", "The part of the operating system that talks directly to the hardware.", "The Linux kernel; GRUB lets you pick an older kernel if a new one breaks.", "\\bkernel\\b"],
+  "distro": ["Linux distribution", "The Linux kernel bundled with tools, settings, and a package manager into a full OS.", "Debian, Ubuntu, Kali, Fedora.", "\\bdistro\\b"],
+  "program": ["Software / application", "A file of instructions for the computer. It does nothing until you run it.", "Pi-hole, Jellyfin, the df command.", "\\bprograms?\\b"],
+  "process": ["A running program", "A program that's been loaded into memory and is actually doing work right now.", "pgrep -af openclaw found the running OpenClaw process.", "\\bprocess\\b"],
+  "service": ["Daemon / background program", "A program that starts at boot and runs in the background with no screen, waiting for work.", "SSH, Tailscale, Unbound, CrowdSec. Check with systemctl status ssh.", "\\bservices?\\b"],
+  "container": ["Docker container", "A program sealed in its own box with everything it needs, so it can't mess with the rest of the system.", "Pi-hole runs in a container; docker ps lists them.", "\\bcontainers?\\b"],
+  "package manager": ["apt (on Debian)", "A tool that downloads, installs, and updates software for you. A typed app store.", "sudo apt install crowdsec", "\\bpackage manager\\b"],
+  "terminal": ["Command line / CLI", "A text window where you control the computer by typing commands.", "PowerShell on the laptop, Termius on the phone, bash on the Wyse.", "\\bterminal\\b"],
+  "sudo": ["Superuser do", "Run one command as the admin (root). It asks for your password.", "sudo docker ps", "\\bsudo\\b"],
+  "web server": ["Program that serves web pages", "A program that sends web pages to browsers that ask for them.", "Pi-hole's built-in web server shows its dashboard on port 80.", "\\bweb server\\b"],
 };
 const ROOM_TERMS = {
   sorter: ["DNS", "tracker", "IP", "Docker", "blocklist"],
