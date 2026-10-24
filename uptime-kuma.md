@@ -88,9 +88,14 @@ Uptime Kuma pushes an alert to my phone when any monitor goes **down**, and agai
 |---|---|---|
 | ntfy server → phone | `curl -d "test from wyse" ntfy.sh/<topic>` from the Wyse | ✅ Buzzed |
 | Uptime Kuma → ntfy | **Test** button in the notification settings | ✅ Buzzed |
-| Monitor → alert | `sudo docker logs uptime-kuma --tail 30` | ❌ Found it |
+| Monitor → alert | `sudo docker logs uptime-kuma --tail 30` | ❌ Found retries holding it in Pending |
+| Alert attached to monitor? | Each monitor's Edit → Notifications | ❌ Phone was off on all 4 |
 
 The logs showed `Failing: connect ECONNREFUSED ...:8096 | Down Count: 0`. Uptime Kuma *saw* Jellyfin was off (connection refused), but the monitor's **retries** kept it in **Pending** (orange), so it never officially went **DOWN** and never alerted. Retries exist to prevent false alarms from one blip. I set **Retries = 1** and **Retry Interval = 60s**, which means an alert in about 2 minutes. That's a balance between **alert fatigue** and **detection speed**, a real SOC tuning decision.
+
+**Second root cause:** even after fixing retries, the monitor went DOWN (logs confirmed it) but still no alert. I opened each monitor's **Edit → Notifications** section, and **Phone was OFF on all 4**. "Apply on all existing monitors" never took effect, probably because I toggled it after the first save. The alert existed but wasn't attached to anything, like installing a fire alarm and never wiring it to a room. I turned Phone on for every monitor.
+
+**Lesson:** a successful **Test** only proves the notification channel works. It doesn't prove any monitor actually *uses* it. Always verify with a real failure.
 
 **Bonus finding in the same logs:** `[AUTH] Successfully logged in user ... IP=<my iPhone's Tailscale IP>`. That's an **authentication log** showing who logged in and from where. A login from an IP I don't recognize would be a red flag.
 
