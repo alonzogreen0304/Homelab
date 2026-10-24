@@ -101,6 +101,12 @@ The logs showed `Failing: connect ECONNREFUSED ...:8096 | Down Count: 0`. Uptime
 
 **Fire drill:** stopped a container on purpose (`sudo docker stop jellyfin`) to prove alerts work end to end, then started it again (`sudo docker start jellyfin`). Testing your alerting by breaking something on purpose is how real ops/SOC teams validate it.
 
+**✅ Fire drill passed (Oct 23, 2026, ~9 PM):**
+- `docker stop jellyfin` → about 2 minutes later: **🔴 Jellyfin Down**, `connect ECONNREFUSED`
+- `docker start jellyfin` → about 1 minute later: **🟢 Jellyfin Up**, `200 - OK`, delivered to my **locked** phone
+
+Alerts don't need Tailscale on the phone. They travel Wyse → ntfy.sh → Apple push → phone, like any app notification.
+
 ## Phone access
 
 Saved to my iPhone home screen (Safari → Share → Add to Home Screen). It opens full-screen like an app. Requires Tailscale on.

@@ -37,7 +37,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 | [Unbound](unbound.md) | My own recursive DNS resolver: Pi-hole asks the internet's root servers directly instead of Google, with DNSSEC validation | ✅ Running, Pi-hole's only upstream |
 | [Jellyfin](jellyfin.md) | My own streaming server ("personal Netflix"), reachable from anywhere over Tailscale | ✅ Running, Movies + Shows libraries set up |
 | [Homepage](homepage.md) | One dashboard linking every service, with live CPU / RAM / disk stats | ✅ Running |
-| [Uptime Kuma](uptime-kuma.md) | Checks every service every 60 seconds (web pages and real DNS queries) and shows uptime history | ✅ Running, 4 monitors green |
+| [Uptime Kuma](uptime-kuma.md) | Checks every service every 60 seconds (web pages and real DNS queries) and shows uptime history | ✅ Running, 4 monitors with phone alerts (fire drill passed) |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
 
 ---
