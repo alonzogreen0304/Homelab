@@ -16,6 +16,7 @@ SSH (Secure Shell) lets me open a terminal on my laptop and control the Wyse ove
 - [x] First connection from the laptop (over Tailscale, fingerprint verified, see [log](disk-cleanup-and-ssh-log.md))
 - [x] Hardening: SSH keys, password login disabled, root login disabled ([log](disk-cleanup-and-ssh-log.md))
 - [x] SSH from my iPhone (Termius) over Tailscale, using its own key (Oct 23, 2026)
+- [x] Legal warning banner shown before login (Oct 24, 2026)
 
 ## SSH from my phone (Oct 23, 2026)
 
@@ -38,6 +39,36 @@ Goal: control the Wyse from my phone anywhere (like at work), without turning pa
 **Extra hardening:** Termius app lock (Face ID), and never pasting secrets into the app's AI command bar.
 
 ---
+
+## Legal warning banner (Oct 24, 2026)
+
+**Analogy:** the "No trespassing, you're on camera" sign on the front door. It doesn't stop anyone by itself, but nobody can claim they didn't know. Companies are required to post one, which makes it a **GRC control** (it supports policy enforcement and legal action).
+
+```bash
+# 1. Write the sign
+sudo tee /etc/issue.net > /dev/null <<'EOF'
+*****************************************************************
+  AUTHORIZED ACCESS ONLY
+  This system is private. All activity is logged and monitored.
+  Unauthorized access is prohibited and may be reported.
+  Disconnect now if you are not an authorized user.
+*****************************************************************
+EOF
+# 2. Tell SSH to show it (its own drop-in file, next to 10-hardening.conf)
+echo "Banner /etc/issue.net" | sudo tee /etc/ssh/sshd_config.d/20-banner.conf
+# 3. Proofread, then apply without dropping my session
+sudo sshd -t && sudo systemctl reload ssh
+# 4. Confirm what SSH is actually using
+sudo sshd -T | grep -i banner      # banner /etc/issue.net
+```
+
+**Test, the attacker's view:** I ran `ssh me@<wyse-ip>` from the Wyse to itself, which has no key, just like a stranger. The banner appeared **before** login, then: `Permission denied (publickey)`. Warned, then blocked.
+
+<img src="images/ssh-legal-banner.png" width="300" alt="SSH login showing the AUTHORIZED ACCESS ONLY banner followed by Permission denied (publickey)">
+
+**Gotcha:** the Termius app on my phone doesn't display pre-login banners, so it *looked* broken there. `sshd -T` proved the server side was right. **Lesson:** check the server's real config before blaming it; sometimes it's the client.
+
+**Undo:** `sudo rm /etc/ssh/sshd_config.d/20-banner.conf && sudo systemctl reload ssh`
 
 ## One-time setup (on the Wyse, with a monitor)
 
