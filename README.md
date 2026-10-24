@@ -37,6 +37,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 | [Unbound](unbound.md) | My own recursive DNS resolver: Pi-hole asks the internet's root servers directly instead of Google, with DNSSEC validation | ✅ Running, Pi-hole's only upstream |
 | [Jellyfin](jellyfin.md) | My own streaming server ("personal Netflix"), reachable from anywhere over Tailscale | ✅ Running, Movies + Shows libraries set up |
 | [Homepage](homepage.md) | One dashboard linking every service, with live CPU / RAM / disk stats | ✅ Running |
+| [Uptime Kuma](uptime-kuma.md) | Checks every service every 60 seconds (web pages and real DNS queries) and shows uptime history | ✅ Running, 4 monitors green |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
 
 ---
@@ -45,6 +46,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 23, 2026 (night) | Installed Uptime Kuma and set up 4 monitors (Pi-hole web, Pi-hole DNS, Jellyfin, Homepage), all from my phone; fixed a self-signed cert failure ([notes](uptime-kuma.md)) |
 | Oct 23, 2026 (night) | From my phone over SSH: removed 200MB of leftover containerd image data, system drive 82% → 79% ([notes](jellyfin.md)) |
 | Oct 23, 2026 (night) | SSH from my iPhone over Tailscale with its own key, so I can manage the server from anywhere ([notes](ssh-setup.md)) |
 | Oct 23, 2026 | Built a Homepage dashboard for all my services ([notes](homepage.md)) |
@@ -99,6 +101,8 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Install Jellyfin
 - [x] Reclaim old containerd image data on the internal drive (203M → 668K)
 - [x] Homepage dashboard
+- [x] Uptime monitoring (Uptime Kuma)
+- [ ] Phone push alerts when a service goes down (ntfy)
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 
