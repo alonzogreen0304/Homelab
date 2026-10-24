@@ -267,6 +267,49 @@ Now it reads `allow-hotplug enp4s0`, so the port comes up whenever a cable is de
 
 ---
 
+## Part 7: Disk check #2 + removing Discord (Oct 24, 2026)
+
+**Analogy:** the closet got fuller overnight. My new login screen (the lobby health board) showed the main drive at **86%** (it was 79% the day before). Same playbook as Part 1: weigh the boxes before throwing anything out.
+
+**Measure:**
+```bash
+df -h /                                                        # 86% used, 911M free
+sudo du -xh / --max-depth=2 2>/dev/null | sort -h | tail -12   # heaviest folders
+sudo du -sh /var/log /var/cache/apt /var/lib/crowdsec /usr      # usual suspects
+dpkg-query -Wf '${Installed-Size}\t${Package}\n' | sort -n | tail -15   # biggest installed programs
+```
+
+| Box | Size | Verdict |
+|---|---|---|
+| `/usr` (programs) | 4.3G | Grew from 4.0G: new programs like CrowdSec (~320MB) |
+| `/var/log` | 152M | Normal |
+| `/var/lib/crowdsec` | 85M | CrowdSec's brain, keep |
+| `/var/cache/apt` | 77M | Leftover installer downloads, free to delete |
+
+**Found Discord installed** (`dpkg -l | grep -i discord` → `ii discord 1.0.137`). A chat app has no business on a headless server.
+
+**Act:**
+```bash
+sudo apt purge discord -y     # remove the app AND its settings files
+sudo apt autoremove -y        # remove helper packages only Discord needed (4 libunity/libdee libs)
+sudo apt clean                # empty the 77M installer cache
+```
+
+**Result:**
+
+| | Before | After |
+|---|---|---|
+| Used | 86% | **84%** |
+| Free | 911M | **993M** |
+
+**Security idea, least functionality:** a server should only run what it needs. Every extra program is one more thing that could have a vulnerability (a CIS / NIST control). **Analogy:** don't keep a spare key under the mat for a door you never use.
+
+**Kept on purpose:**
+- `linux-image-6.1.0-44` (~400MB): the old kernel, my backup engine ([safety net 8](wyse-safety-net.md)). It saved me during the boot failure.
+- `crowdsec` (~320MB): the camera guard.
+
+**Candidate for later:** `firefox-esr` (~300MB), a web browser on a server that runs headless.
+
 ## Key takeaways
 
 - **Measure → investigate → act.** `df` showed the problem, `du` found the cause, and `pgrep`/`which`/`npm config` proved what was safe to remove.
