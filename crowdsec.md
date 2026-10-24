@@ -75,18 +75,35 @@ sudo cscli decisions list
 sudo cscli decisions delete --ip <phone-tailscale-ip>
 ```
 
-## Finding: Docker's side door
+## Finding: Docker's side door (fixed)
 
 While my phone was banned, **SSH was blocked, but Uptime Kuma (a Docker container) still loaded**. My screenshot timestamp (9:25) was ~3 minutes into the ban.
 
 **Why:** the bouncer blocks banned IPs in the **INPUT** chain, which covers services running directly on the host (SSH). Traffic to **Docker-published ports** is forwarded to containers through Docker's own rules and **never passes INPUT**. The attacker was banned at the front door and walked in the side door.
 
-**Fix (pending re-test):** add Docker's `DOCKER-USER` chain to the bouncer:
+**Fix:** add Docker's `DOCKER-USER` chain to the bouncer:
 ```bash
 sudo sed -i 's/^  - INPUT$/  - INPUT\n  - DOCKER-USER/' /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
-grep -A4 iptables_chains /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+sudo grep -A4 iptables_chains /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml   # sudo: the file holds the bouncer's API key, so it's root-only
 sudo systemctl restart crowdsec-firewall-bouncer
+sudo iptables -L DOCKER-USER -n     # now shows: CROWDSEC_CHAIN  0.0.0.0/0  0.0.0.0/0
 ```
+Docker's side door now sends every packet through CrowdSec's ban list first.
+
+**Re-test (Oct 24, 2026), done safely from my phone:** a real ban on my phone would have cut off my own SSH session, so I used a ban that **expires on its own**:
+```bash
+sudo cscli decisions add --ip <phone-tailscale-ip> --duration 2m --reason "side door test"
+```
+Result: Termius froze (front door blocked), and Uptime Kuma, a Docker container, showed **"Lost connection to the socket server. Reconnecting..."** (side door blocked). After 2 minutes the ban expired and everything came back.
+
+<img src="images/crowdsec-side-door-blocked.png" width="300" alt="Uptime Kuma on my phone showing Lost connection to the socket server while my phone's IP was banned">
+
+| Banned phone trying to reach... | Before fix | After fix |
+|---|---|---|
+| SSH (front door, INPUT) | Blocked ✅ | Blocked ✅ |
+| Containers (side door, DOCKER-USER) | **Loaded** ❌ | **Blocked** ✅ |
+
+(The monitors stayed green because Uptime Kuma checks services from inside the Wyse, which wasn't banned.)
 
 **Lesson:** "the ban fired" isn't the same as "the attacker is blocked everywhere." Test the **effect** of a control, not just that it triggered. Docker bypassing host firewall rules is a well-known gotcha.
 
@@ -110,5 +127,5 @@ For now I'm leaving it on. Treating internal devices as untrusted by default is 
 
 - [ ] Enroll in the CrowdSec Console (web dashboard of alerts)
 - [ ] Send CrowdSec alerts to my phone (ntfy), like Uptime Kuma
-- [ ] Apply the `DOCKER-USER` fix and re-test: a banned phone should NOT reach any container
+- [x] Apply the `DOCKER-USER` fix and re-test: a banned phone can no longer reach any container
 - [ ] Later: AI log triage, with read-only access and a human in the loop

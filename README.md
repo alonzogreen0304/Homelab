@@ -47,6 +47,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 24, 2026 | Closed CrowdSec's Docker side door (`DOCKER-USER` chain) and proved it with a self-expiring 2-minute ban on my own phone ([notes](crowdsec.md)) |
 | Oct 23, 2026 (night) | Redesigned Homepage: purple theme, custom background, weather, status dots, Uptime Kuma widget, Security + Study rows ([notes](homepage.md)) |
 | Oct 23, 2026 (night) | Installed CrowdSec + firewall bouncer, fixed it reading a log file Debian 12 doesn't have, then ran a red-team/blue-team drill: my phone brute-forced SSH and got detected (`ssh-bf`) and banned ([notes](crowdsec.md)) |
 | Oct 23, 2026 (night) | Installed Uptime Kuma and set up 4 monitors (Pi-hole web, Pi-hole DNS, Jellyfin, Homepage), all from my phone; fixed a self-signed cert failure; push alerts to my phone with ntfy ([notes](uptime-kuma.md)) |
@@ -112,7 +113,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [ ] Auto power-on after outages: BIOS AC Recovery → Power On ([safety net 4](wyse-safety-net.md))
 - [ ] Wyse + extender on the APC UPS battery outlets; later `apcupsd` for clean shutdowns ([safety net 7](wyse-safety-net.md))
 - [ ] AI SOC analyst: nightly read-only Claude briefing of CrowdSec / Uptime Kuma / disk status pushed to my phone via ntfy (locked-down user, key in `chmod 600`, logs treated as untrusted for prompt injection)
-- [ ] CrowdSec `DOCKER-USER` fix + re-test ([notes](crowdsec.md))
+- [x] CrowdSec `DOCKER-USER` fix + re-test: bans now block containers too ([notes](crowdsec.md))
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 
