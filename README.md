@@ -36,7 +36,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 | [SSH](ssh-setup.md) | Control the server from my laptop, no monitor needed | ✅ Working from my laptop over Tailscale, key-only (passwords disabled) |
 | [Unbound](unbound.md) | My own recursive DNS resolver: Pi-hole asks the internet's root servers directly instead of Google, with DNSSEC validation | ✅ Running, Pi-hole's only upstream |
 | [Jellyfin](jellyfin.md) | My own streaming server ("personal Netflix"), reachable from anywhere over Tailscale | ✅ Running, Movies + Shows libraries set up |
-| [Homepage](homepage.md) | One dashboard linking every service, with live CPU / RAM / disk stats | ✅ Running |
+| [Homepage](homepage.md) | One dashboard linking every service: live Pi-hole, Uptime Kuma and Jellyfin widgets, status dots, weather, and study links | ✅ Running, purple redesign |
 | [Uptime Kuma](uptime-kuma.md) | Checks every service every 60 seconds (web pages and real DNS queries) and shows uptime history | ✅ Running, 4 monitors with phone alerts (fire drill passed) |
 | [CrowdSec](crowdsec.md) | Reads SSH logs, detects brute-force attacks, and bans attacker IPs at the firewall (IDS + IPS) | ✅ Running, caught and banned a simulated attack |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
@@ -47,6 +47,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 23, 2026 (night) | Redesigned Homepage: purple theme, custom background, weather, status dots, Uptime Kuma widget, Security + Study rows ([notes](homepage.md)) |
 | Oct 23, 2026 (night) | Installed CrowdSec + firewall bouncer, fixed it reading a log file Debian 12 doesn't have, then ran a red-team/blue-team drill: my phone brute-forced SSH and got detected (`ssh-bf`) and banned ([notes](crowdsec.md)) |
 | Oct 23, 2026 (night) | Installed Uptime Kuma and set up 4 monitors (Pi-hole web, Pi-hole DNS, Jellyfin, Homepage), all from my phone; fixed a self-signed cert failure; push alerts to my phone with ntfy ([notes](uptime-kuma.md)) |
 | Oct 23, 2026 (night) | From my phone over SSH: removed 200MB of leftover containerd image data, system drive 82% → 79% ([notes](jellyfin.md)) |

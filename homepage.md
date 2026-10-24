@@ -57,8 +57,24 @@ The Pi-hole tile now shows **queries / blocked / % / gravity**, and Jellyfin sho
 
 **Lesson:** check secrets *without displaying them*. Measuring a key's length found the problem without ever printing the key.
 
+## Phase 3: redesign (Oct 23, 2026)
+
+<img src="images/homepage-v2.png" width="360" alt="Redesigned Homepage: purple circuit background, greeting, CPU/RAM/disk, weather, Network row with Pi-hole stats, Security row with Uptime Kuma (4 up, 0 down) and CrowdSec, Media row with Jellyfin">
+
+What changed:
+- **Look:** renamed to *Alonzo's Lab*, purple accent (`color: purple`), frosted-glass cards (`cardBlur: sm`), and a custom purple circuit-board background I generated and host in this repo ([`images/dashboard-bg.jpg`](images/dashboard-bg.jpg)), dimmed with `brightness: 75`
+- **Top bar:** greeting, date/time, local weather (Open-Meteo, no API key), CPU / RAM / big-drive free space, DuckDuckGo search
+- **Status dots** (`siteMonitor`) on Pi-hole, Uptime Kuma, and Jellyfin: green = answering right now
+- **New Security row:** Uptime Kuma with a live widget (sites up / down / uptime %, from a status page with slug `lab`) and CrowdSec
+- **Study row:** one-tap links to my three study games (Command Center, Know Your Lab, Acronym Breach)
+
+**How I changed it safely:** backed up the whole config folder first (`sudo cp -r .../config .../config.bak`), then rewrote each YAML file with `sudo tee` heredocs. Homepage reloads config changes on its own. API keys stayed in `.env`; the YAML only references them.
+
 ## Next steps
 
 - [x] Phase 2: live widgets (Pi-hole stats, Jellyfin) with keys in a `chmod 600` `.env` file
+- [x] Phase 3: purple redesign, weather, status dots, Security + Study rows
+- [ ] CrowdSec widget (live alerts / bans)
+- [ ] Docker container status through a read-only socket proxy (least privilege)
 - [ ] Add new services here as I add them (OptiPlex, VM lab, etc.)
 - [ ] Optional: small rack screen showing the dashboard
