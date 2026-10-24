@@ -75,6 +75,21 @@ sudo cscli decisions list
 sudo cscli decisions delete --ip <phone-tailscale-ip>
 ```
 
+## Finding: Docker's side door
+
+While my phone was banned, **SSH was blocked, but Uptime Kuma (a Docker container) still loaded**. My screenshot timestamp (9:25) was ~3 minutes into the ban.
+
+**Why:** the bouncer blocks banned IPs in the **INPUT** chain, which covers services running directly on the host (SSH). Traffic to **Docker-published ports** is forwarded to containers through Docker's own rules and **never passes INPUT**. The attacker was banned at the front door and walked in the side door.
+
+**Fix (pending re-test):** add Docker's `DOCKER-USER` chain to the bouncer:
+```bash
+sudo sed -i 's/^  - INPUT$/  - INPUT\n  - DOCKER-USER/' /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+grep -A4 iptables_chains /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
+sudo systemctl restart crowdsec-firewall-bouncer
+```
+
+**Lesson:** "the ban fired" isn't the same as "the attacker is blocked everywhere." Test the **effect** of a control, not just that it triggered. Docker bypassing host firewall rules is a well-known gotcha.
+
 ## Security concepts
 
 - **IDS vs. IPS:** the engine detects; the bouncer prevents
@@ -95,5 +110,5 @@ For now I'm leaving it on. Treating internal devices as untrusted by default is 
 
 - [ ] Enroll in the CrowdSec Console (web dashboard of alerts)
 - [ ] Send CrowdSec alerts to my phone (ntfy), like Uptime Kuma
-- [ ] Protect Docker-published ports too (`DOCKER-USER` chain in the bouncer config)
+- [ ] Apply the `DOCKER-USER` fix and re-test: a banned phone should NOT reach any container
 - [ ] Later: AI log triage, with read-only access and a human in the loop
