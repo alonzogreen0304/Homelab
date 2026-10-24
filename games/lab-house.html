@@ -298,6 +298,32 @@ function exitSVG(on){
   return `<svg viewBox="0 0 380 222" role="img" aria-label="${on ? "Exit node on: phone traffic goes through an encrypted tunnel to the house, then the internet" : "Exit node off: phone traffic goes straight through the coffee shop Wi-Fi to the internet"}">${g}</svg>`;
 }
 const DEEP = {
+  door: { title: "Where do my SSH keys live, and how do I find them?", html: () => `
+    <p><b>First: what does SSH stand for?</b> <b>Secure Shell</b>, not "shared shell." Easy mix-up, but it's actually the opposite of shared:</p>
+    <p>• <b>Shell</b> = the program that reads the commands you type and runs them (on the Wyse it's called <b>bash</b>). It's the "me@Wyse:~$" prompt.<br>
+    • <b>Secure</b> = everything between you and that shell is encrypted, so nobody in the middle can read your commands or passwords.<br>
+    • Nothing is <i>shared</i>: your private key is the one thing you <b>never</b> share.</p>
+    <p class="eg">Secure Shell = an encrypted remote control for another computer's command prompt.</p>
+    <p><b>Your key ring: where every key lives</b></p>
+    <div class="stage" style="padding:10px 12px">
+      <p style="margin:0 0 8px"><b>💻 Laptop (Windows)</b>, folder <code>C:\\Users\\alonz\\.ssh\\</code><br>
+      <code>id_ed25519</code> = private key: <b>never share</b><br>
+      <code>id_ed25519.pub</code> = public key: safe to share<br>
+      <code>known_hosts</code> = ID cards of servers I've trusted</p>
+      <p style="margin:0 0 8px"><b>📱 Phone</b>, Termius → Vaults → Keychain → ED25519 → Edit → Public key</p>
+      <p style="margin:0 0 8px"><b>🖥️ Wyse</b>, file <code>~/.ssh/authorized_keys</code><br>
+      The list of <i>public</i> keys allowed in: one line for the laptop, one for the phone.</p>
+      <p style="margin:0"><b>🖥️ Wyse's own ID</b>, <code>/etc/ssh/ssh_host_ed25519_key.pub</code><br>
+      The server's identity (its fingerprint), so my devices know it's really my Wyse.</p>
+    </div>
+    <p><b>Commands to find them:</b></p>
+    <p>• Laptop (PowerShell): <code>ls $env:USERPROFILE\\.ssh</code> lists the key files<br>
+    • Laptop: <code>type $env:USERPROFILE\\.ssh\\id_ed25519.pub</code> shows the public key<br>
+    • Wyse: <code>cat ~/.ssh/authorized_keys</code> shows who's allowed in<br>
+    • Wyse: <code>ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub</code> shows the Wyse's fingerprint</p>
+    <p class="eg">Folders starting with a dot (like .ssh) are hidden, which is why you don't see them in File Explorer by default.</p>
+    <p><b>The one rule:</b> files ending in <code>.pub</code> are the <b>lock</b>: hand them out freely. The same name <i>without</i> .pub is the <b>key</b>: it never leaves the device it was made on. If a private key ever leaks, delete its line from authorized_keys and make a new pair.</p>
+    <p><b>Analogy:</b> the private key is your house key on your keychain. The .pub file is a copy of the <i>lock</i> you give the Wyse to install. authorized_keys is the list of locks on the Wyse's door: one for each of your keys. known_hosts is your memory of what the right house looks like, so you notice if someone swaps the door.</p>` },
   tunnel: { title: "What if my traffic DIDN'T leave through my house?", html: () => `
     <p>First, a key detail: Tailscale only sends traffic <b>to my own devices</b> through the tunnel by default. Normal internet traffic (Instagram, Google, YouTube) goes straight out through whatever network my phone is on. The <b>exit node</b> is the setting that sends <b>everything</b> through my house instead.</p>
     <div class="row" style="display:flex;gap:6px;margin:6px 0"><button class="chip${exitOn ? "" : " on"}" data-x="0">Exit node OFF</button><button class="chip${exitOn ? " on" : ""}" data-x="1">Exit node ON</button></div>
@@ -365,6 +391,7 @@ const TERMS = {
   "image registry": ["Docker image store", "A warehouse of pre-built container images on the internet.", "Docker Hub; ghcr.io, where the Homepage image comes from.", "\\bimage registr(y|ies)\\b"],
   "HTTPS": ["Hypertext Transfer Protocol Secure", "The encrypted version of web traffic. Hides what's on the page, but not which site you're visiting.", "The padlock next to https://github.com.", "\\bHTTPS\\b"],
   "MITM": ["Man-in-the-middle (on-path) attack", "An attacker secretly sitting between you and the internet, reading or changing traffic.", "A fake \"Free Airport WiFi\" hotspot run by an attacker.", "\\bman-in-the-middle\\b"],
+  "shell": ["Command interpreter", "The program that reads the commands you type and runs them. It's what's behind the me@Wyse:~$ prompt.", "bash on the Wyse, PowerShell on Windows. SSH = Secure Shell: an encrypted connection to another computer's shell.", "\\bshell\\b"],
   "terminal": ["Command line / CLI", "A text window where you control the computer by typing commands.", "PowerShell on the laptop, Termius on the phone, bash on the Wyse.", "\\bterminal\\b"],
   "sudo": ["Superuser do", "Run one command as the admin (root). It asks for your password.", "sudo docker ps", "\\bsudo\\b"],
   "web server": ["Program that serves web pages", "A program that sends web pages to browsers that ask for them.", "Pi-hole's built-in web server shows its dashboard on port 80.", "\\bweb server\\b"],
@@ -373,7 +400,7 @@ const ROOM_TERMS = {
   sorter: ["DNS", "tracker", "IP", "Docker", "blocklist"],
   book: ["DNS", "root servers", "ISP", "DNSSEC", "upstream", "localhost", "port"],
   tunnel: ["VPN", "tailnet", "exit node", "WireGuard", "port", "attack surface", "HTTPS", "MITM"],
-  door: ["SSH", "SSH key", "revocation", "Linux"],
+  door: ["SSH", "shell", "SSH key", "revocation", "Linux"],
   camera: ["logs", "brute force", "IP", "firewall", "IDS", "IPS", "blocklist"],
   rounds: ["monitor", "DNS", "CIA triad"],
   theater: ["streaming server", "Docker", "cloud"],
