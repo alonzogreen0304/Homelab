@@ -308,7 +308,18 @@ sudo apt clean                # empty the 77M installer cache
 - `linux-image-6.1.0-44` (~400MB): the old kernel, my backup engine ([safety net 8](wyse-safety-net.md)). It saved me during the boot failure.
 - `crowdsec` (~320MB): the camera guard.
 
-**Candidate for later:** `firefox-esr` (~300MB), a web browser on a server that runs headless.
+**Then removed Firefox too:** `firefox-esr` (309MB), a web browser on a server that runs headless. I reach everything from my phone and laptop.
+```bash
+sudo apt purge firefox-esr -y
+sudo apt autoremove -y
+```
+
+**Final result:**
+
+| | Start of check | After Discord | After Firefox |
+|---|---|---|---|
+| Used | 86% | 84% | **81%** |
+| Free | 911M | 993M | **1.2G** |
 
 ## Key takeaways
 
