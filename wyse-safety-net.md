@@ -95,8 +95,12 @@ If I have to make a risky change on the Wyse anyway, I do it late at night, back
 
 **What it does:** the Wyse turns itself back on when power returns, instead of staying off until someone presses the button.
 
+**Status:** ⬜ To do. Needs a monitor + keyboard one time.
+
+**Why it matters:** everything *after* boot already comes back on its own (Docker `restart: unless-stopped`, Docker waits for the big drive, Tailscale/SSH/Unbound/CrowdSec start at boot, `allow-hotplug` ethernet). But if the Wyse never powers on, none of that runs. Right now it's a lamp that stays off after a blackout until someone flips the switch.
+
 **Set it up**
-1. Reboot the Wyse and tap **F2** right away to enter the BIOS.
+1. Reboot the Wyse and tap **Delete** over and over right away to enter the BIOS (if that doesn't work, try **F2**).
 2. If it asks for a BIOS password, Dell's default for Wyse thin clients is commonly `Fireport`.
 3. Go to **Power Management** → **AC Recovery** (name may vary slightly).
 4. Set it to **Power On** (or **Last Power State**).
@@ -110,9 +114,9 @@ If I have to make a risky change on the Wyse anyway, I do it late at night, back
 
 **What it does:** Docker automatically starts Pi-hole after a reboot or crash.
 
-**Check it**
+**Check it** (every running container at once)
 ```bash
-sudo docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' pihole
+sudo docker inspect -f '{{.Name}} {{.HostConfig.RestartPolicy.Name}}' $(sudo docker ps -q)
 ```
 `unless-stopped` or `always` = good. `no` = it won't come back by itself.
 
@@ -146,13 +150,18 @@ sudo docker update --restart no pihole
 
 ---
 
-## Safety net 7: Battery backup (UPS), optional
+## Safety net 7: Battery backup (UPS)
 
 **What it does:** keeps the Wyse (and ideally the router + modem) running through short power blips and outages.
 
+**Status:** ⬜ To do. I already own an **APC Back-UPS 350**; it just needs to be wired in.
+
 **Set it up**
-1. Get a small UPS (roughly $50–80 range).
-2. Plug the Wyse, router, and modem into the **battery** outlets, not the surge-only ones.
+1. Plug the **Wyse and the Wi-Fi extender** (and router + modem if they reach) into the **battery** outlets, not the surge-only ones.
+2. Short flickers: the Wyse never notices. Long outages: the battery runs out, then **Safety net 4 (AC Recovery)** powers the Wyse back on when power returns. The two work together.
+3. **Later:** if the UPS has a USB data port, install `apcupsd` so the Wyse **shuts down cleanly** before the battery dies, so a hard power cut can't corrupt files.
+
+**How I'll know recovery worked:** [Uptime Kuma](uptime-kuma.md) sends **UP** alerts to my phone as each service comes back.
 
 **Undo:** plug them back into the wall.
 

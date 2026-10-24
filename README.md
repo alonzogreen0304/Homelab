@@ -108,6 +108,8 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Uptime monitoring (Uptime Kuma)
 - [x] Phone push alerts when a service goes down (ntfy)
 - [x] Intrusion detection + prevention (CrowdSec)
+- [ ] Auto power-on after outages: BIOS AC Recovery → Power On ([safety net 4](wyse-safety-net.md))
+- [ ] Wyse + extender on the APC UPS battery outlets; later `apcupsd` for clean shutdowns ([safety net 7](wyse-safety-net.md))
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 
