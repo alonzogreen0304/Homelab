@@ -63,12 +63,33 @@ Low uptime percentages right after setup are just those early red checks. They c
 - **Least privilege**: no Docker socket
 - **Known gap:** if the whole Wyse goes down, Uptime Kuma goes down with it and can't alert ("who watches the watchman"). Fix later: a second monitor on a different device
 
+## Phone alerts (ntfy)
+
+Uptime Kuma pushes an alert to my phone when any monitor goes **down**, and again when it **recovers**.
+
+**Analogy:** the security guard now has a walkie-talkie. Instead of me checking his notebook, he radios me the moment a door doesn't answer.
+
+1. Made a random topic name on the Wyse:
+   ```bash
+   echo "wyse-$(openssl rand -hex 8)"
+   ```
+2. **ntfy** iPhone app: **+** → subscribed to that topic on `ntfy.sh` → allowed notifications
+3. **Uptime Kuma** → Settings → Notifications → Setup Notification:
+   - Type: **ntfy** (not "Notify!", which is a different app; I picked it by mistake first)
+   - Server URL: `https://ntfy.sh`, Topic: the same random name
+   - **Default enabled** + **Apply on all existing monitors** on
+4. **Test** → phone buzzed
+
+**Why the topic is random (and not in this repo):** the free ntfy server is public. Anyone who **guesses** a topic name can read those alerts or send fake ones. A long random name works like a password. Fake "all clear" alerts would be a real attack on a monitoring system, so the topic is treated as a **secret**.
+
+**Fire drill:** stopped a container on purpose (`sudo docker stop jellyfin`) to prove alerts work end to end, then started it again (`sudo docker start jellyfin`). Testing your alerting by breaking something on purpose is how real ops/SOC teams validate it.
+
 ## Phone access
 
 Saved to my iPhone home screen (Safari → Share → Add to Home Screen). It opens full-screen like an app. Requires Tailscale on.
 
 ## Next steps
 
-- [ ] Phone push alerts with ntfy
+- [x] Phone push alerts with ntfy
 - [ ] Add an Uptime Kuma tile to my [Homepage](homepage.md) dashboard
 - [ ] Second monitor on another device to watch the Wyse itself

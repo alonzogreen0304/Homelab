@@ -46,7 +46,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
-| Oct 23, 2026 (night) | Installed Uptime Kuma and set up 4 monitors (Pi-hole web, Pi-hole DNS, Jellyfin, Homepage), all from my phone; fixed a self-signed cert failure ([notes](uptime-kuma.md)) |
+| Oct 23, 2026 (night) | Installed Uptime Kuma and set up 4 monitors (Pi-hole web, Pi-hole DNS, Jellyfin, Homepage), all from my phone; fixed a self-signed cert failure; push alerts to my phone with ntfy ([notes](uptime-kuma.md)) |
 | Oct 23, 2026 (night) | From my phone over SSH: removed 200MB of leftover containerd image data, system drive 82% → 79% ([notes](jellyfin.md)) |
 | Oct 23, 2026 (night) | SSH from my iPhone over Tailscale with its own key, so I can manage the server from anywhere ([notes](ssh-setup.md)) |
 | Oct 23, 2026 | Built a Homepage dashboard for all my services ([notes](homepage.md)) |
@@ -102,7 +102,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Reclaim old containerd image data on the internal drive (203M → 668K)
 - [x] Homepage dashboard
 - [x] Uptime monitoring (Uptime Kuma)
-- [ ] Phone push alerts when a service goes down (ntfy)
+- [x] Phone push alerts when a service goes down (ntfy)
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 
