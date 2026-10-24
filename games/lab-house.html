@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab House</title>
+<meta name="description" content="Alonzo's homelab explained as a house: tap a room to see what each service does.">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Lab House">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#120d24">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #120d24;
+  --panel: #1b1535;
+  --panel-2: #241c45;
+  --line: #352a62;
+  --ink: #ece8fb;
+  --muted: #a99fd0;
+  --faint: #6d6496;
+  --purple: #a78bfa;
+  --teal: #4fd1c5;
+  --coral: #ff8a6b;
+  --good: #57e39b;
+  --bad: #ff5f6d;
+  --amber: #ffc15e;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--display); font-size: 16px; line-height: 1.55;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px; background-position: -1px -1px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px;
+}
+@media (display-mode: standalone) { body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); } }
+.wrap { max-width: 760px; margin: 0 auto; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 8px 16px; margin-bottom: 14px; }
+h1 { margin: 0; font-weight: 800; font-size: clamp(30px, 7vw, 44px); line-height: 1; letter-spacing: -0.02em; }
+h1 span { color: var(--purple); }
+.tag { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+.intro { color: var(--muted); margin: 0 0 14px; font-size: 15px; }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.btn { border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 600 14px var(--display); padding: 9px 14px; border-radius: 999px; cursor: pointer; }
+.btn.on { background: var(--purple); color: var(--bg); border-color: var(--purple); }
+.btn:focus-visible, .room:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.house svg { width: 100%; height: auto; display: block; }
+.room { cursor: pointer; }
+.room rect { transition: stroke-width .15s, opacity .15s; }
+.room text { pointer-events: none; }
+.room.sel rect { stroke-width: 3; }
+.room:not(.sel) rect { opacity: .82; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-top: 14px; }
+.kicker { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+.panel h2 { margin: 2px 0 2px; font-size: 24px; font-weight: 800; line-height: 1.2; }
+.real { font-family: var(--mono); font-size: 14px; color: var(--muted); margin: 0 0 10px; }
+.real b { color: var(--ink); font-weight: 600; }
+.stage { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; margin: 10px 0 12px; overflow: hidden; }
+.stage svg { width: 100%; height: auto; display: block; }
+.panel p { margin: 0 0 8px; }
+.panel .lab { color: var(--muted); font-size: 15px; }
+.panel .lab::before { content: "IN MY LAB  "; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.panel .sec { color: var(--muted); font-size: 15px; }
+.panel .sec::before { content: "SECURITY IDEA  "; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.nav { display: flex; justify-content: space-between; gap: 8px; margin-top: 12px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; font-size: 13px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+/* scene animation helpers */
+.mv { animation-duration: var(--d, 3s); animation-iteration-count: infinite; animation-timing-function: linear; animation-delay: var(--dl, 0s); animation-fill-mode: both; }
+@keyframes pass { 0% { transform: translateX(0); opacity: 0 } 8% { opacity: 1 } 90% { opacity: 1 } 100% { transform: translateX(270px); opacity: 0 } }
+@keyframes drop { 0% { transform: translate(0,0); opacity: 0 } 8% { opacity: 1 } 45% { transform: translate(135px,0) } 70% { transform: translate(140px,58px); opacity: 1 } 80%,100% { transform: translate(140px,58px); opacity: 0 } }
+@keyframes hop { 0% { transform: translate(0,0) } 20% { transform: translate(80px,0) } 40% { transform: translate(160px,0) } 60% { transform: translate(240px,0) } 80% { transform: translate(120px,0) } 100% { transform: translate(0,0) } }
+@keyframes tunnel { 0% { transform: translateX(0); opacity: 0 } 10% { opacity: 1 } 85% { opacity: 1 } 100% { transform: translateX(230px); opacity: 0 } }
+@keyframes bounceoff { 0% { transform: translate(0,0) } 45% { transform: translate(90px,0) } 55% { transform: translate(80px,0) } 100% { transform: translate(0,0) } }
+@keyframes keyin { 0%,10% { transform: translateX(0) } 40%,100% { transform: translateX(118px) } }
+@keyframes shackle { 0%,42% { transform: translateY(0) } 55%,100% { transform: translateY(-10px) } }
+@keyframes appear { 0%,55% { opacity: 0 } 65%,100% { opacity: 1 } }
+@keyframes tries { 0% { transform: translateX(0) } 10% { transform: translateX(120px) } 20% { transform: translateX(100px) } 30% { transform: translateX(120px) } 40% { transform: translateX(100px) } 50% { transform: translateX(120px) } 60%,100% { transform: translateX(40px) } }
+@keyframes stamp { 0%,60% { opacity: 0; transform: scale(1.6) } 68%,100% { opacity: 1; transform: scale(1) } }
+@keyframes walk { 0% { transform: translateX(0) } 25% { transform: translateX(80px) } 50% { transform: translateX(160px) } 75% { transform: translateX(240px) } 100% { transform: translateX(0) } }
+@keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+@keyframes buzz { 0%,70% { transform: translateX(0) } 74% { transform: translateX(-3px) } 78% { transform: translateX(3px) } 82% { transform: translateX(-3px) } 86%,100% { transform: translateX(0) } }
+@keyframes fill { 0% { transform: scaleX(0) } 100% { transform: scaleX(1) } }
+@keyframes redat { 0%,70% { fill: #2a2350 } 72%,100% { fill: #ff5f6d } }
+@keyframes alertshow { 0%,72% { opacity: 0 } 76%,100% { opacity: 1 } }
+.scale-x { transform-origin: left center; transform-box: fill-box; }
+.cs { transform-origin: center; transform-box: fill-box; }
+@media (prefers-reduced-motion: reduce) { .mv { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Lab <span>House</span></h1>
+    <div class="tag">Alonzo's homelab, as a house</div>
+  </header>
+  <p class="intro">My server is a house. Every program is a room or a worker. Tap a room to see what it does, or hit Tour.</p>
+  <div class="controls">
+    <button class="btn" id="tour">▶ Tour</button>
+    <button class="btn" id="visit">Follow a website visit</button>
+  </div>
+
+  <div class="house" id="house"></div>
+  <div class="legend">
+    <span><i style="background:var(--teal)"></i>Traffic + addresses</span>
+    <span><i style="background:var(--coral)"></i>Security</span>
+    <span><i style="background:var(--purple)"></i>Fun stuff</span>
+  </div>
+
+  <section class="panel" id="panel" aria-live="polite"></section>
+</div>
+
+<script>
+const ROOMS = [
+  { id:"sorter", col:"teal", name:"Mail sorter", tool:"Pi-hole", sub:"tosses junk mail",
+    what:"Every time a device opens a site, it first asks for that site's address (DNS). Pi-hole sees every one of those questions. If it's an ad or tracker, it answers \"doesn't exist,\" so the ad never even loads.",
+    lab:"Runs in Docker on the Wyse. About 1 in 4 lookups from my devices are ads or trackers (24% blocked).",
+    sec:"Blocking trackers at the DNS level protects every device at once, even ones you can't install an ad blocker on." },
+  { id:"book", col:"teal", name:"Address book", tool:"Unbound", sub:"finds real addresses",
+    what:"When a lookup isn't junk, Unbound finds the real address itself. It asks the internet's root servers, then .com, then the site, instead of asking Google or my ISP.",
+    lab:"Runs on the Wyse at 127.0.0.1:5335. It's Pi-hole's only upstream.",
+    sec:"DNSSEC: Unbound checks each answer's digital signature, so nobody can slip me a fake address." },
+  { id:"tunnel", col:"teal", name:"Secret tunnel", tool:"Tailscale", sub:"only my devices",
+    what:"A private, encrypted tunnel between my devices, wherever they are. My phone at work can reach the house like it's in the next room.",
+    lab:"5 devices on my tailnet. The Wyse can also be an exit node, so my traffic leaves through my house on public Wi-Fi.",
+    sec:"No ports opened on my router. Strangers can't even see the house from the internet: attack surface reduction." },
+  { id:"door", col:"coral", name:"Keyed front door", tool:"SSH", sub:"my keys only",
+    what:"The remote control for the house. I type commands from my laptop or phone and they run on the Wyse.",
+    lab:"Key-only login: passwords are turned off. My laptop and my phone each have their own key.",
+    sec:"Lose my phone? I delete one line and only that key stops working. That's revocation." },
+  { id:"camera", col:"coral", name:"Camera guard", tool:"CrowdSec", sub:"bans intruders",
+    what:"Watches the security footage (logs). If someone tries key after key on the door, it bans them at the firewall.",
+    lab:"I attacked myself from my phone with a fake user. CrowdSec flagged ssh-bf (brute force) and banned my phone's IP.",
+    sec:"IDS + IPS: the engine detects, the bouncer blocks. Neighbors share mugshots through a community blocklist." },
+  { id:"rounds", col:"coral", name:"Guard on rounds", tool:"Uptime Kuma", sub:"texts me if a room goes dark",
+    what:"Knocks on every room once a minute. If a door doesn't answer, it texts my phone. When the room's back, it texts me again.",
+    lab:"4 monitors, including a real DNS question that tests Pi-hole and Unbound together. Fire drill passed: DOWN and UP alerts hit my locked phone.",
+    sec:"Availability, the A in the CIA triad. You can't fix what you don't know is broken." },
+  { id:"theater", col:"purple", name:"Home theater", tool:"Jellyfin", sub:"my own Netflix",
+    what:"My personal streaming server. My movies and shows, on any device, with profiles for me and my family.",
+    lab:"Runs in Docker, media stored on the 1.8TB drive, reachable anywhere over the secret tunnel.",
+    sec:"My data stays on my hardware, not someone else's cloud." },
+  { id:"lobby", col:"purple", name:"Lobby directory", tool:"Homepage", sub:"every room on one board",
+    what:"One page with a tile for every room: live Pi-hole stats, guard status, weather, and links to my study games.",
+    lab:"Purple theme with a custom background. Status dots go green when a service answers.",
+    sec:"API keys live in a locked file (chmod 600). The page only references them, so they never show up on GitHub." },
+];
+const COL = { teal:"#4fd1c5", coral:"#ff8a6b", purple:"#a78bfa" };
+const DARK = { teal:"#0f2f33", coral:"#3a1e22", purple:"#2a2150" };
+let sel = "sorter", tourTimer = null;
+
+function houseSVG(){
+  const w = 680, rx = [70, 350], ry = [150, 226, 302, 378], rw = 260, rh = 62;
+  let rooms = ROOMS.map((r,i) => {
+    const x = rx[i % 2], y = ry[Math.floor(i / 2)];
+    return `<g class="room${r.id === sel ? " sel" : ""}" data-id="${r.id}" tabindex="0" role="button" aria-label="${r.name}: ${r.tool}">
+      <rect x="${x}" y="${y}" width="${rw}" height="${rh}" rx="10" fill="${DARK[r.col]}" stroke="${COL[r.col]}" stroke-width="1"/>
+      <text x="${x + rw/2}" y="${y + 25}" text-anchor="middle" fill="#ece8fb" font-family="Archivo, sans-serif" font-weight="800" font-size="19">${r.name}</text>
+      <text x="${x + rw/2}" y="${y + 47}" text-anchor="middle" fill="${COL[r.col]}" font-family="JetBrains Mono, monospace" font-size="14">${r.tool}</text>
+    </g>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${w} 470" role="img" aria-label="The homelab drawn as a house with eight rooms">
+    <polygon points="40,138 340,40 640,138" fill="#1b1535" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="340" y="104" text-anchor="middle" fill="#ece8fb" font-family="Archivo, sans-serif" font-weight="800" font-size="22">My Wyse = the house</text>
+    <rect x="55" y="138" width="570" height="314" rx="6" fill="#16112c" stroke="#352a62" stroke-width="1.5"/>
+    ${rooms}
+  </svg>`;
+}
+
+/* ---------- mini scenes (viewBox 380x170) ---------- */
+const T = (x,y,s,c="#a99fd0",sz=12,anchor="middle",w=400) => `<text x="${x}" y="${y}" text-anchor="${anchor}" fill="${c}" font-family="JetBrains Mono, monospace" font-size="${sz}" font-weight="${w}">${s}</text>`;
+const env = (cls, color, label, delay, dur) => `<g class="mv" style="animation-name:${cls};--dl:${delay}s;--d:${dur}s"><rect x="40" y="62" width="34" height="22" rx="3" fill="${color}"/>${T(57,77,label,"#120d24",10,"middle",600)}</g>`;
+const SCENES = {
+  sorter: () => `${T(40,40,"internet","#a99fd0",12,"start")}${T(340,40,"your phone","#a99fd0",12,"end")}
+    <rect x="170" y="50" width="40" height="46" rx="6" fill="#0f2f33" stroke="#4fd1c5"/>${T(190,112,"Pi-hole","#4fd1c5",11)}
+    <rect x="160" y="128" width="60" height="26" rx="4" fill="#3a1e22" stroke="#ff5f6d"/>${T(190,146,"blocked","#ff5f6d",11)}
+    ${env("pass","#57e39b","OK",0,4)}${env("drop","#ff5f6d","AD",1,4)}${env("pass","#57e39b","OK",2,4)}${env("drop","#ff5f6d","AD",3,4)}`,
+  book: () => {
+    const nodes = ["Unbound","root","  .com","espn.com"];
+    return nodes.map((n,i) => `<rect x="${20 + i*80 + i*8}" y="60" width="78" height="40" rx="6" fill="${i ? "#241c45" : "#0f2f33"}" stroke="${i ? "#6d6496" : "#4fd1c5"}"/>${T(59 + i*88,85,n.trim(),"#ece8fb",11)}`).join("")
+      + `<circle class="mv" style="animation-name:hop;--d:4s" cx="59" cy="120" r="7" fill="#ffc15e"/>` + T(190,150,"asks each level, checks the signature","#a99fd0",11);
+  },
+  tunnel: () => `<rect x="20" y="70" width="60" height="40" rx="6" fill="#241c45" stroke="#a78bfa"/>${T(50,95,"phone","#ece8fb",11)}
+    <rect x="300" y="60" width="60" height="60" rx="6" fill="#16112c" stroke="#a78bfa"/>${T(330,95,"house","#ece8fb",11)}
+    <rect x="84" y="78" width="212" height="24" rx="12" fill="#0f2f33" stroke="#4fd1c5"/>
+    <circle class="mv" style="animation-name:tunnel;--d:2.6s" cx="70" cy="90" r="6" fill="#57e39b"/>
+    <circle class="mv" style="animation-name:bounceoff;--d:2.6s" cx="40" cy="40" r="6" fill="#ff5f6d"/>${T(140,44,"stranger: can't get in","#ff5f6d",11,"start")}
+    ${T(190,148,"encrypted tunnel (WireGuard)","#a99fd0",11)}`,
+  door: () => `<g class="mv" style="animation-name:keyin;--d:3.2s"><circle cx="70" cy="85" r="12" fill="none" stroke="#ffc15e" stroke-width="4"/><rect x="82" y="82" width="40" height="6" fill="#ffc15e"/><rect x="110" y="88" width="5" height="8" fill="#ffc15e"/></g>
+    ${T(70,120,"my key","#ffc15e",11)}
+    <path class="mv" style="animation-name:shackle;--d:3.2s" d="M232 74 v-14 a18 18 0 0 1 36 0 v14" fill="none" stroke="#ff8a6b" stroke-width="5"/>
+    <rect x="224" y="72" width="52" height="42" rx="6" fill="#3a1e22" stroke="#ff8a6b" stroke-width="2"/>
+    <g class="mv" style="animation-name:appear;--d:3.2s">${T(250,150,"me@Wyse:~$","#57e39b",14,"middle",600)}</g>
+    ${T(330,40,"no password","#a99fd0",11)}${T(330,56,"to guess","#a99fd0",11)}`,
+  camera: () => `<rect x="180" y="55" width="50" height="70" rx="4" fill="#3a1e22" stroke="#ff8a6b" stroke-width="2"/>${T(205,142,"SSH door","#ff8a6b",11)}
+    <circle class="mv" style="animation-name:tries;--d:4.5s" cx="50" cy="90" r="9" fill="#ff5f6d"/>${T(50,70,"hacker","#ff5f6d",11)}
+    <g class="mv cs" style="animation-name:stamp;--d:4.5s"><rect x="250" y="70" width="110" height="38" rx="6" fill="none" stroke="#ff5f6d" stroke-width="3"/>${T(305,96,"BANNED","#ff5f6d",16,"middle",600)}</g>
+    ${T(305,40,"ssh-bf detected","#a99fd0",11)}`,
+  rounds: () => {
+    const names = ["Pi-hole","DNS","Jellyfin","Home"];
+    return names.map((n,i) => `<rect x="${30 + i*80}" y="50" width="66" height="46" rx="6" fill="#2a2350" stroke="#6d6496" ${i === 2 ? 'class="mv" style="animation-name:redat;--d:5s"' : ""}/>${T(63 + i*80,78,n,"#ece8fb",11)}`).join("")
+      + `<circle class="mv" style="animation-name:walk;--d:5s" cx="63" cy="116" r="8" fill="#ff8a6b"/>${T(63,140,"guard","#ff8a6b",11)}`
+      + `<g class="mv" style="animation-name:alertshow;--d:5s"><g class="mv" style="animation-name:buzz;--d:5s"><rect x="250" y="122" width="120" height="34" rx="8" fill="#241c45" stroke="#ff5f6d"/>${T(310,144,"Jellyfin DOWN","#ff5f6d",12,"middle",600)}</g></g>`;
+  },
+  theater: () => `<rect x="60" y="30" width="260" height="100" rx="8" fill="#241c45" stroke="#a78bfa" stroke-width="2"/>
+    <polygon class="mv" style="animation-name:blink;--d:1.6s" points="175,58 175,102 212,80" fill="#a78bfa"/>
+    <rect x="60" y="144" width="260" height="6" rx="3" fill="#352a62"/><rect class="mv scale-x" style="animation-name:fill;--d:6s" x="60" y="144" width="260" height="6" rx="3" fill="#a78bfa"/>`,
+  lobby: () => {
+    const t = ["Pi-hole","Unbound","Tailscale","Kuma","CrowdSec","Jellyfin"];
+    return t.map((n,i) => { const x = 30 + (i % 3) * 110, y = 30 + Math.floor(i / 3) * 62;
+      return `<rect x="${x}" y="${y}" width="100" height="50" rx="8" fill="#241c45" stroke="#6d6496"/>${T(x + 50,y + 30,n,"#ece8fb",11)}<circle class="mv" style="animation-name:blink;--d:2s;--dl:${i * .3}s" cx="${x + 88}" cy="${y + 12}" r="4" fill="#57e39b"/>`; }).join("");
+  },
+};
+
+function render(){
+  document.getElementById("house").innerHTML = houseSVG();
+  document.querySelectorAll(".room").forEach(g => {
+    g.onclick = () => { stopTour(); pick(g.dataset.id); };
+    g.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); stopTour(); pick(g.dataset.id); } };
+  });
+  const i = ROOMS.findIndex(r => r.id === sel), r = ROOMS[i];
+  document.getElementById("panel").innerHTML = `
+    <div class="kicker" style="color:${COL[r.col]}">Room ${i + 1} of ${ROOMS.length}</div>
+    <h2>${r.name}</h2>
+    <p class="real">Real name: <b>${r.tool}</b>, ${r.sub}</p>
+    <div class="stage"><svg viewBox="0 0 380 170" role="img" aria-label="Animation of ${r.tool}">${SCENES[r.id]()}</svg></div>
+    <p>${r.what}</p>
+    <p class="lab">${r.lab}</p>
+    <p class="sec">${r.sec}</p>
+    <div class="nav"><button class="btn" id="prev">← Prev</button><button class="btn" id="next">Next →</button></div>`;
+  document.getElementById("prev").onclick = () => { stopTour(); step(-1); };
+  document.getElementById("next").onclick = () => { stopTour(); step(1); };
+}
+function pick(id){ sel = id; render(); }
+function step(d){ const i = ROOMS.findIndex(r => r.id === sel); sel = ROOMS[(i + d + ROOMS.length) % ROOMS.length].id; render(); }
+
+const VISIT = ["tunnel","sorter","book"];
+function startTour(list){
+  stopTour();
+  let k = 0; sel = list[0]; render();
+  tourTimer = setInterval(() => { k++; if (k >= list.length) { stopTour(); return; } sel = list[k]; render(); }, 7000);
+}
+function stopTour(){ if (tourTimer) { clearInterval(tourTimer); tourTimer = null; } document.getElementById("tour").classList.remove("on"); document.getElementById("visit").classList.remove("on"); }
+document.getElementById("tour").onclick = e => { const on = !!tourTimer; stopTour(); if (!on) { startTour(ROOMS.map(r => r.id)); e.currentTarget.classList.add("on"); } };
+document.getElementById("visit").onclick = e => { const on = !!tourTimer; stopTour(); if (!on) { startTour(VISIT); e.currentTarget.classList.add("on"); } };
+render();
+</script>
+</body>
+</html>

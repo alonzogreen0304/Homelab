@@ -79,6 +79,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 - [Acronyms cheat sheet](acronyms.md): 158 Security+ and homelab acronyms with plain-English meanings
 - [Know Your Lab](https://alonzogreen0304.github.io/Homelab/games/know-your-lab.html): Learn cards (simple explanation + analogy + where it is in my lab) and a 37-question quiz on everything I've built ([source](games/know-your-lab.html))
+- [Lab House](https://alonzogreen0304.github.io/Homelab/games/lab-house.html): my whole lab explained as a house. Tap a room (mail sorter = Pi-hole, camera guard = CrowdSec, etc.) for an animation, what it does, how it's set up in my lab, and the security idea behind it. Includes a guided tour and a "follow a website visit" mode ([source](games/lab-house.html))
 - [Command Center](https://alonzogreen0304.github.io/Homelab/games/command-center.html): every command from my lab (51 of them). **Learn** cards (what it does, analogy, where I used it, flag-by-flag breakdown), a **Quiz** (what does it do, which command, and 20 "what we did" troubleshooting scenarios), and **Type It**, where I type commands from memory. Tracks XP, streaks, and per-command mastery ([source](games/command-center.html))
 - [Acronym Breach](https://alonzogreen0304.github.io/Homelab/games/acronym-breach.html): a terminal-style hacker game for drilling them. Play it in the browser, or add it to your phone's home screen ([source](games/acronym-breach.html))
 
