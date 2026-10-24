@@ -110,6 +110,8 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [x] Intrusion detection + prevention (CrowdSec)
 - [ ] Auto power-on after outages: BIOS AC Recovery → Power On ([safety net 4](wyse-safety-net.md))
 - [ ] Wyse + extender on the APC UPS battery outlets; later `apcupsd` for clean shutdowns ([safety net 7](wyse-safety-net.md))
+- [ ] AI SOC analyst: nightly read-only Claude briefing of CrowdSec / Uptime Kuma / disk status pushed to my phone via ntfy (locked-down user, key in `chmod 600`, logs treated as untrusted for prompt injection)
+- [ ] CrowdSec `DOCKER-USER` fix + re-test ([notes](crowdsec.md))
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 
