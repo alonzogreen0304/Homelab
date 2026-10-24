@@ -47,6 +47,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 24, 2026 | Custom neofetch logo (AZ + Matrix rain + heart + bat) shown at every login ([notes](ssh-setup.md)) |
 | Oct 24, 2026 | Custom purple login screen with live stats (uptime, disk, containers, CrowdSec bans); it immediately flagged the main disk at 86% ([notes](ssh-setup.md)) |
 | Oct 24, 2026 | Added an SSH legal warning banner ("Authorized access only"), a GRC control, and verified it from an attacker's view ([notes](ssh-setup.md)) |
 | Oct 24, 2026 | Closed CrowdSec's Docker side door (`DOCKER-USER` chain) and proved it with a self-expiring 2-minute ban on my own phone ([notes](crowdsec.md)) |
@@ -116,6 +117,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 - [ ] Wyse + extender on the APC UPS battery outlets; later `apcupsd` for clean shutdowns ([safety net 7](wyse-safety-net.md))
 - [ ] AI SOC analyst: nightly read-only Claude briefing of CrowdSec / Uptime Kuma / disk status pushed to my phone via ntfy (locked-down user, key in `chmod 600`, logs treated as untrusted for prompt injection)
 - [x] CrowdSec `DOCKER-USER` fix + re-test: bans now block containers too ([notes](crowdsec.md))
+- [ ] Find what grew the main disk from 79% to 86% (spotted by the new login screen)
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 

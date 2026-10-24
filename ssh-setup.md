@@ -18,6 +18,7 @@ SSH (Secure Shell) lets me open a terminal on my laptop and control the Wyse ove
 - [x] SSH from my iPhone (Termius) over Tailscale, using its own key (Oct 23, 2026)
 - [x] Legal warning banner shown before login (Oct 24, 2026)
 - [x] Custom purple login screen with live lab stats (Oct 24, 2026)
+- [x] Custom neofetch logo: AZ, Matrix rain, heart + bat (Oct 24, 2026)
 
 ## SSH from my phone (Oct 23, 2026)
 
@@ -108,6 +109,57 @@ sudo chmod -x /etc/update-motd.d/10-uname                         # the "Linux W
 **It already paid off:** the first time it ran, it showed the main disk at **86%** (it was 79% the day before), so I caught the growth right away.
 
 **Undo:** `sudo rm /etc/update-motd.d/20-alonzo-lab && sudo cp /etc/motd.bak /etc/motd && sudo chmod +x /etc/update-motd.d/10-uname`
+
+## Custom logo with neofetch (Oct 24, 2026)
+
+**Analogy:** the login screen above is the lobby's **health board** (how the house is doing). Neofetch is the house's **ID card**: what it's built from (OS, CPU, RAM), next to a logo. By default the logo is Debian's swirl, like the builder's stamp. I swapped in my own.
+
+**What neofetch is:** a tiny program that prints system info next to ASCII art (pictures made of text characters). It's the classic homelab screenshot.
+
+```bash
+sudo apt install neofetch -y      # tiny, a few hundred KB
+neofetch                           # shows the Debian logo + system info
+```
+
+**My own logo:** a text file of characters, where `${c1}`, `${c2}`, etc. are color slots:
+
+```text
+${c4}1  0   1 0   1  0  1   0 1  0
+${c4}0  1     1   0     0   1    1
+${c1}    _    _____  ${c4}1  0  1    0  1
+${c1}   / \  |__  /  ${c4}0     0 1  1
+${c1}  / _ \   / /   ${c4}1  1  1 0     0
+${c1} / ___ \ / /_   ${c4}   0    1  1  1
+${c1}/_/   \_\____|  ${c4}0  1  0    0
+${c2} ALONZO'S LAB   ${c4}1     1 0  1  0
+
+${c1} ,d88b.d88b,   ${c3} .       ^.^       .
+${c1} 88888888888   ${c3} 8b.    d888b    .d8
+${c1} `Y8888888Y'   ${c3} 888b..d88888b..d888
+${c1}   `Y888Y'     ${c3} 8888888888888888888
+${c1}     `Y'       ${c3} `Y8P' `Y888P' `Y8P'
+${c3}                         V
+${c4} here for a good time :)
+```
+
+Saved to `~/.config/neofetch/az.txt` (my own folder, so no `sudo`). Colors: `5` purple (AZ, heart), `6` teal (ALONZO'S LAB), `8` dark gray (bat), `2` green (Matrix-style rain + text). The rain is plain 1s and 0s on purpose: fancy Matrix symbols are double-width on some screens and break the alignment.
+
+**Made it permanent:**
+```bash
+neofetch > /dev/null      # first run creates the settings file
+sed -i 's|^image_source=.*|image_source="/home/me/.config/neofetch/az.txt"|; s|^ascii_colors=.*|ascii_colors=(5 6 8 2)|' ~/.config/neofetch/config.conf
+echo 'neofetch' >> ~/.bashrc   # run it at the start of every session
+```
+
+**What `~/.bashrc` is:** a to-do list my account runs every time I open a terminal. **Analogy:** a morning routine. Adding `neofetch` to it is like adding "look at the house's ID card" to the routine.
+
+**What I learned:**
+- Text files + color codes = terminal art. Spacing matters because every character is the same width.
+- Settings live in plain text files (`config.conf`). `sed` edits them without opening an editor.
+- I iterated on the design (basketball, eye with a `$` pupil, comedy/tragedy masks, heart + bat) before settling. Cheap to change, because it's just a text file.
+- I skipped turning a TV-show screenshot into the logo: it's someone else's copyrighted image. For a photo logo I'd use my own picture with a tool like `chafa`.
+
+**Undo:** `sed -i '/^neofetch$/d' ~/.bashrc`
 
 ## One-time setup (on the Wyse, with a monitor)
 
