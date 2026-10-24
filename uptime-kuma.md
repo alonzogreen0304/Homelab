@@ -13,6 +13,8 @@ Uptime Kuma checks every service in my lab every 60 seconds and records whether 
 
 ## Install
 
+**Analogy:** Hiring the security guard and giving him a notebook (the database on the big drive). He can look at doors but gets no master keys (no Docker socket).
+
 Config in `/opt`, data on the big drive (same pattern as my other services):
 
 ```bash
@@ -47,6 +49,8 @@ Then I opened the web UI on port 3001 over Tailscale, chose **SQLite** (lightest
 **Why the DNS monitor matters most:** the Pi-hole web page can be up while DNS is broken. A real DNS query tests the whole chain, **Pi-hole → Unbound → root servers**, so it also covers Unbound (which only listens on localhost and can't be checked directly from a container).
 
 ## Troubleshooting
+
+**Analogy:** The guard was marking a door as dark because he didn't trust its fake-looking ID (self-signed cert), and couldn't call a phone number with a typo in it (the resolver box).
 
 | Problem | Cause | Fix |
 |---|---|---|

@@ -10,6 +10,8 @@
 
 ## Summary
 
+**Analogy:** First time leaving the house and calling home. I learned which doors must be unlocked, and that one bad setting can cut off the phone line.
+
 I turned on the Wyse with no monitor attached for the first time and tried to reach it from my phone. Two things went wrong, and both taught me something:
 
 1. My phone lost all internet because Tailscale was set to send everything through the Wyse (exit node), and the Wyse was offline.
@@ -20,6 +22,8 @@ After fixing both, the Wyse came online by itself, with no login, and I opened t
 ---
 
 ## Step 1: My phone's internet got blocked
+
+**Analogy:** The exit node sends all my phone's traffic through the house. With the house offline, it was like a tunnel with a wall at the end: nothing could get out. Turning the exit node off took the regular road again.
 
 <img src="images/tailscale-exit-node-offline.png" width="300" alt="Tailscale app showing EXIT NODE OFFLINE, wyse, internet traffic is blocked">
 
@@ -34,6 +38,8 @@ After fixing both, the Wyse came online by itself, with no login, and I opened t
 ---
 
 ## Step 2: Figured out why the Wyse was offline
+
+**Analogy:** The lights were on but nobody answered: power was fine, but the ethernet cable (its phone line) wasn't connected.
 
 The `wyse` machine had a **gray dot** (offline) in the Tailscale app.
 
@@ -53,6 +59,8 @@ The `wyse` machine had a **gray dot** (offline) in the Tailscale app.
 
 ## Step 3: The Wyse came online by itself
 
+**Analogy:** Once the cable was in, the house picked up the phone line on its own. No one had to dial in.
+
 <img src="images/tailscale-wyse-online.png" width="300" alt="Tailscale app showing wyse online with a green dot and exit node disabled">
 
 The `wyse` machine turned **green**: no monitor, no keyboard, nobody logged in.
@@ -70,6 +78,8 @@ Note the exit node now shows **Enable** instead of the red banner. It's off, whi
 
 ## Step 4: Opened Pi-hole from my phone through Tailscale
 
+**Analogy:** Walking through the secret tunnel from my phone straight into the house's mailroom (Pi-hole's dashboard).
+
 <img src="images/pihole-over-tailscale.png" width="300" alt="Pi-hole login page loaded on iPhone through the Tailscale IP">
 
 Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page loaded.
@@ -86,6 +96,8 @@ Opened `http://<wyse-tailscale-ip>/admin` in Safari and the Pi-hole login page l
 ---
 
 ## Step 5: Tailscale broke my internet on my main router
+
+**Analogy:** Tailscale told my phone to use a phone book (DNS) it couldn't actually reach from that network. Every lookup failed, so it looked like "no internet." I found it by changing one thing at a time, like flipping breakers one by one to find the one that kills the lights.
 
 **What happened:** my home has two networks: the main router, and a Wi-Fi extender (the Wyse is plugged into the extender by ethernet). On the extender's network everything worked. On the main router, my phone said **"No Internet Connection"** whenever Tailscale was on.
 
@@ -116,6 +128,8 @@ Now devices use whatever network they're on for normal lookups, and Tailscale on
 ---
 
 ## Requirements for remote access to work
+
+**Analogy:** A chain of doors: power on, cable in, Tailscale logged in. If any single door is locked, you can't get through.
 
 1. Tailscale toggle **on** in the phone app
 2. Wyse **powered on with ethernet plugged in before boot**

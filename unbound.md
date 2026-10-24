@@ -18,6 +18,8 @@ My phone → Pi-hole (blocks ads) → Unbound → root servers → .com servers 
 
 ## Why it matters for security
 
+**Analogy:** Instead of asking a big company's phone book (Google DNS) for every address, which tells them every site I visit, I look addresses up myself, starting from the source.
+
 - **Privacy:** no third-party DNS provider (Google, Cloudflare, my ISP) logs every lookup
 - **DNSSEC validation:** Unbound checks cryptographic signatures and **rejects forged answers**, which protects against DNS spoofing / cache poisoning
 - **No single point of trust:** answers come from the authoritative servers themselves
@@ -33,6 +35,8 @@ My phone → Pi-hole (blocks ads) → Unbound → root servers → .com servers 
 | Prefetch | On | Refreshes popular entries before they expire, so they stay fast |
 
 ## Install steps
+
+**Analogy:** Hiring my own private librarian (Unbound) and telling the mail sorter (Pi-hole) to ask the librarian instead of Google.
 
 ```bash
 # 1. Write config first (127.0.0.1:5335 so it doesn't fight Pi-hole for port 53)
@@ -51,6 +55,8 @@ sudo docker exec pihole pihole-FTL --config dns.upstreams '["127.0.0.1#5335"]'
 ```
 
 ## Testing
+
+**Analogy:** Asking the librarian a few questions, including one with a deliberately forged answer, to prove she catches fakes.
 
 | Test | Command | Result |
 |---|---|---|

@@ -10,11 +10,15 @@
 
 ## Part 1: Exit node verified
 
+**Analogy:** Proved the tunnel really exits through my house: with it on, the internet saw my home ISP (Comcast) instead of my phone carrier.
+
 Approved the Wyse as an exit node in the Tailscale admin console and tested from my phone on cellular. ISP showed **Comcast** (home) with the exit node on and **T-Mobile** (carrier) with it off. Details and screenshots in [tailscale.md](tailscale.md).
 
 ---
 
 ## Part 2: Pi-hole was gone
+
+**Analogy:** After a reboot, Pi-hole's room was empty. Docker had opened the apartments before the storage unit (the big drive) was unlocked, so Pi-hole's stuff wasn't there to move in.
 
 ### Symptom
 After pointing Tailscale DNS at the Wyse, my phone said "can't connect to server." Then:
@@ -54,6 +58,8 @@ Settings, blocklists, and history all came back.
 
 ### Permanent fix: make Docker wait for the drive
 
+**Analogy:** Telling the landlord (Docker) not to open the building until the storage unit (the drive) is unlocked. That's `RequiresMountsFor`.
+
 ```bash
 sudo mkdir -p /etc/systemd/system/docker.service.d
 printf '[Unit]\nRequiresMountsFor=/mnt/agents\n' | sudo tee /etc/systemd/system/docker.service.d/wait-for-drive.conf
@@ -65,6 +71,8 @@ sudo systemctl daemon-reload
 ---
 
 ## Part 3: Pi-hole ignoring Tailscale devices
+
+**Analogy:** Pi-hole was a doorman told to only answer neighbors. My Tailscale devices have 100.x addresses, so it treated them as strangers. Listening mode ALL told him: answer everyone who can reach the door (which is only my home network and my tailnet).
 
 ### Symptom
 Watched Pi-hole live:
@@ -100,6 +108,8 @@ Result: the live feed immediately showed real lookups from my laptop (`query[A] 
 - ✅ **Phone uses Pi-hole over Tailscale too.** At first it sent nothing, even though the app said "Using Tailscale DNS" (the MagicDNS name `wyse` didn't resolve either). After turning off iCloud Private Relay, the fix was: turn **Use Tailscale DNS** off → **restart the iPhone** → connect Tailscale → turn **Use Tailscale DNS** back on. Right after, the live feed showed `query[A] clients4.google.com from <phone-tailscale-ip>`
 
 ### Proof: ads blocked on my phone
+
+**Analogy:** Watching the mail sorter throw out junk mail addressed to my phone, live.
 
 Opened an ad-heavy site on my phone and watched the live feed:
 

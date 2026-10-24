@@ -10,11 +10,15 @@
 
 ## Part 1: Disk space cleanup
 
+**Analogy:** The Wyse's 6.4GB drive is a tiny closet. It was 93% full, and a full closet means nothing new fits (updates, logs, Pi-hole data).
+
 ### What triggered it
 
 The Pi-hole dashboard showed a diagnosis message: **`DISK_EXTENDED: Disk shortage ahead`**. The Wyse only has a ~6.4GB system drive, and it was **92–93% full** (about 460MB free). A full drive can break Pi-hole's logging, make updates fail, and even cause boot problems.
 
 ### Step 1: Measure first
+
+**Analogy:** Check how full the closet is (`df`) before you start throwing things out.
 
 ```bash
 df -h /
@@ -22,6 +26,8 @@ df -h /
 `6.4G size, 5.6G used, 462M avail, 93%`
 
 ### Step 2: Safe, standard cleanup
+
+**Analogy:** Taking out the obvious trash first: empty boxes (apt cache), unused furniture (old packages), and a pile of old receipts (logs).
 
 ```bash
 sudo apt clean                          # delete downloaded update packages
@@ -33,6 +39,8 @@ sudo journalctl --vacuum-size=100M      # shrink system logs to 100MB
 The log cleanup alone freed **184.9MB**. Result: **90%, 647MB free**. Better, but still tight.
 
 ### Step 3: Find what's actually using the space
+
+**Analogy:** Weighing each box in the closet (`du`) to find the heavy one instead of guessing.
 
 ```bash
 sudo du -xh / --max-depth=2 2>/dev/null | sort -h | tail -15
@@ -55,6 +63,8 @@ The biggest item was **`~/.npm-global` at 486MB**: globally installed Node.js to
 
 ### Step 4: Investigate before deleting
 
+**Analogy:** Before throwing out a box, check nobody is using what's inside. The "old" folder turned out to be a duplicate, and the live copy was in the other room (the big drive).
+
 Instead of deleting or moving it right away, I checked what was actually in use:
 
 ```bash
@@ -73,6 +83,8 @@ du -sh /mnt/agents/npm-global
 **Good catch:** my original plan was to copy `~/.npm-global` onto the big drive. If I had done that, I would have overwritten the live install that was running. Checking first saved me from breaking it.
 
 ### Step 5: Remove the duplicate safely (rename → test → delete)
+
+**Analogy:** Put a sticky note saying OLD on the box and leave it for a bit. If nothing breaks, then throw it out. A rename is reversible; the trash truck isn't.
 
 ```bash
 mv ~/.npm-global ~/.npm-global.old      # rename instead of deleting
@@ -98,6 +110,8 @@ df -h /
 
 ## Part 2: SSH from my laptop
 
+**Analogy:** Installing a remote control for the Wyse, so I can work on it from my laptop without a monitor or keyboard.
+
 ### Install SSH on the Wyse
 
 ```bash
@@ -117,6 +131,8 @@ The install automatically:
    ```
 
 ### The security check: host key fingerprint
+
+**Analogy:** The fingerprint is the Wyse's ID card. On the first visit, I compared it to the real one so I knew I wasn't talking to an impostor pretending to be my Wyse (a man-in-the-middle).
 
 On the first connection, SSH warned:
 
@@ -142,6 +158,8 @@ Logged in, saw `me@Wyse:~$` on my laptop, and ran `df -h /` remotely to confirm 
 
 ## Part 3: SSH key login + disabling passwords
 
+**Analogy:** Swapping a door code (password) that anyone could guess for a physical key only I have. Then removing the keypad completely.
+
 ### Make a key pair on the laptop (PowerShell)
 
 ```powershell
@@ -162,6 +180,8 @@ type $env:USERPROFILE\.ssh\id_ed25519.pub | ssh me@<wyse-tailscale-ip> "mkdir -p
 Then `ssh me@<wyse-tailscale-ip>` logged in **without the Wyse password**, so keys worked.
 
 ### Turn off password logins (with a safety net)
+
+**Analogy:** Changing the locks while standing inside with the door propped open (one SSH session kept open). If the new lock jams, I'm not stuck outside.
 
 Kept my working SSH session open the whole time so I couldn't lock myself out. Created a drop-in config file:
 
@@ -191,6 +211,8 @@ Result: **`Permission denied (publickey)`**. Password logins are blocked, so onl
 
 ## Part 4: Open-port audit
 
+**Analogy:** Walking the whole building and writing down every unlocked door, then asking "why is this one open?"
+
 ```bash
 sudo ss -tlnp
 ```
@@ -210,6 +232,8 @@ This lists every program waiting for network connections, which is basically an 
 
 ## Part 5: IP forwarding (Tailscale exit node fix)
 
+**Analogy:** Linux won't pass mail between networks unless you tell it to. IP forwarding turns the Wyse into a mail relay so it can be an exit node.
+
 **Problem:** `tailscale status` warned *"Subnet routing is enabled, but IP forwarding is disabled."* Linux won't pass traffic between networks unless forwarding is turned on.
 
 **Another lesson:** my SSH connection dropped while I was inside `nano`, and the lines I pasted after that went into **Windows PowerShell** instead, which threw red errors. The PowerShell window got scrambled, so I closed it, opened a fresh one, and switched to editor-free commands so a dropped connection can't cause damage:
@@ -227,6 +251,8 @@ The forwarding warning is **gone**, and the settings survive reboots since they 
 ---
 
 ## Part 6: allow-hotplug
+
+**Analogy:** Before, the network only worked if the cable was plugged in at the exact moment the Wyse woke up. Now it's like a lamp with a motion sensor: plug the cable in anytime and it comes on.
 
 **Problem from earlier today:** with `auto enp4s0`, the ethernet port only comes up if the cable is plugged in **at boot**.
 

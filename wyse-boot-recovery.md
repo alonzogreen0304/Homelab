@@ -10,6 +10,8 @@
 
 ## Summary
 
+**Analogy:** The Wyse was a car that wouldn't start. I checked one system at a time (fuel, battery, engine) instead of guessing, and fixed four separate problems.
+
 My Wyse server stopped booting properly and only showed a black screen or text console. I troubleshot it hands-on and found **four separate problems stacked on top of each other**: a missing external drive breaking boot, no desktop environment installed, the ethernet port not set to start at boot, and a kernel update that left the new kernel unbootable. I fixed all four permanently: the server now boots cleanly on the latest kernel, straight to a desktop, with networking up automatically.
 
 ---
@@ -26,6 +28,8 @@ My Wyse server stopped booting properly and only showed a black screen or text c
 ## Troubleshooting and Fixes
 
 ### Issue 1: Emergency mode from a missing drive
+
+**Analogy:** `/etc/fstab` is a checklist the computer reads at startup: "make sure the big drive is here." The drive was missing, so it refused to finish starting, like a pilot who won't take off because one item on the checklist fails. `nofail` marks that item as "nice to have," not "must have."
 
 **Investigation**
 ```bash
@@ -49,6 +53,8 @@ systemctl daemon-reload
 
 ### Issue 2: Server offline (no network)
 
+**Analogy:** The phone was fine, but the phone line wasn't plugged into the wall. No cable = no network, no matter what software does.
+
 **Investigation**
 ```bash
 ping -c 3 1.1.1.1     # result: Network is unreachable
@@ -71,6 +77,8 @@ iface enp4s0 inet dhcp
 
 ### Issue 3: No desktop (text only)
 
+**Analogy:** The house had power and plumbing but no furniture. Linux was running fine; it just had no desktop program installed to show windows.
+
 **Investigation**
 ```bash
 systemctl get-default        # graphical.target
@@ -86,6 +94,8 @@ apt install xfce4 lightdm -y
 ```
 
 ### Issue 4: Kernel panic after updates
+
+**Analogy:** The kernel is the car's engine, and the initramfs is the key that starts it. The update installed a new engine but a broken key. GRUB let me pick the old engine (old kernel) to drive home, then I cut a new key (rebuilt the initramfs).
 
 **Symptom:** `Kernel panic - VFS: Unable to mount root fs` on new kernel `6.1.0-54`
 

@@ -4,6 +4,8 @@
 
 ## What it is (simple version)
 
+**Analogy:** SSH is a secure remote control for the Wyse's terminal. Everything I type is encrypted on the way.
+
 SSH (Secure Shell) lets me open a terminal on my laptop and control the Wyse over the network, encrypted. No monitor, keyboard, or cable swapping needed. Servers in real companies are managed this way.
 
 **Why not just plug the laptop into the Wyse with HDMI?** Laptop HDMI ports only send video out, they can't receive it. SSH replaces the cable entirely.
@@ -16,6 +18,8 @@ SSH (Secure Shell) lets me open a terminal on my laptop and control the Wyse ove
 - [x] SSH from my iPhone (Termius) over Tailscale, using its own key (Oct 23, 2026)
 
 ## SSH from my phone (Oct 23, 2026)
+
+**Analogy:** Giving my phone its own key to the front door, instead of copying my laptop's. If I lose my phone, I change one lock, not every lock.
 
 Goal: control the Wyse from my phone anywhere (like at work), without turning password login back on.
 
@@ -70,6 +74,8 @@ Goal: control the Wyse from my phone anywhere (like at work), without turning pa
 
 ## Troubleshooting
 
+**Analogy:** Each error is a different reason the door won't open: nobody home (refused), wrong address (timed out), wrong key (permission denied), or the house's ID card changed (host identification changed).
+
 | Error | Meaning | Fix |
 |---|---|---|
 | `Connection refused` | SSH isn't installed or running on the Wyse | Redo setup step 2, then `sudo systemctl enable --now ssh` |
@@ -78,6 +84,8 @@ Goal: control the Wyse from my phone anywhere (like at work), without turning pa
 | `REMOTE HOST IDENTIFICATION HAS CHANGED` | The Wyse was reinstalled or its IP now points to a different device | Only if I know why: `ssh-keygen -R <wyse-ip>`, then reconnect |
 
 ## Rules over SSH
+
+**Analogy:** Don't saw off the branch you're sitting on. A network or firewall change can cut the very connection you're using to make it.
 
 - Don't run `reboot`, network changes, or firewall changes unless I mean it. If the network drops, I lose the connection and need the monitor again.
 - Follow the production rules in [wyse-safety-net.md](wyse-safety-net.md).

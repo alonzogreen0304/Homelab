@@ -4,11 +4,15 @@
 
 ## What it is (simple version)
 
+**Analogy:** A private, encrypted tunnel connecting all my devices, wherever they are. Only my devices can enter it, and nobody outside can see in.
+
 Tailscale creates a **private, encrypted network** between my devices, no matter where they are. My phone on cellular data can reach my home server like it's sitting next to it.
 
 It's a VPN, but much easier than a traditional one. No opening ports on my router and no complicated setup. Every device logs in with my account, gets its own private IP (starting with `100.`), and they can all talk to each other securely.
 
 ## Why it matters for security
+
+**Analogy:** Instead of cutting a door in the house that faces the street (port forwarding), I built a secret tunnel only my devices know about. Nothing for strangers to knock on.
 
 - **No port forwarding:** I don't expose my home server to the open internet, which is a big attack surface reduction
 - **Encrypted:** traffic between devices uses WireGuard encryption
@@ -29,6 +33,8 @@ sudo tailscale ip        # show this device's Tailscale IP
 ```
 
 ## Current status
+
+**Analogy:** The tunnel works, the exit node works, and I check the guest list (asset inventory) so no stranger's device sneaks into the tunnel.
 
 - ✅ Server connected and online
 - ✅ Reached Pi-hole from my phone through Tailscale ([log](remote-access-log.md))

@@ -8,6 +8,8 @@ Once my router points its DNS at Pi-hole, every device in the house depends on t
 
 ## Production rules: what runs where
 
+**Analogy:** The Wyse is the house everyone lives in (production). Risky experiments go in the garage workshop (VMs on my PC), so a mistake doesn't burn down the house.
+
 The Wyse isn't banned from learning. The rule is: **if it could break networking, DNS, or booting, it goes on a VM on my PC instead.**
 
 ### Safe on the Wyse
@@ -39,6 +41,8 @@ If I have to make a risky change on the Wyse anyway, I do it late at night, back
 
 ## Safety net 1: DHCP reservation (do this first)
 
+**Analogy:** Reserving a permanent parking spot for the Wyse, so its address never changes and devices can always find it.
+
 **What it does:** makes sure the Wyse always gets the same local IP. If its IP changed, every device would be pointing at a dead address.
 
 **Set it up**
@@ -53,6 +57,8 @@ If I have to make a risky change on the Wyse anyway, I do it late at night, back
 ---
 
 ## Safety net 2: Know the rollback before changing router DNS
+
+**Analogy:** Before rewiring the house, write down how to put the old wiring back.
 
 **What it does:** gets the house back online in about a minute if the Wyse ever dies.
 
@@ -74,6 +80,8 @@ If I have to make a risky change on the Wyse anyway, I do it late at night, back
 
 ## Safety net 3: Start small (per-device DNS)
 
+**Analogy:** Test the new sorter with one mailbox before routing the whole street's mail through it.
+
 **What it does:** tests Pi-hole on one or two devices before the whole house. If it breaks, only those devices are affected.
 
 **iPhone**
@@ -93,6 +101,8 @@ If I have to make a risky change on the Wyse anyway, I do it late at night, back
 
 ## Safety net 4: Auto power-on after an outage (BIOS)
 
+**Analogy:** A lamp that turns itself back on after a blackout, instead of waiting for someone to flip the switch.
+
 **What it does:** the Wyse turns itself back on when power returns, instead of staying off until someone presses the button.
 
 **Status:** ⬜ To do. Needs a monitor + keyboard one time.
@@ -111,6 +121,8 @@ If I have to make a risky change on the Wyse anyway, I do it late at night, back
 ---
 
 ## Safety net 5: Make sure Pi-hole restarts on its own
+
+**Analogy:** A worker who clocks back in automatically after every break or fire drill.
 
 **What it does:** Docker automatically starts Pi-hole after a reboot or crash.
 
@@ -138,6 +150,8 @@ sudo docker update --restart no pihole
 
 ## Safety net 6: Back up Pi-hole settings
 
+**Analogy:** A photocopy of the junk-mail rules kept somewhere else, so you're not rebuilding them from memory.
+
 **What it does:** saves blocklists and settings so I can restore them if the Wyse or its drive dies.
 
 **Back up**
@@ -151,6 +165,8 @@ sudo docker update --restart no pihole
 ---
 
 ## Safety net 7: Battery backup (UPS)
+
+**Analogy:** A backup generator for short blackouts. Paired with safety net 4, the house rides out flickers and restarts itself after long outages.
 
 **What it does:** keeps the Wyse (and ideally the router + modem) running through short power blips and outages.
 
@@ -168,6 +184,8 @@ sudo docker update --restart no pihole
 ---
 
 ## Safety net 8: Fallback kernel
+
+**Analogy:** Keeping the old engine in the garage. If a new one fails, you can still drive.
 
 **What it does:** if an update breaks booting, I can boot the previous kernel (this saved me during the [boot recovery](wyse-boot-recovery.md)).
 

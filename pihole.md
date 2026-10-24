@@ -4,6 +4,8 @@
 
 ## What it is (simple version)
 
+**Analogy:** Pi-hole is the house's mail sorter. Before any device fetches a website, it asks for the address. Pi-hole checks a junk list and refuses to give out addresses for ads and trackers, so they never arrive.
+
 Every time a device visits a website or loads an ad, it first asks a **DNS server** "what's the address for this name?" Think of DNS as the internet's phone book.
 
 **Pi-hole is my own phone book.** When a device asks for a known ad or tracking domain, Pi-hole just doesn't answer, so the ad never loads. Normal sites work like usual.
@@ -36,6 +38,8 @@ sudo ss -tulpn | grep :53                        # confirm something is answerin
 
 ## What Pi-hole blocks (and what it can't)
 
+**Analogy:** A mail sorter can throw out mail from known junk senders, but it can't open an envelope from a trusted sender and remove the ad inside. That's why YouTube ads (same address as the videos) get through.
+
 **Simple version:** every device looks up a website's address in a "phone book" (DNS) before connecting. Pi-hole is my own phone book, at my house, with ~82,000 ad and tracker companies crossed out. Tailscale is a private tunnel that lets my phone and laptop use that phone book from anywhere.
 
 Because it works at the phone book level, it covers **every app on the device**, not just the browser:
@@ -62,6 +66,8 @@ Blocking trackers and analytics is arguably the bigger win than ads. It's **priv
 **Interview version:** "I run Pi-hole as a DNS sinkhole on my homelab server and route my devices' DNS to it over a Tailscale WireGuard tunnel, so I get network-level ad and tracker blocking from anywhere without exposing the server to the internet."
 
 ## Reading the dashboard (snapshot: Oct 22, 2026, ~12:20 AM)
+
+**Analogy:** The sorter's daily report: how much mail came in, how much was junk, and which junk senders showed up most.
 
 <img src="images/pihole-dashboard.png" width="300" alt="Pi-hole dashboard: 588 total queries, 92 blocked, 15.6 percent blocked, 82,624 domains on lists">
 

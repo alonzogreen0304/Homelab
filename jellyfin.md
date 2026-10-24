@@ -6,6 +6,8 @@
 
 ## What it is (simple version)
 
+**Analogy:** My own home theater with my own movie shelf, playable on any of my devices through the secret tunnel. Like Netflix, but I own the building.
+
 My own Netflix. I put movies and shows on my 1.8TB drive, and Jellyfin streams them to my phone, laptop, or TV, from anywhere, through Tailscale. No subscription, no ads, no tracking.
 
 ## My setup
@@ -23,6 +25,8 @@ Same pattern as Pi-hole: **settings and media live on the drive, not in the cont
 
 ## Theme: Abyss (CSS-only)
 
+**Analogy:** Repainting the theater walls. CSS only changes how it looks, not what it does, so it can't break anything.
+
 Applied the [Abyss theme](https://github.com/AumGupta/abyss-jellyfin) with one line in **Dashboard → Branding → Custom CSS**:
 
 ```css
@@ -35,6 +39,8 @@ Applied the [Abyss theme](https://github.com/AumGupta/abyss-jellyfin) with one l
 
 ## Plugins: rules I follow
 
+**Analogy:** Plugins are extra workers I let into the theater. I only hire ones with good references (official catalog, active maintainers), because they get access to everything inside.
+
 - Official catalog first. Plugins run inside the server with full access, so third-party repos are a **supply-chain risk**
 - Keep it light: the Wyse CPU can't handle heavy video processing
 - Restart Jellyfin after installing (`sudo docker restart jellyfin`)
@@ -44,6 +50,8 @@ Applied the [Abyss theme](https://github.com/AumGupta/abyss-jellyfin) with one l
 The Wyse's CPU is too weak to **transcode** (convert video on the fly). Media should be in widely supported formats (MP4 / H.264) so devices can **direct play** it.
 
 ## The problem I hit installing it
+
+**Analogy:** Docker was unpacking the new movie theater into the tiny closet (the 6.4GB drive) instead of the big warehouse (the 1.8TB drive). The closet overflowed. The fix: tell Docker to always unpack in the warehouse.
 
 The first install failed with `no space left on device` in `/var/lib/containerd/...`.
 
@@ -79,6 +87,8 @@ Before taking Pi-hole down, I turned off **Use Tailscale DNS** on my phones and 
 Then Jellyfin installed cleanly (~211s download), and the system drive stayed at **82%**.
 
 ### Follow-up: reclaiming the leftover containerd data (Oct 23, 2026, done from my phone over SSH)
+
+**Analogy:** After moving to the warehouse, a pile of old boxes was still sitting in the closet. I checked nobody used them, then cleared them out.
 
 Turning the snapshotter off didn't delete what containerd had already stored. An old copy of the Pi-hole image was still sitting on the small drive.
 

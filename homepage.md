@@ -6,6 +6,8 @@
 
 ## What it is (simple version)
 
+**Analogy:** The lobby directory board: one screen listing every room in the house, with live status lights and stats.
+
 One start page for my whole homelab: a tile for every service (Pi-hole, Tailscale, Unbound, Jellyfin), live CPU / RAM / disk stats, a search bar, and bookmarks. Instead of remembering IPs and ports, I open one page.
 
 <img src="images/homepage-dashboard.png" width="700" alt="Homepage dashboard showing Network (Pi-hole, Tailscale, Unbound), Media (Jellyfin), and Homelab bookmarks with CPU, RAM and disk stats">
@@ -33,10 +35,14 @@ One start page for my whole homelab: a tile for every service (Pi-hole, Tailscal
 
 ## Security choices
 
+**Analogy:** The directory shows which rooms exist, but the room keys (API keys) stay in a locked drawer (`.env`, chmod 600). The board only references the drawer, so the keys never get printed on it.
+
 - **No Docker socket mounted.** Homepage *can* show container status if you give it `/var/run/docker.sock`, but that socket is effectively **root access to the whole host**. Skipped for now
 - **API keys stay out of YAML and out of GitHub.** Phase 2 widgets use environment variables from a locked-down `.env` file (see below)
 
 ## Phase 2: live widgets
+
+**Analogy:** Upgrading the directory from a printed sign to a live scoreboard that pulls real numbers from each room.
 
 The Pi-hole tile now shows **queries / blocked / % / gravity**, and Jellyfin shows library counts and now-playing.
 
@@ -58,6 +64,8 @@ The Pi-hole tile now shows **queries / blocked / % / gravity**, and Jellyfin sho
 **Lesson:** check secrets *without displaying them*. Measuring a key's length found the problem without ever printing the key.
 
 ## Phase 3: redesign (Oct 23, 2026)
+
+**Analogy:** Repainting the lobby (purple theme, background) and adding new sections for security and studying.
 
 <img src="images/homepage-v2.png" width="360" alt="Redesigned Homepage: purple circuit background, greeting, CPU/RAM/disk, weather, Network row with Pi-hole stats, Security row with Uptime Kuma (4 up, 0 down) and CrowdSec, Media row with Jellyfin">
 
