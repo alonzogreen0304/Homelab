@@ -269,6 +269,53 @@ const COL = { teal:"#4fd1c5", coral:"#ff8a6b", purple:"#a78bfa" };
 const DARK = { teal:"#0f2f33", coral:"#3a1e22", purple:"#2a2150" };
 let sel = "sorter", tourTimer = null, openTerm = null;
 
+let openDeep = false, exitOn = false;
+function exitSVG(on){
+  const T2 = (x,y,t,c="#a99fd0",sz=11,w=400,a="middle") => `<text x="${x}" y="${y}" text-anchor="${a}" fill="${c}" font-family="JetBrains Mono, monospace" font-size="${sz}" font-weight="${w}">${t}</text>`;
+  const box = (x,y,w,h,fill,stroke,l1,l2,dim) => `<g opacity="${dim ? .35 : 1}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="7" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>${T2(x+w/2,y+h/2-3,l1,"#ece8fb",11,600)}${T2(x+w/2,y+h/2+12,l2,"#a99fd0",10)}</g>`;
+  let g = T2(190,22, on ? "EXIT NODE ON" : "EXIT NODE OFF", on ? "#57e39b" : "#ff5f6d", 13, 600);
+  g += box(8,82,58,50,"#241c45","#a78bfa","phone","you");
+  g += box(96,72,84,70,"#2a2532","#8a83a8","Wi-Fi","coffee shop");
+  g += box(208,72,74,70,"#2a2150","#a78bfa","house","Comcast", !on);
+  g += box(310,72,62,70,"#16112c","#6d6496","sites","internet");
+  if (on) {
+    g += `<rect x="66" y="123" width="142" height="14" rx="7" fill="#0f2f33" stroke="#4fd1c5" stroke-width="1.5"/>`;
+    g += `<line x1="282" y1="107" x2="308" y2="107" stroke="#a78bfa" stroke-width="2"/>`;
+    g += `<circle class="mv" style="animation-name:tunnel;--d:2.4s" cx="60" cy="130" r="4.5" fill="#57e39b"/>`;
+    g += T2(138,62,"sees: scrambled","#57e39b",10) + T2(245,62,"exits here","#a78bfa",10);
+    g += T2(190,168,"Wi-Fi owner sees: encrypted data, 1 address","#57e39b",11);
+    g += T2(190,186,"Fake hotspot? Can't read it.","#57e39b",11);
+    g += T2(190,204,"Sites see: your HOME IP (Comcast)","#ece8fb",11);
+  } else {
+    g += `<line x1="66" y1="107" x2="94" y2="107" stroke="#ffc15e" stroke-width="2"/><path d="M180 107 C 215 178, 275 178, 308 107" fill="none" stroke="#ffc15e" stroke-width="2"/>`;
+    g += `<g class="mv" style="animation-name:tunnel;--d:3s"><rect x="40" y="40" width="74" height="16" rx="4" fill="#ffc15e"/>${T2(77,52,"insta.com","#120d24",10,600)}</g>`;
+    g += `<g class="mv" style="animation-name:tunnel;--d:3s;--dl:1.5s"><rect x="40" y="40" width="74" height="16" rx="4" fill="#ffc15e"/>${T2(77,52,"espn.com","#120d24",10,600)}</g>`;
+    g += T2(245,62,"not used","#6d6496",10);
+    g += T2(190,176,"Wi-Fi owner sees: every site you visit","#ff5f6d",11);
+    g += T2(190,194,"Fake hotspot? Can sit in the middle.","#ff5f6d",11);
+    g += T2(190,212,"Sites see: the coffee shop's IP","#ece8fb",11);
+  }
+  return `<svg viewBox="0 0 380 222" role="img" aria-label="${on ? "Exit node on: phone traffic goes through an encrypted tunnel to the house, then the internet" : "Exit node off: phone traffic goes straight through the coffee shop Wi-Fi to the internet"}">${g}</svg>`;
+}
+const DEEP = {
+  tunnel: { title: "What if my traffic DIDN'T leave through my house?", html: () => `
+    <p>First, a key detail: Tailscale only sends traffic <b>to my own devices</b> through the tunnel by default. Normal internet traffic (Instagram, Google, YouTube) goes straight out through whatever network my phone is on. The <b>exit node</b> is the setting that sends <b>everything</b> through my house instead.</p>
+    <div class="row" style="display:flex;gap:6px;margin:6px 0"><button class="chip${exitOn ? "" : " on"}" data-x="0">Exit node OFF</button><button class="chip${exitOn ? " on" : ""}" data-x="1">Exit node ON</button></div>
+    <div class="stage">${exitSVG(exitOn)}</div>
+    <p><b>Exit node OFF, on public Wi-Fi</b> (coffee shop, airport, work):</p>
+    <p>1. <b>The Wi-Fi owner can see where I go.</b> HTTPS still hides what's <i>on</i> the page (passwords, messages), but the network can see <i>which</i> sites I visit and when, from the addresses my phone connects to.<br>
+    2. <b>Fake hotspots are a real risk.</b> An attacker can set up \"Free Airport WiFi\" and sit in the middle of my traffic (a man-in-the-middle). They can try to read anything not encrypted, or send me to fake login pages.<br>
+    3. <b>Work networks can log and filter.</b> On a job's Wi-Fi, their firewall can record and block sites.<br>
+    4. <b>Sites see that network's IP and location</b>, not my home's.</p>
+    <p class="eg">On T-Mobile with the exit node off, whatismyip showed T-Mobile. With it on, it showed Comcast, my home internet.</p>
+    <p><b>Exit node ON:</b> my phone wraps <i>everything</i> in an encrypted WireGuard tunnel to the Wyse, and it leaves the internet from my house. The coffee shop only sees scrambled data going to one address. No sites, no details.</p>
+    <p><b>The tradeoffs (why it's not on 24/7):</b><br>
+    • <b>Slower:</b> everything takes a detour through my house, limited by my home upload speed and Wi-Fi extender.<br>
+    • <b>Kill switch:</b> if the Wyse is off or offline, my phone has <b>no internet</b> until I turn the exit node off. That happened to me once.<br>
+    • <b>At home it's pointless:</b> I'm already on my own trusted network.</p>
+    <p class="eg">My rule: Tailscale always on, exit node ON at public or work Wi-Fi, OFF at home. (Check your job's rules before using a VPN on their network.)</p>
+    <p><b>Security idea:</b> this is <b>protecting data in transit</b> on networks I don't trust. Same reason companies make remote workers use a VPN.</p>` },
+};
 /* ---------- beginner glossary: [full name, simple meaning, example, match pattern] ---------- */
 const TERMS = {
   "DNS": ["Domain Name System", "The internet's phone book. Turns a name like espn.com into the number (IP address) computers actually use.", "You type espn.com; DNS answers 199.181.132.250. Pi-hole is a DNS server.", "\\bDNS\\b"],
@@ -316,6 +363,8 @@ const TERMS = {
   "package": ["Software package", "One program, pre-built and boxed up with info about what it needs, ready to install.", "unbound, crowdsec, and openssh-server are packages (.deb files).", "\\bpackages?\\b"],
   "dependency": ["Required extra piece", "Another package a program needs in order to run. The package manager installs these automatically.", "Installing one program can pull in 5 small libraries it depends on.", "\\bdependenc(y|ies)\\b"],
   "image registry": ["Docker image store", "A warehouse of pre-built container images on the internet.", "Docker Hub; ghcr.io, where the Homepage image comes from.", "\\bimage registr(y|ies)\\b"],
+  "HTTPS": ["Hypertext Transfer Protocol Secure", "The encrypted version of web traffic. Hides what's on the page, but not which site you're visiting.", "The padlock next to https://github.com.", "\\bHTTPS\\b"],
+  "MITM": ["Man-in-the-middle (on-path) attack", "An attacker secretly sitting between you and the internet, reading or changing traffic.", "A fake \"Free Airport WiFi\" hotspot run by an attacker.", "\\bman-in-the-middle\\b"],
   "terminal": ["Command line / CLI", "A text window where you control the computer by typing commands.", "PowerShell on the laptop, Termius on the phone, bash on the Wyse.", "\\bterminal\\b"],
   "sudo": ["Superuser do", "Run one command as the admin (root). It asks for your password.", "sudo docker ps", "\\bsudo\\b"],
   "web server": ["Program that serves web pages", "A program that sends web pages to browsers that ask for them.", "Pi-hole's built-in web server shows its dashboard on port 80.", "\\bweb server\\b"],
@@ -323,7 +372,7 @@ const TERMS = {
 const ROOM_TERMS = {
   sorter: ["DNS", "tracker", "IP", "Docker", "blocklist"],
   book: ["DNS", "root servers", "ISP", "DNSSEC", "upstream", "localhost", "port"],
-  tunnel: ["VPN", "tailnet", "exit node", "WireGuard", "port", "attack surface"],
+  tunnel: ["VPN", "tailnet", "exit node", "WireGuard", "port", "attack surface", "HTTPS", "MITM"],
   door: ["SSH", "SSH key", "revocation", "Linux"],
   camera: ["logs", "brute force", "IP", "firewall", "IDS", "IPS", "blocklist"],
   rounds: ["monitor", "DNS", "CIA triad"],
@@ -422,16 +471,19 @@ function render(){
     <p>${linkify(r.what, ROOM_TERMS[r.id])}</p>
     <p class="lab">${linkify(r.lab, ROOM_TERMS[r.id])}</p>
     <p class="sec">${linkify(r.sec, ROOM_TERMS[r.id])}</p>
+    ${DEEP[r.id] ? `<details class="dd"${openDeep ? " open" : ""} id="deepBox"><summary>${DEEP[r.id].title}</summary>${DEEP[r.id].html()}</details>` : ""}
     <div class="words">WORDS IN THIS ROOM (TAP ONE)</div>
     <div class="chips">${ROOM_TERMS[r.id].map(k => `<button class="chip${openTerm === k ? " on" : ""}" data-t="${escH(k)}">${escH(k)}</button>`).join("")}</div>
     ${openTerm && ROOM_TERMS[r.id].includes(openTerm) ? defHTML(openTerm) : ""}
     <div class="nav"><button class="btn" id="prev">← Prev</button><button class="btn" id="next">Next →</button></div>`;
   document.querySelectorAll("#panel [data-t]").forEach(b => b.onclick = () => { stopTour(); openTerm = openTerm === b.dataset.t ? null : b.dataset.t; const y = window.scrollY; render(); window.scrollTo(0, y); });
+  document.querySelectorAll("#panel [data-x]").forEach(b => b.onclick = () => { stopTour(); exitOn = b.dataset.x === "1"; openDeep = true; const y = window.scrollY; render(); window.scrollTo(0, y); });
+  const db = document.getElementById("deepBox"); if (db) db.ontoggle = () => { openDeep = db.open; };
   document.getElementById("prev").onclick = () => { stopTour(); step(-1); };
   document.getElementById("next").onclick = () => { stopTour(); step(1); };
 }
-function pick(id){ sel = id; openTerm = null; render(); }
-function step(d){ const i = ROOMS.findIndex(r => r.id === sel); sel = ROOMS[(i + d + ROOMS.length) % ROOMS.length].id; openTerm = null; render(); }
+function pick(id){ sel = id; openTerm = null; openDeep = false; render(); }
+function step(d){ const i = ROOMS.findIndex(r => r.id === sel); sel = ROOMS[(i + d + ROOMS.length) % ROOMS.length].id; openTerm = null; openDeep = false; render(); }
 
 const VISIT = ["tunnel","sorter","book"];
 function startTour(list){
