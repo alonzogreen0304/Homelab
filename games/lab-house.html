@@ -93,6 +93,27 @@ h1 span { color: var(--purple); }
 .scale-x { transform-origin: left center; transform-box: fill-box; }
 .cs { transform-origin: center; transform-box: fill-box; }
 @media (prefers-reduced-motion: reduce) { .mv { animation: none !important; } }
+.start { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px; margin-bottom: 14px; }
+.start summary, .gloss summary { cursor: pointer; font-weight: 800; font-size: 17px; padding: 10px 0; }
+.start .step { display: grid; grid-template-columns: 30px minmax(0,1fr); gap: 2px 10px; padding: 8px 0; border-top: 1px solid var(--line); }
+.start .n { grid-row: span 3; width: 26px; height: 26px; border-radius: 7px; background: var(--purple); color: var(--bg); font: 600 13px var(--mono); display: grid; place-items: center; }
+.start b { font-size: 16px; }
+.start p { margin: 0; color: var(--ink); font-size: 15px; }
+.start .eg { color: var(--amber); font-size: 14px; }
+.start .eg::before, .defbox .eg::before, .gl .eg::before { content: "EXAMPLE  "; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.term { font: inherit; color: var(--ink); background: none; border: 0; padding: 0; border-bottom: 2px dotted var(--purple); cursor: pointer; }
+.term.on { background: var(--panel-2); color: var(--purple); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 8px; }
+.chip { border: 1px solid var(--line); background: var(--panel-2); color: var(--ink); font: 600 13px var(--mono); padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+.chip.on { border-color: var(--purple); color: var(--purple); }
+.words { font-family: var(--mono); font-size: 11px; color: var(--faint); letter-spacing: .06em; margin-top: 12px; }
+.defbox { background: var(--bg); border: 1px solid var(--purple); border-radius: 10px; padding: 12px 14px; margin: 6px 0 10px; }
+.defbox h3, .gl h3 { margin: 0; font-size: 18px; font-weight: 800; }
+.defbox .full, .gl .full { font-family: var(--mono); font-size: 13px; color: var(--purple); margin: 0 0 6px; }
+.defbox p, .gl p { margin: 0 0 6px; font-size: 15px; }
+.defbox .eg, .gl .eg { color: var(--amber); font-size: 14px; }
+.gloss { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 4px 16px; margin-top: 14px; }
+.gl { padding: 10px 0; border-top: 1px solid var(--line); }
 </style>
 </head>
 <body>
@@ -101,7 +122,15 @@ h1 span { color: var(--purple); }
     <h1>Lab <span>House</span></h1>
     <div class="tag">Alonzo's homelab, as a house</div>
   </header>
-  <p class="intro">My server is a house. Every program is a room or a worker. Tap a room to see what it does, or hit Tour.</p>
+  <p class="intro">A beginner's study guide to my homelab. The server is a house, and every program is a room or a worker. Tap a room to see what it does. Any <span style="border-bottom:2px dotted var(--purple)">underlined word</span> explains itself when you tap it.</p>
+  <details class="start" open>
+    <summary>Start here: never heard of a homelab?</summary>
+    <div class="step"><span class="n">1</span><b>What's a homelab?</b><p>Your own mini data center at home: a computer that runs 24/7 so you can practice the same things IT and security pros do at work, without breaking anything important.</p><p class="eg">A $40 used thin client in my room running ad blocking, a VPN, monitoring, and an attack blocker.</p></div>
+    <div class="step"><span class="n">2</span><b>What's a server?</b><p>A computer whose job is to <i>serve</i> things to other devices, all day, usually with no screen or keyboard. "Server" describes the job, not a special kind of machine.</p><p class="eg">My Dell Wyse 5060 sits in a corner with no monitor. My phone and laptop use what it serves.</p></div>
+    <div class="step"><span class="n">3</span><b>What runs on it?</b><p>An operating system (Linux), and on top of that, programs. Some run silently in the background (services). Others run in sealed boxes (Docker containers) and have a web page you open in a browser.</p><p class="eg">Pi-hole is a program. Its dashboard is a web page served by the Wyse, not a website on the internet.</p></div>
+    <div class="step"><span class="n">4</span><b>How do I reach it?</b><p>Every device has an address (an IP). Each program on the server listens on its own numbered door (a port). Address + port = which program you're talking to.</p><p class="eg">100.119.39.63:3000 = the Wyse, door 3000 = my dashboard.</p></div>
+  </details>
+  <p class="intro" style="margin-top:4px">Tap a room, hit Tour, or follow one website visit through the house.</p>
   <div class="controls">
     <button class="btn" id="tour">▶ Tour</button>
     <button class="btn" id="visit">Follow a website visit</button>
@@ -115,46 +144,111 @@ h1 span { color: var(--purple); }
   </div>
 
   <section class="panel" id="panel" aria-live="polite"></section>
+
+  <details class="gloss" id="gloss">
+    <summary>Glossary: every term, A to Z</summary>
+    <div id="glossList"></div>
+  </details>
 </div>
 
 <script>
 const ROOMS = [
   { id:"sorter", col:"teal", name:"Mail sorter", tool:"Pi-hole", sub:"tosses junk mail",
-    what:"Every time a device opens a site, it first asks for that site's address (DNS). Pi-hole sees every one of those questions. If it's an ad or tracker, it answers \"doesn't exist,\" so the ad never even loads.",
+    what:"Every time a device opens a site, it first asks for that site's address. That question is called a DNS lookup. Pi-hole sees every one of those questions. If it's an ad or tracker, it answers \"doesn't exist,\" so the ad never even loads.",
     lab:"Runs in Docker on the Wyse. About 1 in 4 lookups from my devices are ads or trackers (24% blocked).",
     sec:"Blocking trackers at the DNS level protects every device at once, even ones you can't install an ad blocker on." },
   { id:"book", col:"teal", name:"Address book", tool:"Unbound", sub:"finds real addresses",
-    what:"When a lookup isn't junk, Unbound finds the real address itself. It asks the internet's root servers, then .com, then the site, instead of asking Google or my ISP.",
+    what:"When a DNS lookup isn't junk, Unbound finds the real address itself. It asks the internet's root servers, then .com, then the site, instead of asking Google or my ISP.",
     lab:"Runs on the Wyse at 127.0.0.1:5335. It's Pi-hole's only upstream.",
     sec:"DNSSEC: Unbound checks each answer's digital signature, so nobody can slip me a fake address." },
   { id:"tunnel", col:"teal", name:"Secret tunnel", tool:"Tailscale", sub:"only my devices",
-    what:"A private, encrypted tunnel between my devices, wherever they are. My phone at work can reach the house like it's in the next room.",
+    what:"A VPN: a private, encrypted tunnel between my devices, wherever they are. My phone at work can reach the house like it's in the next room.",
     lab:"5 devices on my tailnet. The Wyse can also be an exit node, so my traffic leaves through my house on public Wi-Fi.",
-    sec:"No ports opened on my router. Strangers can't even see the house from the internet: attack surface reduction." },
+    sec:"It runs on WireGuard encryption, and no ports are opened on my router. Strangers can't even see the house from the internet: attack surface reduction." },
   { id:"door", col:"coral", name:"Keyed front door", tool:"SSH", sub:"my keys only",
-    what:"The remote control for the house. I type commands from my laptop or phone and they run on the Wyse.",
+    what:"SSH is the remote control for the house. I type commands from my laptop or phone and they run on the Wyse, which runs Linux.",
     lab:"Key-only login: passwords are turned off. My laptop and my phone each have their own key.",
-    sec:"Lose my phone? I delete one line and only that key stops working. That's revocation." },
+    sec:"Each device has its own SSH key. Lose my phone? I delete one line and only that key stops working. That's revocation." },
   { id:"camera", col:"coral", name:"Camera guard", tool:"CrowdSec", sub:"bans intruders",
-    what:"Watches the security footage (logs). If someone tries key after key on the door, it bans them at the firewall.",
+    what:"An IDS + IPS. It watches the security footage (logs). If someone tries key after key on the door, it bans them at the firewall.",
     lab:"I attacked myself from my phone with a fake user. CrowdSec flagged ssh-bf (brute force) and banned my phone's IP.",
     sec:"IDS + IPS: the engine detects, the bouncer blocks. Neighbors share mugshots through a community blocklist." },
   { id:"rounds", col:"coral", name:"Guard on rounds", tool:"Uptime Kuma", sub:"texts me if a room goes dark",
     what:"Knocks on every room once a minute. If a door doesn't answer, it texts my phone. When the room's back, it texts me again.",
     lab:"4 monitors, including a real DNS question that tests Pi-hole and Unbound together. Fire drill passed: DOWN and UP alerts hit my locked phone.",
-    sec:"Availability, the A in the CIA triad. You can't fix what you don't know is broken." },
+    sec:"Availability, the A in the CIA triad (Confidentiality, Integrity, Availability). You can't fix what you don't know is broken." },
   { id:"theater", col:"purple", name:"Home theater", tool:"Jellyfin", sub:"my own Netflix",
     what:"My personal streaming server. My movies and shows, on any device, with profiles for me and my family.",
     lab:"Runs in Docker, media stored on the 1.8TB drive, reachable anywhere over the secret tunnel.",
     sec:"My data stays on my hardware, not someone else's cloud." },
   { id:"lobby", col:"purple", name:"Lobby directory", tool:"Homepage", sub:"every room on one board",
-    what:"One page with a tile for every room: live Pi-hole stats, guard status, weather, and links to my study games.",
+    what:"A dashboard: one page with a tile for every room: live Pi-hole stats, guard status, weather, and links to my study games.",
     lab:"Purple theme with a custom background. Status dots go green when a service answers.",
     sec:"API keys live in a locked file (chmod 600). The page only references them, so they never show up on GitHub." },
 ];
 const COL = { teal:"#4fd1c5", coral:"#ff8a6b", purple:"#a78bfa" };
 const DARK = { teal:"#0f2f33", coral:"#3a1e22", purple:"#2a2150" };
-let sel = "sorter", tourTimer = null;
+let sel = "sorter", tourTimer = null, openTerm = null;
+
+/* ---------- beginner glossary: [full name, simple meaning, example, match pattern] ---------- */
+const TERMS = {
+  "DNS": ["Domain Name System", "The internet's phone book. Turns a name like espn.com into the number (IP address) computers actually use.", "You type espn.com; DNS answers 199.181.132.250. Pi-hole is a DNS server.", "\\bDNS\\b"],
+  "IP": ["Internet Protocol (address)", "A device's address on a network, so data knows where to go. Like a mailing address for computers.", "192.168.1.20 at home, or 100.119.39.63, the Wyse's Tailscale IP.", "\\bIPs?\\b"],
+  "ISP": ["Internet Service Provider", "The company that sells you internet access.", "Comcast for home internet, T-Mobile for phone data.", "\\bISP\\b"],
+  "DNSSEC": ["DNS Security Extensions", "Digital signatures on DNS answers, so you can tell a real address from a fake one.", "Unbound rejects an answer for a bank's site if the signature doesn't check out.", "\\bDNSSEC\\b"],
+  "root servers": ["The top of the DNS tree", "13 sets of servers that know where every ending (.com, .org, .net) is managed. Every lookup can start here.", "Unbound asks a root server \"who handles .com?\" before asking for espn.com.", "root servers"],
+  "upstream": ["Upstream DNS server", "The server Pi-hole asks when it doesn't block something and needs the real answer.", "My Pi-hole's upstream is Unbound, instead of Google (8.8.8.8).", "\\bupstream\\b"],
+  "localhost": ["127.0.0.1", "A special address that always means \"this same computer.\" Only the machine itself can reach it.", "Unbound listens on 127.0.0.1, so only the Wyse can talk to it.", "127\\.0\\.0\\.1"],
+  "port": ["Network port", "A numbered door on a computer. Each program listens on its own door.", "Port 22 = SSH, port 3000 = my dashboard, port 5335 = Unbound.", "\\bports?\\b"],
+  "Docker": ["Container platform", "Runs each app in its own sealed box (a container) with everything it needs, so apps don't step on each other.", "Pi-hole, Jellyfin, Homepage and Uptime Kuma each run in their own Docker container.", "\\bDocker\\b"],
+  "tracker": ["Tracking domain", "A hidden address apps and sites contact to record what you do, usually for ads.", "doubleclick.net, or an app reporting what you tapped to an ad company.", "\\btrackers?\\b"],
+  "VPN": ["Virtual Private Network", "An encrypted tunnel between devices over the internet, so nobody in between can read the traffic.", "Tailscale, NordVPN, or a company's work VPN.", "\\bVPN\\b"],
+  "tailnet": ["Tailscale network", "The private network made of all the devices logged into my Tailscale account.", "My Wyse, laptop and 3 iPhones.", "\\btailnet\\b"],
+  "exit node": ["VPN exit point", "A device that sends all your internet traffic out through its own connection.", "On public Wi-Fi, my phone's traffic leaves the internet through my house.", "\\bexit node\\b"],
+  "WireGuard": ["VPN protocol", "The modern, fast encryption method that Tailscale uses under the hood.", "Every Tailscale connection is a WireGuard tunnel.", "\\bWireGuard\\b"],
+  "attack surface": ["Attack surface", "Every way an attacker could try to get in. Fewer open doors = smaller attack surface.", "Not opening ports on my router means strangers have nothing to knock on.", "\\battack surface\\b"],
+  "SSH": ["Secure Shell", "An encrypted way to type commands on another computer, like a remote control for its terminal.", "ssh me@100.119.39.63 from my laptop or the Termius app.", "\\bSSH\\b"],
+  "SSH key": ["Key pair (private + public)", "A matched pair: the private key stays on your device, the public key sits on the server. Proves who you are without a password.", "My phone has its own ED25519 key; the Wyse keeps its public half on file.", "\\bkeys?\\b"],
+  "revocation": ["Revoking access", "Cancelling one person's or device's access without touching anyone else's.", "Lost phone? Delete its one line from authorized_keys. The laptop still works.", "\\brevocation\\b"],
+  "logs": ["Log files", "A diary the computer writes of what happened: logins, errors, connections.", "\"Invalid user hacker from 100.84.243.114\" is one log line.", "\\blogs\\b"],
+  "brute force": ["Brute-force attack", "Guessing logins over and over, really fast, hoping one works.", "A bot trying thousands of passwords on SSH. CrowdSec calls it ssh-bf.", "\\bbrute force\\b"],
+  "firewall": ["Firewall", "A gatekeeper that allows or blocks network traffic based on rules.", "CrowdSec adds a rule: drop everything from the attacker's IP.", "\\bfirewall\\b"],
+  "IDS": ["Intrusion Detection System", "Watches for attacks and raises an alert. Detects, doesn't block.", "CrowdSec's engine reading logs and spotting a brute force.", "\\bIDS\\b"],
+  "IPS": ["Intrusion Prevention System", "Detects attacks AND blocks them automatically.", "CrowdSec's bouncer banning the attacker at the firewall.", "\\bIPS\\b"],
+  "blocklist": ["Blocklist", "A list of known-bad addresses to refuse.", "Pi-hole's list of ad domains; CrowdSec's community list of attacker IPs.", "\\bblocklist\\b"],
+  "CIA triad": ["Confidentiality, Integrity, Availability", "The 3 goals of security: keep secrets secret, keep data unchanged, keep things working.", "A leak breaks C, a changed bank balance breaks I, a crashed site breaks A.", "\\bCIA triad\\b"],
+  "monitor": ["Uptime monitor", "An automatic check that asks \"are you up?\" on a schedule.", "Uptime Kuma checks Jellyfin's /health page every 60 seconds.", "\\bmonitors?\\b"],
+  "streaming server": ["Media server", "A program that stores your videos and streams them to your devices, like a personal Netflix.", "Jellyfin playing a movie from my 1.8TB drive on my phone.", "\\bstreaming server\\b"],
+  "cloud": ["The cloud", "Someone else's computers in a data center that you rent or use over the internet.", "Netflix, Google Drive, and iCloud all run in the cloud.", "\\bcloud\\b"],
+  "dashboard": ["Dashboard", "One screen that shows the status of many things at a glance.", "My Homepage: every service, its stats, and a green or red dot.", "\\bdashboard\\b"],
+  "API key": ["Application Programming Interface key", "A password one program uses to talk to another program.", "Homepage uses Pi-hole's API key to pull the blocked-ads number.", "\\bAPI keys?\\b"],
+  "chmod 600": ["File permissions", "A Linux command that locks a file so only its owner can read or change it.", "My .env file holding API keys is chmod 600.", "\\bchmod 600\\b"],
+  "GitHub": ["Code hosting site", "A website for storing and sharing code and docs. Public repos double as a portfolio.", "This whole guide lives in my GitHub repo.", "\\bGitHub\\b"],
+  "Linux": ["Operating system", "A free operating system that runs most of the world's servers.", "My Wyse runs Debian 12, a version of Linux.", "\\bLinux\\b"],
+};
+const ROOM_TERMS = {
+  sorter: ["DNS", "tracker", "IP", "Docker", "blocklist"],
+  book: ["DNS", "root servers", "ISP", "DNSSEC", "upstream", "localhost", "port"],
+  tunnel: ["VPN", "tailnet", "exit node", "WireGuard", "port", "attack surface"],
+  door: ["SSH", "SSH key", "revocation", "Linux"],
+  camera: ["logs", "brute force", "IP", "firewall", "IDS", "IPS", "blocklist"],
+  rounds: ["monitor", "DNS", "CIA triad"],
+  theater: ["streaming server", "Docker", "cloud"],
+  lobby: ["dashboard", "API key", "chmod 600", "GitHub"],
+};
+const escH = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+function linkify(text, keys){
+  const hits = [];
+  keys.forEach(k => { const m = new RegExp(TERMS[k][3], "i").exec(text); if (m) hits.push({ k, i: m.index, len: m[0].length }); });
+  hits.sort((a,b) => a.i - b.i);
+  let out = "", pos = 0;
+  hits.forEach(h => { if (h.i < pos) return; out += escH(text.slice(pos, h.i)) + `<button class="term${openTerm === h.k ? " on" : ""}" data-t="${escH(h.k)}">${escH(text.substr(h.i, h.len))}</button>`; pos = h.i + h.len; });
+  return out + escH(text.slice(pos));
+}
+function defHTML(k){
+  const t = TERMS[k];
+  return `<div class="defbox"><h3>${escH(k)}</h3><p class="full">${escH(t[0])}</p><p>${escH(t[1])}</p><p class="eg">${escH(t[2])}</p></div>`;
+}
 
 function houseSVG(){
   const w = 680, rx = [70, 350], ry = [150, 226, 302, 378], rw = 260, rh = 62;
@@ -231,15 +325,19 @@ function render(){
     <h2>${r.name}</h2>
     <p class="real">Real name: <b>${r.tool}</b>, ${r.sub}</p>
     <div class="stage"><svg viewBox="0 0 380 170" role="img" aria-label="Animation of ${r.tool}">${SCENES[r.id]()}</svg></div>
-    <p>${r.what}</p>
-    <p class="lab">${r.lab}</p>
-    <p class="sec">${r.sec}</p>
+    <p>${linkify(r.what, ROOM_TERMS[r.id])}</p>
+    <p class="lab">${linkify(r.lab, ROOM_TERMS[r.id])}</p>
+    <p class="sec">${linkify(r.sec, ROOM_TERMS[r.id])}</p>
+    <div class="words">WORDS IN THIS ROOM (TAP ONE)</div>
+    <div class="chips">${ROOM_TERMS[r.id].map(k => `<button class="chip${openTerm === k ? " on" : ""}" data-t="${escH(k)}">${escH(k)}</button>`).join("")}</div>
+    ${openTerm && ROOM_TERMS[r.id].includes(openTerm) ? defHTML(openTerm) : ""}
     <div class="nav"><button class="btn" id="prev">← Prev</button><button class="btn" id="next">Next →</button></div>`;
+  document.querySelectorAll("#panel [data-t]").forEach(b => b.onclick = () => { stopTour(); openTerm = openTerm === b.dataset.t ? null : b.dataset.t; const y = window.scrollY; render(); window.scrollTo(0, y); });
   document.getElementById("prev").onclick = () => { stopTour(); step(-1); };
   document.getElementById("next").onclick = () => { stopTour(); step(1); };
 }
-function pick(id){ sel = id; render(); }
-function step(d){ const i = ROOMS.findIndex(r => r.id === sel); sel = ROOMS[(i + d + ROOMS.length) % ROOMS.length].id; render(); }
+function pick(id){ sel = id; openTerm = null; render(); }
+function step(d){ const i = ROOMS.findIndex(r => r.id === sel); sel = ROOMS[(i + d + ROOMS.length) % ROOMS.length].id; openTerm = null; render(); }
 
 const VISIT = ["tunnel","sorter","book"];
 function startTour(list){
@@ -250,6 +348,7 @@ function startTour(list){
 function stopTour(){ if (tourTimer) { clearInterval(tourTimer); tourTimer = null; } document.getElementById("tour").classList.remove("on"); document.getElementById("visit").classList.remove("on"); }
 document.getElementById("tour").onclick = e => { const on = !!tourTimer; stopTour(); if (!on) { startTour(ROOMS.map(r => r.id)); e.currentTarget.classList.add("on"); } };
 document.getElementById("visit").onclick = e => { const on = !!tourTimer; stopTour(); if (!on) { startTour(VISIT); e.currentTarget.classList.add("on"); } };
+document.getElementById("glossList").innerHTML = Object.keys(TERMS).sort((a,b) => a.toLowerCase().localeCompare(b.toLowerCase())).map(k => `<div class="gl"><h3>${escH(k)}</h3><p class="full">${escH(TERMS[k][0])}</p><p>${escH(TERMS[k][1])}</p><p class="eg">${escH(TERMS[k][2])}</p></div>`).join("");
 render();
 </script>
 </body>
