@@ -17,6 +17,7 @@ SSH (Secure Shell) lets me open a terminal on my laptop and control the Wyse ove
 - [x] Hardening: SSH keys, password login disabled, root login disabled ([log](disk-cleanup-and-ssh-log.md))
 - [x] SSH from my iPhone (Termius) over Tailscale, using its own key (Oct 23, 2026)
 - [x] Legal warning banner shown before login (Oct 24, 2026)
+- [x] Custom purple login screen with live lab stats (Oct 24, 2026)
 
 ## SSH from my phone (Oct 23, 2026)
 
@@ -69,6 +70,44 @@ sudo sshd -T | grep -i banner      # banner /etc/issue.net
 **Gotcha:** the Termius app on my phone doesn't display pre-login banners, so it *looked* broken there. `sshd -T` proved the server side was right. **Lesson:** check the server's real config before blaming it; sometimes it's the client.
 
 **Undo:** `sudo rm /etc/ssh/sshd_config.d/20-banner.conf && sudo systemctl reload ssh`
+
+## Custom login screen (Oct 24, 2026)
+
+**Analogy:** the legal banner is the "No trespassing" sign *outside* the door. This is the **welcome board inside the lobby**: the moment I'm in, it shows the house's health at a glance.
+
+<img src="images/login-screen.png" width="300" alt="Purple ALONZO'S LAB login screen showing uptime, disk, big drive, memory, 4 containers running, 0 CrowdSec bans, and the Tailscale IP">
+
+Debian builds the login message (MOTD, "message of the day") by running every script in `/etc/update-motd.d/` in order. I added my own:
+
+```bash
+sudo tee /etc/update-motd.d/20-alonzo-lab > /dev/null <<'EOF'
+#!/bin/bash
+P='\033[1;35m'; C='\033[0;36m'; G='\033[0;32m'; N='\033[0m'
+echo -e "${P}=================================${N}"
+echo -e "${P}      A L O N Z O ' S   L A B    ${N}"
+echo -e "${P}=================================${N}"
+echo -e "${C}Uptime    :${N} $(uptime -p | sed 's/up //')"
+echo -e "${C}Main disk :${N} $(df -h / | awk 'NR==2{print $5" used"}')"
+echo -e "${C}Big drive :${N} $(df -h /mnt/agents 2>/dev/null | awk 'NR==2{print $4" free"}')"
+echo -e "${C}Memory    :${N} $(free -h | awk '/Mem:/{print $3" / "$2}')"
+echo -e "${C}Containers:${N} ${G}$(docker ps -q 2>/dev/null | wc -l) running${N}"
+echo -e "${C}Bans      :${N} $(cscli decisions list -o json 2>/dev/null | grep -o '"value"' | wc -l) active (CrowdSec)"
+echo -e "${C}Tailscale :${N} $(tailscale ip -4 2>/dev/null)"
+echo -e "${P}=================================${N}"
+EOF
+sudo chmod +x /etc/update-motd.d/20-alonzo-lab   # make it runnable
+sudo run-parts /etc/update-motd.d/               # preview it
+
+# clean out Debian's default text (reversible)
+sudo cp /etc/motd /etc/motd.bak && sudo truncate -s 0 /etc/motd   # the legal paragraph
+sudo chmod -x /etc/update-motd.d/10-uname                         # the "Linux Wyse 6.1.0..." line
+```
+
+**Kept on purpose:** `Last login: ... from <IP>`. It's a mini security alert: a time or IP I don't recognize means someone else got in.
+
+**It already paid off:** the first time it ran, it showed the main disk at **86%** (it was 79% the day before), so I caught the growth right away.
+
+**Undo:** `sudo rm /etc/update-motd.d/20-alonzo-lab && sudo cp /etc/motd.bak /etc/motd && sudo chmod +x /etc/update-motd.d/10-uname`
 
 ## One-time setup (on the Wyse, with a monitor)
 

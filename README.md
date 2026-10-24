@@ -47,6 +47,7 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 | Date | What I did |
 |---|---|
+| Oct 24, 2026 | Custom purple login screen with live stats (uptime, disk, containers, CrowdSec bans); it immediately flagged the main disk at 86% ([notes](ssh-setup.md)) |
 | Oct 24, 2026 | Added an SSH legal warning banner ("Authorized access only"), a GRC control, and verified it from an attacker's view ([notes](ssh-setup.md)) |
 | Oct 24, 2026 | Closed CrowdSec's Docker side door (`DOCKER-USER` chain) and proved it with a self-expiring 2-minute ban on my own phone ([notes](crowdsec.md)) |
 | Oct 23, 2026 (night) | Redesigned Homepage: purple theme, custom background, weather, status dots, Uptime Kuma widget, Security + Study rows ([notes](homepage.md)) |
