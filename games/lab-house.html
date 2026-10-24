@@ -180,6 +180,18 @@ h1 span { color: var(--purple); }
         <p class="eg"><code>sudo apt install unbound</code> downloaded and installed Unbound on the Wyse.</p>
       </details>
 
+      <details class="dd"><summary>Where programs come from: the package manager</summary>
+        <p><b>Is it built in?</b> Yes. On Debian the package manager is called <b>apt</b>, and it came with the operating system, like the App Store comes pre-installed on an iPhone. It's a program itself.</p>
+        <p><b>Where the programs live:</b> on the internet, on servers called <b>repositories</b> (repos). Debian runs its own repos holding tens of thousands of programs, already <b>pre-built</b> by volunteers called package maintainers. Each ready-to-install program is a <b>package</b>.</p>
+        <p class="eg">apt = the App Store app. The repository = Apple's warehouse online. A package = one app in the warehouse. The Wyse's list of trusted warehouses is the file /etc/apt/sources.list.</p>
+        <p><b>What happens when you install something:</b></p>
+        <p>1. <code>sudo apt update</code> downloads the latest catalog (what's available). Nothing installs yet.<br>2. <code>sudo apt install unbound</code> finds it in the catalog and figures out what else it needs to run (its <b>dependencies</b>, like batteries a toy needs).<br>3. It downloads everything from the repo over the internet.<br>4. It checks Debian's <b>digital signature</b>. If anything was tampered with, it refuses to install.<br>5. It puts the files in the right folders and sets it up as a service.</p>
+        <p><b>Not everything comes from Debian.</b> Some companies run their own repo. You add it to the trusted list, then apt can install from it.</p>
+        <p class="eg">The CrowdSec install script added CrowdSec's repo, then <code>sudo apt install crowdsec</code> pulled from it. Tailscale works the same way.</p>
+        <p><b>Security idea:</b> adding a repo means trusting that company to put software on your server as admin. That's <b>supply-chain trust</b>: only add repos from official sources.</p>
+        <p><b>Docker apps are different:</b> containers come from <b>image registries</b> like Docker Hub, not apt. Same idea, a warehouse of pre-built apps online, but <code>docker compose up -d</code> does the downloading.</p>
+      </details>
+
       <details class="dd"><summary>The 3 kinds of programs in my lab</summary>
         <p><b>1. Commands you run once.</b> They do one job, print a result, and stop.</p>
         <p class="eg"><code>df -h</code>, <code>ls</code>, <code>docker ps</code>.</p>
@@ -300,6 +312,10 @@ const TERMS = {
   "service": ["Daemon / background program", "A program that starts at boot and runs in the background with no screen, waiting for work.", "SSH, Tailscale, Unbound, CrowdSec. Check with systemctl status ssh.", "\\bservices?\\b"],
   "container": ["Docker container", "A program sealed in its own box with everything it needs, so it can't mess with the rest of the system.", "Pi-hole runs in a container; docker ps lists them.", "\\bcontainers?\\b"],
   "package manager": ["apt (on Debian)", "A tool that downloads, installs, and updates software for you. A typed app store.", "sudo apt install crowdsec", "\\bpackage manager\\b"],
+  "repository": ["Repo", "A server on the internet that stores pre-built programs (packages) for a package manager to download.", "deb.debian.org for Debian; CrowdSec and Tailscale run their own repos.", "\\brepositor(y|ies)\\b"],
+  "package": ["Software package", "One program, pre-built and boxed up with info about what it needs, ready to install.", "unbound, crowdsec, and openssh-server are packages (.deb files).", "\\bpackages?\\b"],
+  "dependency": ["Required extra piece", "Another package a program needs in order to run. The package manager installs these automatically.", "Installing one program can pull in 5 small libraries it depends on.", "\\bdependenc(y|ies)\\b"],
+  "image registry": ["Docker image store", "A warehouse of pre-built container images on the internet.", "Docker Hub; ghcr.io, where the Homepage image comes from.", "\\bimage registr(y|ies)\\b"],
   "terminal": ["Command line / CLI", "A text window where you control the computer by typing commands.", "PowerShell on the laptop, Termius on the phone, bash on the Wyse.", "\\bterminal\\b"],
   "sudo": ["Superuser do", "Run one command as the admin (root). It asks for your password.", "sudo docker ps", "\\bsudo\\b"],
   "web server": ["Program that serves web pages", "A program that sends web pages to browsers that ask for them.", "Pi-hole's built-in web server shows its dashboard on port 80.", "\\bweb server\\b"],
