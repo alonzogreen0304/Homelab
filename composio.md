@@ -44,6 +44,43 @@ It lets Claude work with my GitHub from **any** Claude chat, including on my pho
 
 > **Analogy:** before this, Claude could only work on my repo from one workshop (a coding session with the repo already cloned). Now Claude has a **spare key to the garage** and can get in from any chat.
 
+### Example: making a GitHub issue from a chat
+
+**I type (from any Claude chat, even on my phone):**
+> "Make a GitHub issue in my Homelab repo: add Dozzle to Uptime Kuma."
+
+**What happens behind the scenes:**
+1. Claude asks Composio which GitHub tools it has.
+2. Composio answers that it has `GITHUB_CREATE_AN_ISSUE`.
+3. Claude sends: owner `alonzogreen0304`, repo `Homelab`, title "Add Dozzle to Uptime Kuma".
+4. Composio uses my saved GitHub token to create the issue.
+5. Claude replies with the link to the new issue.
+
+> **Analogy:** I tell the **waiter** (Claude) my order. The waiter hands it to the **kitchen manager** (Composio), who has the keys to the walk-in fridge (my GitHub). I never go into the kitchen myself.
+
+```mermaid
+sequenceDiagram
+    participant Me
+    participant Claude
+    participant Composio
+    participant GitHub
+    Me->>Claude: "Make an issue: add Dozzle to Uptime Kuma"
+    Claude->>Composio: What GitHub tools do you have?
+    Composio-->>Claude: GITHUB_CREATE_AN_ISSUE
+    Claude->>Composio: Create issue (owner, repo, title)
+    Composio->>GitHub: API call using my saved token
+    GitHub-->>Composio: Issue #1 created
+    Composio-->>Claude: Success + link
+    Claude-->>Me: "Done, here's issue #1"
+```
+
+**Other things I can ask:**
+- "What did I commit to Homelab this week?" (read-only)
+- "List my open issues." (read-only)
+- "Add a to-do issue for each hardware task: BIOS AC recovery, UPS." (write)
+
+Every call shows me an approval prompt first, so nothing happens without my OK.
+
 ---
 
 ## The security lesson: STU blocked Outlook (good!)
