@@ -111,6 +111,57 @@ cd /opt/homepage && sudo docker compose up -d
 
 **Also:** added [Lab House](https://alonzogreen0304.github.io/Homelab/games/lab-house.html) as the first tile in the Study row (now a 2x2 grid with Command Center, Know Your Lab, Acronym Breach), and switched the Uptime Kuma bookmark to `http://wyse:3001`.
 
+## Phase 5: Dozzle tile + a YAML spacing lesson (Oct 25, 2026)
+
+Added [Dozzle](dozzle.md) (live container logs) to the **Security** row, next to Uptime Kuma and CrowdSec.
+
+```yaml
+    - Dozzle:
+        icon: dozzle.png
+        href: http://wyse:8888
+        description: Live container logs
+        siteMonitor: http://127.0.0.1:8888
+```
+
+- `href` is the link **my browser** opens, so the MagicDNS name `wyse` works.
+- `siteMonitor` is the status-dot check that Homepage runs **from inside the Wyse**, so it uses `127.0.0.1`, like the other tiles.
+
+> **Analogy:** `href` is the street address I give a visitor. `siteMonitor` is the security guard checking the room from inside the building, so the guard uses the inside hallway (`127.0.0.1`).
+
+### What broke: `YAMLException: bad indentation of a sequence entry`
+
+I typed the block in nano on my phone, and the dashboard showed an error instead of tiles. Two fixes in a row didn't work: first a manual re-align, then a `sed` command that guessed the wrong spacing (2/4 instead of 4/8).
+
+**How I found it:** I stopped guessing and showed the hidden characters:
+
+```bash
+sudo grep -n -A20 "Security" /mnt/agents/homepage/config/services.yaml | cat -A
+```
+
+`cat -A` shows `$` at the end of each line and `^I` for tabs. It showed that my file uses **4 spaces before `- Name:` and 8 before each setting**. After that, one exact `sed` insert fixed it:
+
+```bash
+sudo cp /mnt/agents/homepage/config/services.yaml.bak /mnt/agents/homepage/config/services.yaml   # restore clean copy
+sudo sed -i '/description: IDS\/IPS, bans SSH brute force/a\    - Dozzle:\n        icon: dozzle.png\n        href: http://wyse:8888\n        description: Live container logs\n        siteMonitor: http://127.0.0.1:8888' /mnt/agents/homepage/config/services.yaml
+```
+
+> **Analogy:** YAML is a family tree drawn with spaces. Move a line 2 spaces and it becomes the child of the wrong parent. Typing YAML on a phone is like laying tile by eye. `cat -A` is the measuring tape, and the `.bak` file is the box of spare tiles.
+
+```mermaid
+flowchart TD
+    A["Edit services.yaml on phone"] --> B{"Dashboard loads?"}
+    B -->|"YAMLException"| C["Restore .bak copy"]
+    C --> D["cat -A: see real spacing<br/>(4 spaces / 8 spaces)"]
+    D --> E["sed inserts block<br/>with exact spacing"]
+    E --> B
+    B -->|"Yes"| F["Dozzle tile in Security row ✅"]
+```
+
+**Lessons:**
+1. **Back up before editing** (`cp file file.bak`). That backup saved me twice here.
+2. **Measure, don't guess.** `cat -A` shows the real spacing and any hidden tabs.
+3. **Match the file's own pattern.** Spacing rules are per file, not universal.
+
 ## Next steps
 
 - [x] Phase 2: live widgets (Pi-hole stats, Jellyfin) with keys in a `chmod 600` `.env` file

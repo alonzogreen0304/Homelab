@@ -79,6 +79,7 @@ flowchart LR
 
 | Date | What I did |
 |---|---|
+| Oct 25, 2026 | Added a Dozzle tile to the dashboard's Security row; a phone-typed YAML spacing error broke the page, so I restored the backup, measured the real indents with `cat -A`, and inserted the block exactly with `sed` ([notes](homepage.md)) |
 | Oct 25, 2026 | Connected Composio to Claude and linked GitHub; STU's admin consent blocked Outlook (app asked for ~12 permissions incl. send-as, I needed 1), so I used the built-in browser instead ([notes](composio.md)) |
 | Oct 25, 2026 | Added my gaming PC to Tailscale (exit node kept off; skipped the signature check, so I documented how to verify it after install), confirmed `http://wyse:3000` loads from it, and reviewed the device list ([notes](tailscale.md)) |
 | Oct 25, 2026 | Wrote a "verify before you run" habit for Windows installers: official source + code-signing check, with Rainmeter as the real example ([notes](verify-before-you-run.md)) |
