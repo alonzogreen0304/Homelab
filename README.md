@@ -70,6 +70,7 @@ flowchart LR
 | [Uptime Kuma](uptime-kuma.md) | Checks every service every 60 seconds (web pages and real DNS queries) and shows uptime history | ✅ Running, 4 monitors with phone alerts (fire drill passed) |
 | [CrowdSec](crowdsec.md) | Reads SSH logs, detects brute-force attacks, and bans attacker IPs at the firewall (IDS + IPS) | ✅ Running, caught and banned a simulated attack |
 | [Dozzle](dozzle.md) | Live logs from every container in one web page, read-only through a socket proxy, login required | ✅ Running |
+| [Composio](composio.md) | One connector that links Claude to my apps (GitHub now); school Outlook blocked by admin consent, a least-privilege lesson | ✅ GitHub connected |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
 
 ---
@@ -78,6 +79,7 @@ flowchart LR
 
 | Date | What I did |
 |---|---|
+| Oct 25, 2026 | Connected Composio to Claude and linked GitHub; STU's admin consent blocked Outlook (app asked for ~12 permissions incl. send-as, I needed 1), so I used the built-in browser instead ([notes](composio.md)) |
 | Oct 25, 2026 | Added my gaming PC to Tailscale (exit node kept off; skipped the signature check, so I documented how to verify it after install), confirmed `http://wyse:3000` loads from it, and reviewed the device list ([notes](tailscale.md)) |
 | Oct 25, 2026 | Wrote a "verify before you run" habit for Windows installers: official source + code-signing check, with Rainmeter as the real example ([notes](verify-before-you-run.md)) |
 | Oct 24, 2026 | Installed Dozzle (live container logs) behind a read-only socket proxy instead of handing it the Docker socket; added a login after the in-app setup silently failed ([notes](dozzle.md)) |
