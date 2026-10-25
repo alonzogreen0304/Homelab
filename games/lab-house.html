@@ -122,6 +122,10 @@ h1 span { color: var(--purple); }
 .l1 { background: #2a2532; border: 1px solid #8a83a8; }
 .hint { color: var(--muted); font-size: 14.5px; margin: 0 0 6px; }
 .dd { border-top: 1px solid var(--line); }
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0; font-size: 13px; }
+.flow span { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; color: var(--ink); }
+.flow i { font-style: normal; color: var(--purple); }
+.step ol { margin: 6px 0; padding-left: 20px; display: grid; gap: 4px; }
 .dd summary { cursor: pointer; font-weight: 600; font-size: 15px; padding: 9px 0; color: var(--purple); }
 .dd p { margin: 0 0 8px; font-size: 15px; }
 .dd .eg { color: var(--amber); font-size: 14px; }
@@ -142,7 +146,27 @@ h1 span { color: var(--purple); }
   <details class="start" open>
     <summary>Start here: never heard of a homelab?</summary>
     <div class="step"><span class="n">1</span><b>What's a homelab?</b><p>Your own mini data center at home: a computer that runs 24/7 so you can practice the same things IT and security pros do at work, without breaking anything important.</p><p class="eg">A $40 used thin client in my room running ad blocking, a VPN, monitoring, and an attack blocker.</p></div>
-    <div class="step"><span class="n">2</span><b>What's a server?</b><p>A computer whose job is to <i>serve</i> things to other devices, all day, usually with no screen or keyboard. "Server" describes the job, not a special kind of machine.</p><p class="eg">My Dell Wyse 5060 sits in a corner with no monitor. My phone and laptop use what it serves.</p></div>
+    <div class="step"><span class="n">2</span><b>What's a server?</b><p>A computer whose job is to <i>serve</i> things to other devices, all day, usually with no screen or keyboard. "Server" describes the job, not a special kind of machine.</p><p class="eg">My Dell Wyse 5060 sits in a corner with no monitor. My phone and laptop use what it serves.</p>
+      <details class="dd"><summary>How did my server get there?</summary>
+        <p>The Wyse didn't come as a server. It was a <b>thin client</b>: a small office computer built to be a "dumb screen" that logs into a bigger computer somewhere else. It shipped with Dell's own locked-down system. Businesses replace them in bulk, so they sell used for cheap. That made it a great first server: quiet, tiny, and low on power.</p>
+        <p><b>The journey, step by step:</b></p>
+        <ol>
+          <li><b>Got the hardware.</b> A used Wyse 5060, about $40.</li>
+          <li><b>Made an installer USB.</b> I downloaded Debian 12 from debian.org and wrote it onto a USB stick, which turns the stick into a bootable "install disc."</li>
+          <li><b>Booted from the USB.</b> I plugged in a monitor and keyboard and told the Wyse to start from the USB instead of its own drive.</li>
+          <li><b>Installed Debian.</b> This replaced Dell's system with Linux. Now I'm the admin, so I can install anything.</li>
+          <li><b>Connected it to the network.</b> I plugged it into my home network, so other devices can reach it.</li>
+          <li><b>Turned on remote control.</b> I set up SSH (control by typing from my laptop or phone) and later Tailscale (reach it from anywhere).</li>
+          <li><b>Went headless.</b> I unplugged the monitor and keyboard. Now it sits in a corner and I run everything remotely.</li>
+          <li><b>Moved in the workers.</b> Docker, Pi-hole, Unbound, Jellyfin, Uptime Kuma, CrowdSec, Dozzle, and the dashboard.</li>
+        </ol>
+        <div class="flow" aria-label="Thin client, then install Debian, then plug into the network, then SSH and Tailscale, then headless server">
+          <span>Used thin client</span><i>→</i><span>Install Debian</span><i>→</i><span>Plug into network</span><i>→</i><span>SSH + Tailscale</span><i>→</i><span>Headless server ✅</span>
+        </div>
+        <p class="hint">Analogy: buying an old storefront and turning it into a restaurant. The building came empty (the hardware). Installing Debian is gutting it and hiring a manager (the OS). Plugging into the network is getting a street address. SSH and Tailscale are the back door and a phone line, so I can run things without standing inside. Then the cooks move in (the programs).</p>
+        <p class="eg">Security note: wiping the old system and installing Debian from the official site is a <b>clean, trusted build</b>. You know exactly what's on the machine, which is the same idea as companies "re-imaging" used laptops.</p>
+      </details>
+    </div>
     <div class="step"><span class="n">3</span><b>What runs on it?</b><p>Three layers stacked on each other: the hardware, an operating system (Linux), and programs on top. Some programs run silently in the background (services). Others run in sealed boxes (Docker containers) and have a web page you open in a browser.</p><p class="eg">Pi-hole is a program. Its dashboard is a web page served by the Wyse, not a website on the internet.</p></div>
     <div class="deep">
       <div class="stack" aria-label="Layers: hardware at the bottom, Linux in the middle, programs on top">
