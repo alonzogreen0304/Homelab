@@ -88,6 +88,15 @@ h1 span { color: var(--purple); }
 .debrief ul { margin: 6px 0 0; padding-left: 20px; }
 .secplus { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 8px; }
 .nav { display: flex; justify-content: space-between; gap: 8px; margin-top: 14px; }
+.terms { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: -4px 0 12px; }
+.terms .tl { font-family: var(--mono); font-size: 11px; color: var(--faint); letter-spacing: .06em; margin-right: 4px; }
+.term-chip { font: 600 12px var(--mono); color: var(--ink); background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; text-decoration: none; }
+.term-chip:hover { border-color: var(--purple); color: var(--purple); }
+a.link { text-decoration: underline; }
+.stuckmsg { display: block; font-size: 13px; color: var(--teal); margin-top: 6px; white-space: pre-wrap; }
+.notes { margin-top: 10px; border-top: 1px solid var(--line); padding-top: 6px; }
+.notes summary { cursor: pointer; font: 600 13px var(--mono); color: var(--muted); }
+.notes textarea { width: 100%; min-height: 70px; margin-top: 6px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font: 14px var(--display); padding: 8px 10px; resize: vertical; }
 [hidden] { display: none !important; }
 </style>
 </head>
@@ -230,6 +239,30 @@ const LABS = [
    secplus:"Security+: vulnerability scanning, CVE, CVSS, patch management, risk acceptance." },
 ];
 
+/* per-task Command Center card ids (null = no card) */
+const CMDLINK = {
+  linux:["", "ls", "chmod", "chmod", "ls"],
+  logs:["journal", "grep", "pipe", "calerts", ""],
+  dns:["dig", "dig", "dig", "dig"],
+  ports:["ss", "ss", "ss", "tsstatus"],
+  attack:["cdec", "ssh", "cdec", "cdec"],
+  ir:["dstop", "", "dlogs", "dstart", ""],
+  audit:["apt", "", "grep", "grep", ""],
+  vuln:["dps", "", "", "", ""],
+};
+/* Lab House glossary terms for each lab */
+const LABTERMS = {
+  linux:["Linux", "terminal", "sudo", "chmod 600", "SSH key"],
+  logs:["logs", "brute force", "IP", "IDS", "container"],
+  dns:["DNS", "DNSSEC", "root servers", "upstream", "localhost"],
+  ports:["port", "localhost", "service", "attack surface", "tailnet"],
+  attack:["IDS", "IPS", "firewall", "brute force", "blocklist"],
+  ir:["monitor", "container", "CIA triad", "logs"],
+  audit:["Linux", "package manager", "package", "operating system"],
+  vuln:["container", "image registry", "package", "dependency"],
+};
+const CC_URL = "command-center.html?cmd=", LH_URL = "lab-house.html?term=";
+
 const KEY = "wyselabs-v1";
 let S = {};
 try { S = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
@@ -266,6 +299,7 @@ function openLab(id){
     <div class="meta"><span class="pill ${l.lvl}">${l.lvl === "easy" ? "Easy" : "Medium"}</span><span class="pill">${l.time}</span>${l.tags.map(t => `<span class="pill">${esc(t)}</span>`).join("")}</div>
     <div class="box"><p class="goal" style="margin-top:0"><b>Goal:</b> ${esc(l.goal)}</p><p class="analogy" style="margin:0">${esc(l.analogy)}</p>
       <div class="flow" aria-label="Lab steps">${l.flow.map((f,k) => `${k ? '<span class="a">→</span>' : ""}<span class="n">${esc(f)}</span>`).join("")}</div></div>
+    <div class="terms"><span class="tl">TERMS IN THIS LAB</span>${(LABTERMS[l.id] || []).map(t => `<a class="term-chip" href="${LH_URL}${encodeURIComponent(t)}">${esc(t)}</a>`).join("")}</div>
     ${l.tasks.map((t,k) => taskHTML(l,t,k)).join("")}
     <div class="box debrief" id="debrief" ${all ? "" : "hidden"}><h3>Debrief: what you learned</h3><ul>${l.debrief.map(d => `<li>${esc(d)}</li>`).join("")}</ul><div class="secplus">${esc(l.secplus)}</div></div>
     <div class="nav"><button class="btn" id="prevLab">← Prev lab</button><button class="btn" id="nextLab">Next lab →</button></div>`;
@@ -279,6 +313,14 @@ function openLab(id){
   });
   el.querySelectorAll("form").forEach(f => f.onsubmit = e => { e.preventDefault(); check(l, +f.dataset.k, f); });
   el.querySelectorAll("[data-hint]").forEach(b => b.onclick = () => { b.nextElementSibling.hidden = !b.nextElementSibling.hidden; });
+  el.querySelectorAll("[data-stuck]").forEach(b => b.onclick = () => {
+    const k = +b.dataset.stuck, t = l.tasks[k], li = LABS.indexOf(l) + 1;
+    const msg = `Wyse Labs, Lab ${li} (${l.title}), Step ${k + 1}: ${t.t}.` + (t.cmd ? `\nI ran: ${t.cmd}` : "") + `\nQuestion: ${t.q.q}\nHere's my output (screenshot attached):`;
+    const out = b.closest(".task").querySelector(".stuckmsg");
+    const shown = () => { out.hidden = false; out.textContent = "Copied. Paste it to Claude with a screenshot of your terminal."; };
+    try { navigator.clipboard.writeText(msg).then(shown, () => { out.hidden = false; out.textContent = msg; }); } catch (e) { out.hidden = false; out.textContent = msg; }
+  });
+  el.querySelectorAll("[data-note]").forEach(ta => ta.oninput = () => { S[l.id + ":" + ta.dataset.note + ":note"] = ta.value; save(); });
   el.querySelectorAll("[data-show]").forEach(b => b.onclick = () => { const t = l.tasks[+b.dataset.show]; const fb = b.closest(".task").querySelector(".fb"); fb.className = "fb"; fb.textContent = "Answer: " + t.q.a[0]; });
   window.scrollTo(0, 0);
 }
@@ -292,7 +334,9 @@ function taskHTML(l,t,k){
     <p class="q">${esc(t.q.q)}</p>
     <form class="ans" data-k="${k}"><input type="text" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer" value="${ok ? esc(ok) : ""}"><button class="btn primary" type="submit">Check</button></form>
     <div class="fb">${ok ? "Saved." : ""}</div>
-    <div class="small">${t.hint ? `<button class="link" type="button" data-hint>Hint</button><span class="hint" hidden>${esc(t.hint)}</span>` : ""}${t.q.a ? `<button class="link" type="button" data-show="${k}">Show answer</button>` : ""}</div>
+    <div class="small">${t.hint ? `<button class="link" type="button" data-hint>Hint</button><span class="hint" hidden>${esc(t.hint)}</span>` : ""}${t.q.a ? `<button class="link" type="button" data-show="${k}">Show answer</button>` : ""}${(CMDLINK[l.id] || [])[k] ? `<a class="link" href="${CC_URL}${CMDLINK[l.id][k]}">Learn this command</a>` : ""}<button class="link" type="button" data-stuck="${k}">Stuck? Ask Claude</button></div>
+    <span class="stuckmsg" hidden></span>
+    <details class="notes"${S[l.id + ":" + k + ":note"] ? " open" : ""}><summary>My notes</summary><textarea data-note="${k}" placeholder="What did you see? What did you learn?">${esc(S[l.id + ":" + k + ":note"] || "")}</textarea></details>
   </div>`;
 }
 

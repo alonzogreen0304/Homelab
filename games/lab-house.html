@@ -521,8 +521,13 @@ function startTour(list){
 function stopTour(){ if (tourTimer) { clearInterval(tourTimer); tourTimer = null; } document.getElementById("tour").classList.remove("on"); document.getElementById("visit").classList.remove("on"); }
 document.getElementById("tour").onclick = e => { const on = !!tourTimer; stopTour(); if (!on) { startTour(ROOMS.map(r => r.id)); e.currentTarget.classList.add("on"); } };
 document.getElementById("visit").onclick = e => { const on = !!tourTimer; stopTour(); if (!on) { startTour(VISIT); e.currentTarget.classList.add("on"); } };
-document.getElementById("glossList").innerHTML = Object.keys(TERMS).sort((a,b) => a.toLowerCase().localeCompare(b.toLowerCase())).map(k => `<div class="gl"><h3>${escH(k)}</h3><p class="full">${escH(TERMS[k][0])}</p><p>${escH(TERMS[k][1])}</p><p class="eg">${escH(TERMS[k][2])}</p></div>`).join("");
+document.getElementById("glossList").innerHTML = Object.keys(TERMS).sort((a,b) => a.toLowerCase().localeCompare(b.toLowerCase())).map(k => `<div class="gl" id="g-${k.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}"><h3>${escH(k)}</h3><p class="full">${escH(TERMS[k][0])}</p><p>${escH(TERMS[k][1])}</p><p class="eg">${escH(TERMS[k][2])}</p></div>`).join("");
 render();
+const DEEP_TERM = new URLSearchParams(location.search).get("term");
+if (DEEP_TERM) {
+  const g = document.getElementById("g-" + DEEP_TERM.replace(/[^a-z0-9]+/gi, "-").toLowerCase());
+  if (g) { document.getElementById("gloss").open = true; g.style.outline = "2px solid var(--amber)"; g.style.outlineOffset = "4px"; setTimeout(() => g.scrollIntoView({ block: "center" }), 50); }
+}
 </script>
 </body>
 </html>

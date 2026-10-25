@@ -590,7 +590,7 @@ function renderLearn(){
   chips(document.getElementById("learnChips"), ["All", ...CATS], learnCat, c => { learnCat = c; renderLearn(); });
   const list = CMDS.filter(c => learnCat === "All" || c.cat === learnCat);
   document.getElementById("cards").innerHTML = list.map(c => `
-    <article class="card">
+    <article class="card" id="c-${c.id}">
       <span class="stars">${starStr(c.id)}</span>
       <code class="cmd">${esc(c.c)}</code>
       <p class="what">${esc(c.what)}</p>
@@ -722,7 +722,14 @@ hud();
 renderLearn();
 renderQuizChips(); buildQuiz(); renderQ();
 renderTypeChips(); buildType(); renderT();
+const DEEP_CMD = new URLSearchParams(location.search).get("cmd");
+if (DEEP_CMD && CMDS.some(c => c.id === DEEP_CMD)) {
+  learnCat = "All"; renderLearn();
+  const card = document.getElementById("c-" + DEEP_CMD);
+  if (card) { const d = card.querySelector("details"); if (d) d.open = true; card.style.outline = "2px solid var(--amber)"; setTimeout(() => card.scrollIntoView({ block: "center" }), 50); }
+} else {
 try { const t = localStorage.getItem(KEY + "-tab"); if (t && t !== "learn") document.querySelector(`.tabs button[data-tab="${t}"]`).click(); } catch (e) {}
+}
 </script>
 </body>
 </html>
