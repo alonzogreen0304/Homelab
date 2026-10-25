@@ -6,6 +6,21 @@ Once my router points its DNS at Pi-hole, every device in the house depends on t
 
 ---
 
+## Visual: Production vs lab
+
+**Analogy:** The Wyse is the house everyone lives in. Risky experiments happen in the garage workshop (VMs on my PC).
+
+```mermaid
+flowchart LR
+  subgraph PROD["Wyse = production (keep it boring)"]
+    A["Pi-hole, Unbound, Tailscale, SSH, CrowdSec, monitoring"]
+  end
+  subgraph LAB["Gaming PC VMs = lab (break things here)"]
+    B["Kali, Juice Shop, Wazuh, untrusted GitHub tools"]
+  end
+  LAB -.->|"only after it's proven safe"| PROD
+```
+
 ## Production rules: what runs where
 
 **Analogy:** The Wyse is the house everyone lives in (production). Risky experiments go in the garage workshop (VMs on my PC), so a mistake doesn't burn down the house.

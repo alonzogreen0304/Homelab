@@ -8,6 +8,15 @@
 
 ---
 
+## Visual: The chain that has to work
+
+**Analogy:** A row of doors: if any single one is locked, you can't reach the house from outside.
+
+```mermaid
+flowchart LR
+  A["Wyse has power"] --> B["Ethernet cable in"] --> C["Tailscale connected"] --> D["Phone has Tailscale on"] --> E["Reach Pi-hole from anywhere"]
+```
+
 ## Summary
 
 **Analogy:** First time leaving the house and calling home. I learned which doors must be unlocked, and that one bad setting can cut off the phone line.

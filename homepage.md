@@ -12,6 +12,22 @@ One start page for my whole homelab: a tile for every service (Pi-hole, Tailscal
 
 <img src="images/homepage-dashboard.png" width="700" alt="Homepage dashboard showing Network (Pi-hole, Tailscale, Unbound), Media (Jellyfin), and Homelab bookmarks with CPU, RAM and disk stats">
 
+## Visual: How the dashboard gets its numbers
+
+**Analogy:** The lobby directory board: each tile asks its room for live numbers, using keys kept in a locked drawer (.env).
+
+```mermaid
+flowchart LR
+  B["My browser: http://wyse:3000"] --> G{"Name on the allowed-hosts list?"}
+  G -->|No| R["Host validation failed"]
+  G -->|Yes| HP["Homepage"]
+  ENV["Locked drawer: .env API keys, chmod 600"] -.-> HP
+  HP --> PH["Pi-hole: queries, blocked %"]
+  HP --> UK["Uptime Kuma: sites up/down"]
+  HP --> JF["Jellyfin: library counts"]
+  HP --> SYS["Wyse: CPU, RAM, disk"]
+```
+
 ## My setup
 
 | Setting | Value | Why |

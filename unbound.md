@@ -16,6 +16,28 @@ My phone → Pi-hole (blocks ads) → Unbound → root servers → .com servers 
 
 **Analogy:** instead of calling an operator who looks up the number for you (and remembers who you called), I walk the directory myself: the main index, then the ".com" section, then the actual listing. No single company sees my whole browsing history.
 
+## Visual: How Unbound looks up an address
+
+**Analogy:** A private librarian who goes to the source herself (root, then .com, then the site) instead of asking Google, and checks every answer's signature.
+
+```mermaid
+sequenceDiagram
+  participant PH as Pi-hole
+  participant UB as Unbound (on the Wyse)
+  participant R as Root servers
+  participant T as .com servers
+  participant S as espn.com's DNS
+  PH->>UB: Where is espn.com?
+  UB->>R: Who handles .com?
+  R-->>UB: Ask the .com servers
+  UB->>T: Who handles espn.com?
+  T-->>UB: Ask espn.com's servers
+  UB->>S: What's the address?
+  S-->>UB: 199.181.132.250 (signed)
+  Note over UB: DNSSEC: checks the signature, rejects fakes
+  UB-->>PH: 199.181.132.250
+```
+
 ## Why it matters for security
 
 **Analogy:** Instead of asking a big company's phone book (Google DNS) for every address, which tells them every site I visit, I look addresses up myself, starting from the source.

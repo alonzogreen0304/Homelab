@@ -10,6 +10,18 @@
 
 My own Netflix. I put movies and shows on my 1.8TB drive, and Jellyfin streams them to my phone, laptop, or TV, from anywhere, through Tailscale. No subscription, no ads, no tracking.
 
+## Visual: Where Jellyfin's stuff lives
+
+**Analogy:** The theater runs in its own sealed room (a container), but the movies and settings sit in the big warehouse (the 1.8TB drive), not the tiny closet (the 6.4GB system drive).
+
+```mermaid
+flowchart LR
+  P["Phone / laptop / TV"] -->|Tailscale| J["Jellyfin container, port 8096"]
+  J --> M["Movies + shows on the 1.8TB drive"]
+  J --> C["Settings on the 1.8TB drive"]
+  S["6.4GB system drive"] -.-|"keep big stuff OFF it"| J
+```
+
 ## My setup
 
 | Setting | Value |

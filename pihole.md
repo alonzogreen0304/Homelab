@@ -12,6 +12,18 @@ Every time a device visits a website or loads an ad, it first asks a **DNS serve
 
 Because it works at the network level, it can block ads on devices where you can't install an ad blocker, like smart TVs and game consoles.
 
+## Visual: How Pi-hole works
+
+**Analogy:** The mail sorter: every lookup passes through it, junk gets thrown out, real mail goes on to the address book (Unbound).
+
+```mermaid
+flowchart LR
+  D["Phone / laptop: where is site.com?"] --> PH{"Pi-hole: on the junk list?"}
+  PH -->|Yes: ad or tracker| B["Blocked: answers doesn't exist, ad never loads"]
+  PH -->|No: normal site| UB["Unbound looks up the real address"]
+  UB --> A["Address sent back, site loads"]
+```
+
 ## My setup
 
 - **Runs on:** Dell Wyse 5060 (Debian 12)

@@ -10,6 +10,21 @@ Tailscale creates a **private, encrypted network** between my devices, no matter
 
 It's a VPN, but much easier than a traditional one. No opening ports on my router and no complicated setup. Every device logs in with my account, gets its own private IP (starting with `100.`), and they can all talk to each other securely.
 
+## Visual: Exit node off vs on
+
+**Analogy:** Off: my traffic goes straight out through whatever Wi-Fi I'm on. On: everything rides an encrypted tunnel home first, so the Wi-Fi owner only sees scrambled data.
+
+```mermaid
+flowchart LR
+  subgraph OFF["Exit node OFF"]
+    P1["Phone"] --> W1["Coffee shop Wi-Fi: sees every site"] --> I1["Internet sees the coffee shop's IP"]
+  end
+  subgraph ON["Exit node ON"]
+    P2["Phone"] ==>|encrypted WireGuard tunnel| H["My house (the Wyse)"] --> I2["Internet sees my home IP"]
+    W2["Coffee shop Wi-Fi: sees only scrambled data"] -.- P2
+  end
+```
+
 ## Why it matters for security
 
 **Analogy:** Instead of cutting a door in the house that faces the street (port forwarding), I built a secret tunnel only my devices know about. Nothing for strangers to knock on.

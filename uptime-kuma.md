@@ -11,6 +11,20 @@ Uptime Kuma checks every service in my lab every 60 seconds and records whether 
 
 **Why I added it:** when Pi-hole vanished after a reboot ([log](pihole-docker-recovery-log.md)), I only found out because ads came back. With monitoring, I'd know within a minute.
 
+## Visual: How monitoring + alerts work
+
+**Analogy:** The guard knocks on every door each minute. If one doesn't answer, he radios my phone; when it's back, he radios again.
+
+```mermaid
+flowchart LR
+  UK["Uptime Kuma: checks every 60s"] --> M1["Pi-hole web"]
+  UK --> M2["Pi-hole DNS question"]
+  UK --> M3["Jellyfin /health"]
+  UK --> M4["Homepage"]
+  UK -->|status changes: DOWN or UP| NT["ntfy.sh (secret topic)"]
+  NT --> PH["Push alert on my locked phone"]
+```
+
 ## Install
 
 **Analogy:** Hiring the security guard and giving him a notebook (the database on the big drive). He can look at doors but gets no master keys (no Docker socket).

@@ -14,6 +14,36 @@ Hey! I'm a cybersecurity student, and this repo documents my homelab: what I bui
 
 ---
 
+## Visual: The whole lab at a glance
+
+**Analogy:** The Wyse is a house. My devices reach it through a private tunnel; inside, each program is a room with one job.
+
+```mermaid
+flowchart LR
+  subgraph ME["My devices"]
+    P["iPhone"]
+    L["Laptop"]
+  end
+  P -->|Tailscale tunnel| W
+  L -->|Tailscale tunnel| W
+  subgraph W["Dell Wyse 5060 (Debian Linux)"]
+    direction TB
+    subgraph SVC["Background services"]
+      SSH["SSH: remote control"]
+      UB["Unbound: address lookups"]
+      CS["CrowdSec: bans attackers"]
+    end
+    subgraph DK["Docker containers"]
+      PH["Pi-hole: blocks ads"]
+      JF["Jellyfin: movies"]
+      HP["Homepage: dashboard"]
+      UK["Uptime Kuma: monitoring"]
+    end
+  end
+  PH --> UB --> NET["Internet"]
+  UK -->|alerts| NT["ntfy app on my phone"]
+```
+
 ## Hardware
 
 | Device | Role |

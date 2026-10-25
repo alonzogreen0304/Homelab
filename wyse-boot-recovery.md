@@ -8,6 +8,19 @@
 
 ---
 
+## Visual: The four problems, in order
+
+**Analogy:** A car that wouldn't start: check one system at a time instead of guessing.
+
+```mermaid
+flowchart TD
+  S["Wyse won't boot properly"] --> I1["1. Emergency mode: missing drive in fstab"]
+  I1 -->|"fix: plug in drive, add nofail"| I2["2. No network: ethernet not connected"]
+  I2 -->|"fix: plug in cable"| I3["3. No desktop: text only"]
+  I3 -->|"fix: install XFCE"| I4["4. Kernel panic after update"]
+  I4 -->|"fix: boot old kernel, rebuild initramfs"| OK["Boots normally"]
+```
+
 ## Summary
 
 **Analogy:** The Wyse was a car that wouldn't start. I checked one system at a time (fuel, battery, engine) instead of guessing, and fixed four separate problems.

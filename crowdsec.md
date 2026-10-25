@@ -15,6 +15,22 @@ Two parts:
 
 In security terms, that's an **IDS** (detect) plus an **IPS** (prevent).
 
+## Visual: How CrowdSec catches and blocks an attacker
+
+**Analogy:** The camera guard (engine) watches the logs, spots someone trying every key, and radios the bouncer, who now guards both the front door (INPUT) and Docker's garage door (DOCKER-USER).
+
+```mermaid
+flowchart LR
+  A["Attacker tries SSH logins"] --> LOG["SSH logs (journal)"]
+  LOG --> E["CrowdSec engine: detects ssh-bf"]
+  E -->|ban decision| B["Firewall bouncer"]
+  B --> F1["INPUT: front door, SSH"]
+  B --> F2["DOCKER-USER: garage door, containers"]
+  F1 --> X["Attacker blocked everywhere"]
+  F2 --> X
+  E <-->|share bad IPs| C["Community blocklist"]
+```
+
 ## Install
 
 **Analogy:** hiring the camera guard (the engine) and the bouncer (the firewall bouncer), then giving the bouncer a walkie-talkie so the guard can say "don't let this person in."

@@ -8,6 +8,25 @@
 
 ---
 
+## Visual: Why Pi-hole vanished: the boot race
+
+**Analogy:** Docker opened the apartments before the storage unit (the big drive) was unlocked. The fix tells Docker to wait.
+
+```mermaid
+sequenceDiagram
+  participant Boot as Wyse boots
+  participant D as Docker
+  participant Drive as 1.8TB drive
+  Note over Boot,Drive: Before the fix
+  Boot->>D: start Docker
+  D->>D: looks for Pi-hole data: not there yet
+  Boot->>Drive: drive mounts (too late)
+  Note over Boot,Drive: After the fix (RequiresMountsFor)
+  Boot->>Drive: mount drive first
+  Drive-->>D: ready
+  D->>D: Pi-hole starts with all its data
+```
+
 ## Part 1: Exit node verified
 
 **Analogy:** Proved the tunnel really exits through my house: with it on, the internet saw my home ISP (Comcast) instead of my phone carrier.

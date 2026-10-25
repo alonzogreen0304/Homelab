@@ -10,6 +10,23 @@ SSH (Secure Shell) lets me open a terminal on my laptop and control the Wyse ove
 
 **Why not just plug the laptop into the Wyse with HDMI?** Laptop HDMI ports only send video out, they can't receive it. SSH replaces the cable entirely.
 
+## Visual: How key login works
+
+**Analogy:** The Wyse asks my phone to sign a puzzle. The phone signs it with the private key (which never leaves the phone), and the Wyse checks the signature against the public key on file.
+
+```mermaid
+sequenceDiagram
+  participant P as My phone (private key)
+  participant W as The Wyse (public keys on file)
+  P->>W: I want to log in as me
+  W-->>P: Here's my ID card (host fingerprint)
+  Note over P: Matches the one I trusted before? Not an impostor.
+  W->>P: Prove it: sign this random puzzle
+  P->>W: Signature (the private key itself is never sent)
+  Note over W: Checks it against authorized_keys
+  W-->>P: Match: me@Wyse:~$
+```
+
 ## Status
 
 - [x] One-time setup on the Wyse

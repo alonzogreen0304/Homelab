@@ -8,6 +8,20 @@
 
 ---
 
+## Visual: The cleanup playbook
+
+**Analogy:** Weigh every box before throwing anything out, and put a sticky note on it before the trash truck comes.
+
+```mermaid
+flowchart LR
+  A["Measure: df -h"] --> B["Find the heavy folders: du"]
+  B --> C["Investigate: is anything using it?"]
+  C --> D["Rename it .old (reversible)"]
+  D --> E["Test: everything still works?"]
+  E -->|yes| F["Delete for real"]
+  E -->|no| G["Rename it back"]
+```
+
 ## Part 1: Disk space cleanup
 
 **Analogy:** The Wyse's 6.4GB drive is a tiny closet. It was 93% full, and a full closet means nothing new fits (updates, logs, Pi-hole data).
