@@ -91,10 +91,18 @@ flowchart LR
 ```
 
 **What I did:**
-1. Downloaded Tailscale from the official site and checked the installer's digital signature first ([verify before you run](verify-before-you-run.md))
+1. Downloaded Tailscale from the official site. **Honest note:** I skipped the signature check this time, which goes against my own [verify before you run](verify-before-you-run.md) habit. Lesson: do the check *before* hitting Yes on UAC. It can still be checked after install (below)
 2. Installed it and signed in with the same account
 3. Confirmed it shows **online** (green dot) in the Tailscale app on my phone
 4. Tested `http://wyse:3000` from the PC: Homepage loaded, so the tunnel **and** MagicDNS both work
+
+**Checking the signature after the fact:** if you skipped it, you can still confirm the installed program is legit. In PowerShell:
+
+```powershell
+Get-AuthenticodeSignature "C:\Program Files\Tailscale\tailscale-ipn.exe" | Format-List Status, SignerCertificate
+```
+
+`Status` should say **Valid**, and the signer should be **Tailscale Inc.** **Analogy:** I already took the medicine, but I can still read the seal on the empty bottle to make sure it was real.
 
 **Gotchas:**
 - **The app "won't open":** Tailscale on Windows has no main window. It lives in the system tray (the `^` arrow by the clock). Right-click the icon for the menu

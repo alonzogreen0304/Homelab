@@ -78,7 +78,7 @@ flowchart LR
 
 | Date | What I did |
 |---|---|
-| Oct 25, 2026 | Added my gaming PC to Tailscale (signature-checked installer, exit node kept off), confirmed `http://wyse:3000` loads from it, and reviewed the device list ([notes](tailscale.md)) |
+| Oct 25, 2026 | Added my gaming PC to Tailscale (exit node kept off; skipped the signature check, so I documented how to verify it after install), confirmed `http://wyse:3000` loads from it, and reviewed the device list ([notes](tailscale.md)) |
 | Oct 25, 2026 | Wrote a "verify before you run" habit for Windows installers: official source + code-signing check, with Rainmeter as the real example ([notes](verify-before-you-run.md)) |
 | Oct 24, 2026 | Installed Dozzle (live container logs) behind a read-only socket proxy instead of handing it the Docker socket; added a login after the in-app setup silently failed ([notes](dozzle.md)) |
 | Oct 24, 2026 | MagicDNS: reach everything by name (`http://wyse:3000`); added the name to Homepage's allowed hosts (DNS-rebinding protection); Lab House added to the dashboard ([notes](tailscale.md)) |
