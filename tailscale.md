@@ -37,7 +37,7 @@ flowchart LR
 
 - **Server:** Dell Wyse 5060 is connected to my tailnet
 - **Exit node:** the server is set up as an exit node, so my phone can route its traffic through my home network on public Wi-Fi
-- **Other devices:** a few phones (some are old and need to be removed)
+- **Other devices:** a few phones, my laptop, and my gaming PC (added Oct 25, 2026)
 
 ## Useful commands
 
@@ -78,6 +78,34 @@ Tailscale gives every device on my tailnet a name. `tailscale status` shows them
 Now `http://wyse:3000` (dashboard), `http://wyse:3001` (Uptime Kuma), and `ssh me@wyse` all work from any device on my tailnet. No more typing `100.x.x.x`.
 
 **Gotcha: Homepage said "Host validation failed."** MagicDNS worked fine. Homepage was protecting itself. Its `HOMEPAGE_ALLOWED_HOSTS` setting only listed the IP-based addresses, so a request for "wyse" got refused. **Analogy:** a doorman with a guest list. I showed up under a nickname he'd never heard, so we added the nickname to the list. See [homepage.md](homepage.md).
+
+## Gaming PC joined the tailnet (Oct 25, 2026)
+
+**Analogy:** the PC already lived in the house, but it didn't have a key to the secret tunnel. Now it does, and it only uses the tunnel when it's heading to the Wyse. Game traffic still goes out the front door like normal.
+
+```mermaid
+flowchart LR
+  PC["Gaming PC (Windows)"] -->|Tailscale tunnel: only for my devices| W["Wyse: Homepage, Pi-hole, Jellyfin"]
+  PC -->|normal route, exit node = None| NET["Internet + game servers"]
+  P["iPhone"] -->|Tailscale tunnel| W
+```
+
+**What I did:**
+1. Downloaded Tailscale from the official site and checked the installer's digital signature first ([verify before you run](verify-before-you-run.md))
+2. Installed it and signed in with the same account
+3. Confirmed it shows **online** (green dot) in the Tailscale app on my phone
+4. Tested `http://wyse:3000` from the PC: Homepage loaded, so the tunnel **and** MagicDNS both work
+
+**Gotchas:**
+- **The app "won't open":** Tailscale on Windows has no main window. It lives in the system tray (the `^` arrow by the clock). Right-click the icon for the menu
+- **Wi-Fi acted weird right after login:** the fix list is (1) make sure **Exit node = None** on the PC, (2) uncheck **Use Tailscale DNS settings** if lookups break, (3) `ipconfig /flushdns`. Disconnecting Tailscale is the quick test: if Wi-Fi goes back to normal, Tailscale was the cause
+
+**Rules for this device:**
+- Exit node stays **None** on the PC, so game traffic doesn't detour through the Wyse and add ping
+- The PC is a **client only**. It's not an exit node or subnet router
+- Rename it from the Windows default to something clear (`gaming-pc`) so the device list stays readable
+
+**Asset inventory check (same day):** my phone app showed 6 devices. Two were offline (gray). Any I don't recognize or don't use get removed.
 
 ## What I learned
 
