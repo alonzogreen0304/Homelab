@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Public Wi-Fi Reality Check</title>
+<meta name="theme-color" content="#120d24">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a phone-first walkthrough, 5 stops I show a friend in order, each one interactive */
+:root {
+  color-scheme: dark;
+  --bg: #120d24; --panel: #1b1535; --panel2: #231b45; --line: #352a62;
+  --ink: #ece8fb; --muted: #a99fd0; --faint: #6d6496;
+  --purple: #a78bfa; --teal: #4fd1c5; --amber: #ffc15e; --bad: #ff5f6d; --good: #57e39b;
+  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--display);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 22px 48px; }
+.wrap { max-width: 640px; margin: 0 auto; display: grid; gap: 18px; }
+.wrap > * { min-width: 0; }
+h1 { margin: 0; font-size: clamp(30px, 8vw, 44px); font-weight: 800; line-height: 1.02; letter-spacing: -1px; text-wrap: balance; }
+h1 span { color: var(--amber); }
+.lede { color: var(--muted); margin: 8px 0 0; }
+.stop { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 12px; }
+.stop h2 { margin: 0; font-size: 21px; font-weight: 800; display: flex; gap: 10px; align-items: center; text-wrap: balance; }
+.stop h2 b { font: 700 13px var(--mono); background: var(--purple); color: #160f2e; border-radius: 99px; width: 28px; height: 28px; display: grid; place-items: center; flex: none; }
+.stop p { margin: 0; }
+.muted { color: var(--muted); font-size: 14.5px; }
+.an { color: var(--amber); font-size: 14.5px; }
+.ex { font: 600 11px var(--mono); color: var(--faint); text-transform: uppercase; letter-spacing: 1px; }
+.btn { font: 700 15px var(--display); border: 1px solid var(--line); background: var(--panel2); color: var(--ink); padding: 11px 16px; border-radius: 12px; cursor: pointer; }
+.btn.on { background: var(--purple); color: #160f2e; border-color: var(--purple); }
+.btn:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Stop 1: envelope */
+.env { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.env > div { background: var(--panel2); border-radius: 12px; padding: 12px; min-width: 0; }
+.env h3 { margin: 0 0 6px; font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: 1px; }
+.env .see h3 { color: var(--bad); } .env .nosee h3 { color: var(--good); }
+.env ul { margin: 0; padding-left: 18px; font-size: 14.5px; display: grid; gap: 3px; }
+.letter { font: 14px var(--mono); background: #efe9d8; color: #2a2140; border-radius: 8px; padding: 12px; position: relative; overflow-wrap: anywhere; }
+.letter .seal { display: block; margin-top: 6px; transition: filter .3s; }
+.letter.sealed .seal { filter: blur(6px); user-select: none; }
+
+/* Stop 2: tracker feed */
+.feed { background: #0c0819; border: 1px solid var(--line); border-radius: 12px; padding: 10px; font: 13px/1.6 var(--mono); height: 230px; overflow-y: auto; }
+.feed div { display: flex; justify-content: space-between; gap: 8px; animation: in .25s ease-out; }
+.feed span { overflow-wrap: anywhere; min-width: 0; }
+.feed .t { color: var(--bad); } .feed .ok { color: var(--muted); } .feed .blk { color: var(--faint); text-decoration: line-through; }
+.feed i { font-style: normal; flex: none; font-weight: 600; }
+.feed .t i { color: var(--bad); } .feed .blk i { color: var(--good); } .feed .ok i { color: var(--muted); }
+@keyframes in { from { opacity: 0; transform: translateY(4px); } }
+.tally { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; }
+.tally div { background: var(--panel2); border-radius: 10px; padding: 8px 4px; }
+.tally b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+.tally small { font: 600 11px var(--mono); color: var(--faint); text-transform: uppercase; }
+
+/* Stop 3: spot the fake */
+.nets { display: grid; gap: 8px; }
+.net { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; width: 100%; }
+.net .lock { font: 600 12px var(--mono); color: var(--muted); }
+.net.right { border-color: var(--good); background: color-mix(in srgb, var(--good) 15%, var(--panel2)); }
+.net.wrong { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 15%, var(--panel2)); }
+
+/* Stop 4/5: checklists */
+.tabs { display: flex; gap: 6px; }
+.check { display: flex; gap: 10px; align-items: start; padding: 8px 0; border-top: 1px solid var(--line); cursor: pointer; }
+.check:first-of-type { border-top: 0; }
+.check input { accent-color: var(--good); width: 18px; height: 18px; margin-top: 3px; flex: none; }
+.check small { display: block; color: var(--muted); font-size: 13.5px; }
+code { font: 13px var(--mono); background: var(--panel2); padding: 1px 5px; border-radius: 5px; overflow-wrap: anywhere; }
+.legal { border: 1px dashed var(--amber); border-radius: 12px; padding: 12px 14px; font-size: 14px; color: var(--muted); }
+.legal b { color: var(--amber); }
+footer { color: var(--faint); font-size: 12px; text-align: center; }
+footer a { color: var(--muted); }
+@media (max-width: 420px) { .env { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .feed div { animation: none; } .letter .seal { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Public Wi-Fi <span>Reality Check</span></h1>
+    <p class="lede">What the coffee-shop Wi-Fi (and the apps on your phone) can see, in 5 quick stops. Plus a 2-minute fix.</p>
+  </header>
+
+  <section class="stop">
+    <h2><b>1</b>Sealed envelopes, visible addresses</h2>
+    <p>Most sites use <strong>HTTPS</strong>, so the Wi-Fi owner can't read what you send. But they can still see <em>where</em> you're going.</p>
+    <div class="letter sealed" id="letter">
+      <span>TO: instagram.com · 2:14 PM · 3 min</span>
+      <span class="seal">"hey did you see the game last night lol, sending you that pic now…"</span>
+    </div>
+    <div class="row"><button class="btn" id="unseal">What if there's no HTTPS?</button></div>
+    <div class="env">
+      <div class="see"><h3>Wi-Fi can see</h3><ul><li>Which sites and apps (domain names)</li><li>When and how long</li><li>How much data</li><li>Your device</li></ul></div>
+      <div class="nosee"><h3>Can't see (HTTPS)</h3><ul><li>Your messages</li><li>Passwords</li><li>Which exact page or video</li><li>What you typed</li></ul></div>
+    </div>
+    <p class="an"><b>Analogy:</b> the mailroom can't open your envelopes, but it writes down every address you mail to.</p>
+  </section>
+
+  <section class="stop">
+    <h2><b>2</b>Open one news site. Count the trackers.</h2>
+    <p class="muted">Every line is one lookup your phone makes when the page loads. Red = ads and trackers. Flip Pi-hole on to see what it blocks.</p>
+    <p class="ex">Example simulation · real tracker domains, typical page</p>
+    <div class="row">
+      <button class="btn" id="load">▶ Load news site</button>
+      <button class="btn" id="ph" aria-pressed="false">Pi-hole: OFF</button>
+    </div>
+    <div class="feed" id="feed" aria-live="polite"><div><span class="ok">Tap "Load news site" to start…</span></div></div>
+    <div class="tally">
+      <div><b id="cTotal">0</b><small>Lookups</small></div>
+      <div><b id="cTrack" style="color:var(--bad)">0</b><small>Trackers</small></div>
+      <div><b id="cBlock" style="color:var(--good)">0</b><small>Blocked</small></div>
+    </div>
+    <p class="an"><b>Analogy:</b> you invited one friend over (the news site), and 16 strangers walked in behind them with notebooks. Pi-hole is the bouncer at the door.</p>
+  </section>
+
+  <section class="stop">
+    <h2><b>3</b>Spot the fake hotspot</h2>
+    <p class="muted">You're at a Starbucks. Which network is the risky one?</p>
+    <div class="nets" id="nets">
+      <button class="btn net" data-v="real"><span>Google Starbucks</span><span class="lock">open · sign-in page</span></button>
+      <button class="btn net" data-v="fake"><span>Starbucks_Free_WiFi_5G</span><span class="lock">open · strongest signal</span></button>
+      <button class="btn net" data-v="real"><span>Your phone's hotspot</span><span class="lock">🔒 WPA2</span></button>
+    </div>
+    <p id="netWhy" class="muted" hidden></p>
+    <p class="an"><b>Analogy:</b> anyone can hang a "Free Food" sign. A fake hotspot is a stranger's sign over a door that looks like the real one.</p>
+  </section>
+
+  <section class="stop">
+    <h2><b>4</b>Check your own phone</h2>
+    <p>Want proof from <em>your</em> phone, not a demo?</p>
+    <div class="tabs"><button class="btn on" id="tIos">iPhone</button><button class="btn" id="tAnd">Android</button></div>
+    <div id="pIos">
+      <p><strong>App Privacy Report:</strong> Settings → Privacy &amp; Security → <strong>App Privacy Report</strong> → turn on. Use your phone for a day, then open it to see every domain each app contacted.</p>
+    </div>
+    <div id="pAnd" hidden>
+      <p><strong>Privacy dashboard:</strong> Settings → Security &amp; privacy → <strong>Privacy dashboard</strong> shows which apps used your location, camera, and mic, and when. (Menu names vary by brand.)</p>
+    </div>
+    <p class="an"><b>Analogy:</b> it's your phone's security-camera footage of every app that left the house and where it went.</p>
+  </section>
+
+  <section class="stop">
+    <h2><b>5</b>The 2-minute fix</h2>
+    <div class="tabs"><button class="btn on" id="fIos">iPhone</button><button class="btn" id="fAnd">Android</button></div>
+    <div id="lIos">
+      <label class="check"><input type="checkbox" id="i1"><span>Private Wi-Fi Address<small>Settings → Wi-Fi → (i) next to the network → Private Wi-Fi Address → Rotating (or Fixed)</small></span></label>
+      <label class="check"><input type="checkbox" id="i2"><span>Limit IP Address Tracking<small>Same screen → turn on. Hides your IP from known trackers in Mail and Safari</small></span></label>
+      <label class="check"><input type="checkbox" id="i3"><span>Turn off Auto-Join for public networks<small>Same screen → Auto-Join off, so you don't connect to a lookalike</small></span></label>
+      <label class="check"><input type="checkbox" id="i4"><span>Safari: block cross-site tracking<small>Settings → Apps → Safari → Prevent Cross-Site Tracking on</small></span></label>
+      <label class="check"><input type="checkbox" id="i5"><span>Use a trusted VPN on public Wi-Fi<small>Or your phone's hotspot instead</small></span></label>
+    </div>
+    <div id="lAnd" hidden>
+      <label class="check"><input type="checkbox" id="a1"><span>Private DNS (blocks lots of ads + trackers)<small>Settings → Network → Private DNS → hostname: <code>dns.adguard-dns.com</code></small></span></label>
+      <label class="check"><input type="checkbox" id="a2"><span>Randomized MAC<small>Wi-Fi → network → Privacy → Use randomized MAC</small></span></label>
+      <label class="check"><input type="checkbox" id="a3"><span>Forget public networks after use<small>Stops auto-connecting to lookalikes</small></span></label>
+      <label class="check"><input type="checkbox" id="a4"><span>Use a trusted VPN on public Wi-Fi<small>Or your phone's hotspot instead</small></span></label>
+    </div>
+    <p class="an"><b>Analogy:</b> you can't control the coffee shop's mailroom, but you can use a P.O. box (VPN), wear a disguise (private address), and stop handing your mail to strangers (auto-join off).</p>
+  </section>
+
+  <div class="legal"><b>Keep it legal:</b> only look at traffic from your own devices, or a friend's phone with their OK. Capturing other people's traffic on public Wi-Fi counts as wiretapping. My Pi-hole demo uses my own phone over my own Tailscale network.</div>
+
+  <footer>Made for my <a href="https://github.com/alonzogreen0304/Homelab">Homelab</a> · Pi-hole + Unbound + Tailscale</footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// Stop 1
+$("unseal").addEventListener("click", () => {
+  const sealed = $("letter").classList.toggle("sealed");
+  $("unseal").textContent = sealed ? "What if there's no HTTPS?" : "Seal it (HTTPS)";
+  $("unseal").classList.toggle("on", !sealed);
+});
+
+// Stop 2: example page load, with a mix of real content + well-known ad/tracker domains
+const LOOKUPS = [
+  ["news-site.com", 0], ["cdn.news-site.com", 0], ["fonts.gstatic.com", 0],
+  ["securepubads.g.doubleclick.net", 1], ["www.google-analytics.com", 1], ["connect.facebook.net", 1],
+  ["images.news-site.com", 0], ["c.amazon-adsystem.com", 1], ["sb.scorecardresearch.com", 1],
+  ["static.criteo.net", 1], ["cdn.taboola.com", 1], ["ads.pubmatic.com", 1],
+  ["video.news-site.com", 0], ["s.pinimg.com", 1], ["analytics.tiktok.com", 1],
+  ["bat.bing.com", 1], ["static.ads-twitter.com", 1], ["cdn.cookielaw.org", 0],
+  ["px.ads.linkedin.com", 1], ["pixel.quantserve.com", 1], ["api.news-site.com", 0],
+  ["tags.bluekai.com", 1], ["ib.adnxs.com", 1], ["cdn.jsdelivr.net", 0]
+];
+let pihole = false, timer = null;
+$("ph").addEventListener("click", () => {
+  pihole = !pihole;
+  $("ph").textContent = "Pi-hole: " + (pihole ? "ON" : "OFF");
+  $("ph").classList.toggle("on", pihole); $("ph").setAttribute("aria-pressed", pihole);
+});
+$("load").addEventListener("click", () => {
+  clearInterval(timer);
+  const feed = $("feed"); feed.innerHTML = "";
+  let i = 0, total = 0, track = 0, block = 0;
+  const paint = () => { $("cTotal").textContent = total; $("cTrack").textContent = track; $("cBlock").textContent = block; };
+  paint();
+  const step = () => {
+    if (i >= LOOKUPS.length) { clearInterval(timer); return; }
+    const [d, t] = LOOKUPS[i++]; total++;
+    let cls = "ok", tag = "allowed";
+    if (t) { track++; if (pihole) { block++; cls = "blk"; tag = "BLOCKED"; } else { cls = "t"; tag = "tracker"; } }
+    const row = document.createElement("div"); row.className = cls;
+    row.innerHTML = `<span>${d}</span><i>${tag}</i>`;
+    feed.appendChild(row); feed.scrollTop = feed.scrollHeight; paint();
+  };
+  const fast = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (fast) { while (i < LOOKUPS.length) step(); } else timer = setInterval(step, 140);
+});
+
+// Stop 3
+$("nets").addEventListener("click", e => {
+  const b = e.target.closest(".net"); if (!b) return;
+  $("nets").querySelectorAll(".net").forEach(n => { n.classList.remove("right", "wrong"); if (n.dataset.v === "fake") n.classList.add("wrong"); });
+  const w = $("netWhy"); w.hidden = false;
+  w.innerHTML = b.dataset.v === "fake"
+    ? "<b style='color:var(--good)'>Good eye.</b> \"Starbucks_Free_WiFi_5G\" isn't the store's real network name, and the strongest signal is often someone sitting close by. That's an <b>evil twin</b>: they can watch every site you visit and push fake sign-in pages."
+    : "<b style='color:var(--bad)'>Not that one.</b> The red one, \"Starbucks_Free_WiFi_5G\", is the lookalike. Ask staff for the real network name. When in doubt, use your own hotspot.";
+});
+
+// Tabs
+function tabs(a, b, pa, pb) {
+  $(a).addEventListener("click", () => { $(a).classList.add("on"); $(b).classList.remove("on"); $(pa).hidden = false; $(pb).hidden = true; });
+  $(b).addEventListener("click", () => { $(b).classList.add("on"); $(a).classList.remove("on"); $(pb).hidden = false; $(pa).hidden = true; });
+}
+tabs("tIos", "tAnd", "pIos", "pAnd");
+tabs("fIos", "fAnd", "lIos", "lAnd");
+</script>
+</body>
+</html>
