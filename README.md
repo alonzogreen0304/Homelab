@@ -79,6 +79,7 @@ flowchart LR
 
 | Date | What I did |
 |---|---|
+| Oct 25, 2026 | Built **Audit Ready**, a GRC study game (71 questions: frameworks, risk math, controls, audit evidence commands, privacy laws, and my lab mapped to controls). Documented how my server got here; Debian came pre-installed by the seller, so I flagged it as a supply-chain risk to audit or re-image ([notes](how-my-server-got-here.md)) |
 | Oct 25, 2026 | Added a Dozzle tile to the dashboard's Security row; a phone-typed YAML spacing error broke the page, so I restored the backup, measured the real indents with `cat -A`, and inserted the block exactly with `sed` ([notes](homepage.md)) |
 | Oct 25, 2026 | Connected Composio to Claude and linked GitHub; STU's admin consent blocked Outlook (app asked for ~12 permissions incl. send-as, I needed 1), so I used the built-in browser instead ([notes](composio.md)) |
 | Oct 25, 2026 | Added my gaming PC to Tailscale (exit node kept off; skipped the signature check, so I documented how to verify it after install), confirmed `http://wyse:3000` loads from it, and reviewed the device list ([notes](tailscale.md)) |
@@ -110,7 +111,7 @@ flowchart LR
 
 ## Logs and write-ups
 
-- [How my server got here](how-my-server-got-here.md): from a $40 used thin client to a headless Debian server, with journey, before/after, and network diagrams
+- [How my server got here](how-my-server-got-here.md): from a $40 used thin client (Debian pre-installed by the seller, a supply-chain risk) to a headless server, with journey, before/after, and network diagrams
 - [Wyse boot failure recovery](wyse-boot-recovery.md): fixing emergency mode, network, desktop, and a kernel panic
 - [First headless boot + remote access](remote-access-log.md): exit node kill switch, a missing ethernet cable, and reaching Pi-hole from my phone through Tailscale
 - [Disk cleanup, SSH, and hardening](disk-cleanup-and-ssh-log.md): finding a 486MB duplicate safely, verifying an SSH fingerprint, key-only SSH, and an open-port audit
@@ -126,6 +127,7 @@ flowchart LR
 - [Know Your Lab](https://alonzogreen0304.github.io/Homelab/games/know-your-lab.html): Learn cards (simple explanation + analogy + where it is in my lab) and a 37-question quiz on everything I've built ([source](games/know-your-lab.html))
 - [Wyse Labs](https://alonzogreen0304.github.io/Homelab/games/labs.html): 8 hands-on practice labs I run on my own server, TryHackMe-style: Linux Detective, Log Hunter, DNS Lab, Know Your Doors (ports), Attack & Detect (CrowdSec), Incident Response Drill (MTTD/MTTR), Hardening Audit (Lynis, GRC), and Vulnerability Scan (Trivy). Each has a goal, analogy, step flow, commands, answer checks, and a Security+ debrief ([source](games/labs.html))
 - [Lab House](https://alonzogreen0304.github.io/Homelab/games/lab-house.html): a beginner study guide to my whole lab, explained as a house. Starts with "what is a homelab / server / port", then every underlined term (DNS, VPN, IDS, etc.) is tappable with a plain meaning and a real example, plus a deep-dive on hardware, operating systems, Linux, what a package manager is and where programs come from, and what programs/services/containers are, and a 51-term A-Z glossary. Tap a room (mail sorter = Pi-hole, camera guard = CrowdSec, etc.) for an animation, what it does, how it's set up in my lab, and the security idea behind it. Includes a guided tour and a "follow a website visit" mode ([source](games/lab-house.html))
+- [Audit Ready](https://alonzogreen0304.github.io/Homelab/games/audit-ready.html): a GRC game set up like an audit case file. 71 questions across Frameworks (NIST CSF 2.0, ISO 27001, SOC 2, RMF, PCI DSS, CMMC), Risk (SLE/ALE, treatments, appetite), Controls, Policy & Audit (RPO/RTO, BIA, vendor risk), Evidence Commands (what to run when an auditor asks), Laws & Privacy (GDPR, HIPAA, FERPA, SOX), and My Lab (my own setup mapped to controls). Each answer gets a COMPLIANT or FINDING stamp, the why, and an analogy. 3 findings fails the audit; XP ranks from Intern to CISO; plus a Field Guide to study from ([source](games/audit-ready.html))
 - [Command Center](https://alonzogreen0304.github.io/Homelab/games/command-center.html): every command from my lab (51 of them). **Learn** cards (what it does, analogy, where I used it, flag-by-flag breakdown), a **Quiz** (what does it do, which command, and 20 "what we did" troubleshooting scenarios), and **Type It**, where I type commands from memory. Tracks XP, streaks, and per-command mastery ([source](games/command-center.html))
 - [Acronym Breach](https://alonzogreen0304.github.io/Homelab/games/acronym-breach.html): a terminal-style hacker game for drilling them. Play it in the browser, or add it to your phone's home screen ([source](games/acronym-breach.html))
 

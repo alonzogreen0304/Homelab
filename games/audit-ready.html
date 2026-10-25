@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Audit Ready</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#120d24">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one column "case file" — a clipboard of audit questions, each answer gets a stamp */
+:root {
+  color-scheme: dark;
+  --bg: #120d24;
+  --panel: #1b1535;
+  --panel2: #231b45;
+  --line: #352a62;
+  --ink: #ece8fb;
+  --muted: #a99fd0;
+  --faint: #6d6496;
+  --purple: #a78bfa;
+  --paper: #efe9d8;
+  --paper-ink: #2a2140;
+  --good: #57e39b;
+  --bad: #ff5f6d;
+  --amber: #ffc15e;
+  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --type: "Courier Prime", "Courier New", monospace;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body {
+  background: var(--bg); color: var(--ink); font: 15px/1.5 var(--display);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 40px;
+}
+.wrap { max-width: 720px; margin: 0 auto; display: grid; gap: 16px; }
+header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px; }
+h1 { font-size: 30px; font-weight: 800; margin: 0; letter-spacing: -0.5px; text-wrap: balance; }
+h1 span { color: var(--purple); }
+.sub { color: var(--muted); margin: 2px 0 0; font-size: 14px; }
+.rank { font: 600 12px var(--mono); color: var(--amber); text-transform: uppercase; letter-spacing: 1px; text-align: right; }
+.rank b { display: block; color: var(--ink); font-size: 18px; letter-spacing: 0; text-transform: none; font-family: var(--display); }
+.bar { height: 6px; background: var(--panel2); border-radius: 99px; overflow: hidden; margin-top: 4px; min-width: 140px; }
+.bar i { display: block; height: 100%; background: var(--purple); transition: width .4s; }
+
+nav { display: flex; gap: 6px; flex-wrap: wrap; }
+nav button, .chip, .btn {
+  font: 600 13px var(--display); border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  padding: 8px 14px; border-radius: 99px; cursor: pointer;
+}
+nav button[aria-selected="true"] { background: var(--purple); color: #1a1033; border-color: var(--purple); }
+.btn.primary { background: var(--purple); color: #1a1033; border-color: var(--purple); font-size: 15px; padding: 11px 20px; }
+button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip[aria-pressed="true"] { border-color: var(--purple); color: var(--purple); background: var(--panel2); }
+.label { font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: 1.2px; color: var(--faint); margin: 0 0 8px; }
+
+/* Case file card */
+.file {
+  background: var(--paper); color: var(--paper-ink); border-radius: 4px 14px 14px 14px; padding: 18px 18px 20px;
+  position: relative; box-shadow: 0 10px 30px rgba(0,0,0,.35); font-family: var(--type);
+}
+.file::before {
+  content: attr(data-tab); position: absolute; top: -24px; left: 0; background: var(--paper); color: var(--paper-ink);
+  font: 700 11px var(--mono); padding: 5px 12px; border-radius: 8px 8px 0 0; letter-spacing: 1px; text-transform: uppercase;
+}
+.meta { display: flex; justify-content: space-between; gap: 8px; font: 600 12px var(--mono); color: #6b5f8a; margin-bottom: 10px; flex-wrap: wrap; }
+.lives { letter-spacing: 2px; }
+.q { font-size: 18px; font-weight: 700; margin: 0 0 14px; line-height: 1.4; text-wrap: pretty; }
+.q code, .opt code, .why code, .guide code { font-family: var(--mono); font-size: .9em; }
+.opts { display: grid; gap: 8px; }
+.opt {
+  text-align: left; font: 15px/1.4 var(--type); color: var(--paper-ink); background: #fffaf0; border: 1.5px solid #cfc5ab;
+  border-radius: 8px; padding: 10px 12px; cursor: pointer; min-width: 0; overflow-wrap: anywhere;
+}
+.opt:hover:not(:disabled) { border-color: var(--paper-ink); }
+.opt.right { background: #d9f7e6; border-color: #1f9d5b; }
+.opt.wrong { background: #ffe0e3; border-color: #d23246; }
+.opt:disabled { cursor: default; }
+.stamp {
+  position: absolute; right: 16px; top: 34px; font: 700 20px var(--mono); padding: 4px 10px; border: 3px solid; border-radius: 6px;
+  transform: rotate(-12deg) scale(1.6); opacity: 0; letter-spacing: 2px; pointer-events: none;
+}
+.stamp.on { animation: stamp .35s forwards; }
+.stamp.ok { color: #1f9d5b; } .stamp.no { color: #d23246; }
+@keyframes stamp { to { opacity: .9; transform: rotate(-12deg) scale(1); } }
+.why { margin-top: 14px; border-top: 1.5px dashed #b9ae92; padding-top: 12px; font-size: 14.5px; }
+.why p { margin: 0 0 8px; }
+.why .an { color: #5b3fb0; }
+.next { margin-top: 12px; display: flex; justify-content: flex-end; }
+
+.end { text-align: center; display: grid; gap: 10px; justify-items: center; }
+.end .big { font: 800 44px var(--display); color: var(--purple); }
+.miss { text-align: left; width: 100%; display: grid; gap: 8px; }
+.miss div { background: var(--panel2); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.miss b { color: var(--amber); }
+
+.guide { display: grid; gap: 10px; }
+.guide details { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0 14px; }
+.guide summary { cursor: pointer; padding: 11px 0; font-weight: 700; }
+.guide summary small { color: var(--faint); font: 600 11px var(--mono); margin-left: 6px; }
+.guide .item { border-top: 1px solid var(--line); padding: 10px 0; font-size: 14px; }
+.guide .item b { color: var(--purple); }
+.guide .item p { margin: 4px 0 0; color: var(--muted); }
+.guide .item .an { color: var(--amber); }
+.hint { color: var(--muted); font-size: 13px; margin: 0; }
+.stats { display: flex; gap: 14px; flex-wrap: wrap; font: 600 13px var(--mono); color: var(--muted); }
+.stats b { color: var(--ink); font-size: 16px; }
+footer { color: var(--faint); font-size: 12px; text-align: center; }
+footer a { color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .stamp.on { animation: none; opacity: .9; transform: rotate(-12deg); } .bar i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Audit <span>Ready</span></h1>
+      <p class="sub">GRC frameworks, risk, controls, and the commands auditors ask for. Mapped to my own lab.</p>
+    </div>
+    <div class="rank" aria-live="polite">Rank<b id="rankName">Intern</b><div class="bar"><i id="rankBar" style="width:0%"></i></div><span id="xpText">0 XP</span></div>
+  </header>
+
+  <nav role="tablist" aria-label="Mode">
+    <button role="tab" id="tabPlay" aria-selected="true">Audit Run</button>
+    <button role="tab" id="tabGuide" aria-selected="false">Field Guide</button>
+  </nav>
+
+  <section id="setup" class="panel" style="display:grid;gap:14px">
+    <div>
+      <p class="label">Pick your scope</p>
+      <div class="chips" id="decks"></div>
+    </div>
+    <div class="stats" id="stats"></div>
+    <p class="hint">10 questions per run. 3 findings (wrong answers) and the audit fails. Each answer comes with the why and an analogy.</p>
+    <div><button class="btn primary" id="start">Start audit</button></div>
+  </section>
+
+  <section id="game" hidden></section>
+  <section id="guide" class="guide" hidden></section>
+
+  <footer>Part of my <a href="https://github.com/alonzogreen0304/Homelab">Homelab</a> study tools · Security+ SY0-701 + GRC</footer>
+</div>
+
+<script>
+const DECKS = {
+  fw:   "Frameworks",
+  risk: "Risk",
+  ctl:  "Controls",
+  pol:  "Policy & Audit",
+  cmd:  "Evidence Commands",
+  law:  "Laws & Privacy",
+  lab:  "My Lab"
+};
+
+// [deck, question, [correct, wrong, wrong, wrong], why, analogy]
+const Q = [
+  // Frameworks
+  ["fw","NIST CSF 2.0 has six core functions. Which one was added in 2.0?",["Govern","Identify","Recover","Detect"],"CSF 2.0 (Feb 2024) added Govern on top of Identify, Protect, Detect, Respond, Recover. Govern covers strategy, roles, policy, and supply-chain risk.","Govern is the head coach. The other five are the plays on the field."],
+  ["fw","List the NIST CSF 2.0 functions:",["Govern, Identify, Protect, Detect, Respond, Recover","Plan, Do, Check, Act","Prepare, Categorize, Select, Implement, Assess, Authorize, Monitor","Identify, Contain, Eradicate, Recover"],"Plan-Do-Check-Act is the ISO improvement cycle, the 7 steps are the NIST RMF, and Contain/Eradicate are incident-response phases.","GIPDRR: \"Good Interns Protect, Detect, Respond, Recover.\""],
+  ["fw","Which framework is a certifiable standard for an Information Security Management System (ISMS)?",["ISO/IEC 27001","NIST CSF","CIS Controls","OWASP Top 10"],"Companies can be audited and certified against ISO 27001. NIST CSF is voluntary guidance, with no certificate.","ISO 27001 is a driver's license you can earn. NIST CSF is a driving guidebook."],
+  ["fw","ISO 27001:2022 Annex A groups its 93 controls into which four themes?",["Organizational, People, Physical, Technological","Preventive, Detective, Corrective, Deterrent","Govern, Protect, Detect, Respond","Low, Moderate, High, Critical"],"The 2022 update cut 114 controls down to 93 and grouped them into those 4 themes.","Four rooms in the building: the office, the staff, the doors, and the computers."],
+  ["fw","A SOC 2 Type II report proves that…",["Controls actually worked over a period of time (usually 3-12 months)","Controls were designed well on a single day","The company is PCI compliant","The company passed a penetration test"],"Type I = the design at one point in time. Type II = operating effectiveness over a period. Customers usually want Type II.","Type I is a photo of a clean kitchen. Type II is a security camera showing it stayed clean all year."],
+  ["fw","Which SOC 2 Trust Services Criterion is required in every report?",["Security","Privacy","Availability","Processing Integrity"],"Security (the Common Criteria) is mandatory. Availability, Processing Integrity, Confidentiality, and Privacy are optional add-ons.","Security is the main course. The other four are sides you can order."],
+  ["fw","The NIST Risk Management Framework (RMF, SP 800-37) has how many steps?",["7: Prepare, Categorize, Select, Implement, Assess, Authorize, Monitor","5: Identify, Protect, Detect, Respond, Recover","4: Plan, Do, Check, Act","6: the CSF functions"],"RMF is the federal process for authorizing systems. It ends with an Authority to Operate (ATO) and continuous monitoring.","Getting a building permit: plan, inspect, approve, then keep inspecting."],
+  ["fw","NIST SP 800-53 is best described as…",["A catalog of security and privacy controls","A breach notification law","A risk scoring formula","A cloud certification program"],"800-53 is the giant control catalog (Access Control, Audit, etc.). The RMF \"Select\" step picks controls from it.","800-53 is the menu. RMF is how you order from it."],
+  ["fw","CIS Controls v8 has 18 controls split into Implementation Groups. A small business with limited IT should start with…",["IG1 (basic cyber hygiene)","IG3","IG2","All 18 at once"],"IG1 is the minimum essential set (inventory, patching, MFA, backups). IG2 and IG3 add more for bigger or higher-risk orgs.","IG1 is learning to swim before diving off the high board."],
+  ["fw","A cloud provider wants to sell to US federal agencies. Which program authorizes it?",["FedRAMP","CMMC","HIPAA","PCI DSS"],"FedRAMP standardizes security authorization for cloud services the federal government uses. CMMC is for Department of Defense contractors.","FedRAMP is the federal government's approved-vendor list for cloud."],
+  ["fw","A company that stores, processes, or transmits credit card data must follow…",["PCI DSS","SOX","FERPA","GDPR only"],"PCI DSS is set by the card brands (Visa, Mastercard, etc.), not a government. The current version is 4.0.","PCI DSS is the house rules for anyone handling the card-brand money."],
+  ["fw","A Department of Defense contractor handling Controlled Unclassified Information (CUI) needs…",["CMMC","FedRAMP","SOC 2 Type I","ISO 9001"],"CMMC (Cybersecurity Maturity Model Certification) is built on NIST SP 800-171 for protecting CUI.","CMMC is the security badge required to work on a defense project."],
+
+  // Risk
+  ["risk","Risk is usually calculated as…",["Likelihood × Impact","Threat + Vulnerability","Assets − Controls","Impact ÷ Cost"],"A risk matrix plots likelihood against impact. High × high = top priority.","Chance of rain × how bad getting wet would be."],
+  ["risk","An asset is worth $10,000 and an event would destroy 50% of it. What's the SLE?",["$5,000","$10,000","$500","$20,000"],"SLE (Single Loss Expectancy) = Asset Value × Exposure Factor = $10,000 × 0.5.","SLE is the damage from one storm."],
+  ["risk","SLE is $5,000 and the event happens once every 2 years (ARO 0.5). What's the ALE?",["$2,500","$10,000","$5,000","$1,000"],"ALE (Annualized Loss Expectancy) = SLE × ARO = $5,000 × 0.5. If a control costs more than the ALE per year, it may not be worth it.","ALE is the average storm damage per year, used to budget for insurance."],
+  ["risk","Risk BEFORE any controls are applied is called…",["Inherent risk","Residual risk","Accepted risk","Control risk"],"Inherent = raw risk. Residual = what's left after controls. You never get residual risk to zero.","Inherent is driving with no seatbelt. Residual is the risk still left with seatbelts and airbags."],
+  ["risk","A company buys cyber insurance. Which risk treatment is that?",["Transfer","Mitigate","Avoid","Accept"],"Transfer shifts the financial impact to a third party. The four treatments are Mitigate, Transfer, Avoid, and Accept.","Paying someone else to carry the heavy box."],
+  ["risk","A company stops offering a risky feature entirely. Which treatment?",["Avoid","Accept","Transfer","Mitigate"],"Avoidance removes the activity that creates the risk.","Not swimming in the shark tank at all."],
+  ["risk","Leadership signs off that a low risk isn't worth fixing. Which treatment, and what document records it?",["Accept, recorded in the risk register with an owner","Avoid, in the incident log","Transfer, in the SLA","Mitigate, in the firewall rules"],"Acceptance must be a documented, owned decision, not ignoring it. The risk register tracks each risk, its score, owner, and treatment.","Accepting is signing a waiver. Ignoring is pretending the waiver doesn't exist."],
+  ["risk","The overall amount of risk an organization is willing to take on to reach its goals is its…",["Risk appetite","Risk tolerance","Risk register","Residual risk"],"Appetite is the big-picture willingness. Tolerance is the acceptable variation around it for a specific risk.","Appetite: \"I'm OK with spicy food.\" Tolerance: \"but nothing hotter than a jalapeño.\""],
+  ["risk","An unpatched server is a ___. A ransomware gang is a ___.",["vulnerability, threat","threat, vulnerability","risk, control","control, risk"],"A vulnerability is a weakness. A threat is something that could exploit it. Risk is the chance and impact of that happening.","The unlocked window is the vulnerability. The burglar is the threat."],
+  ["risk","High / Medium / Low ratings on a heat map are what kind of risk analysis?",["Qualitative","Quantitative","Statistical","Financial"],"Qualitative uses categories and judgment. Quantitative uses numbers and dollars (SLE, ARO, ALE).","Qualitative: \"that movie was good.\" Quantitative: \"8.4 out of 10.\""],
+  ["risk","You can't apply a required patch to old equipment, so you isolate it on its own network segment. That's a…",["Compensating control","Detective control","Deterrent control","Directive control"],"A compensating control meets the intent of a requirement when the primary control isn't possible.","Can't fix the broken lock, so you put the room behind a second locked door."],
+
+  // Controls
+  ["ctl","Name the CIA triad.",["Confidentiality, Integrity, Availability","Control, Identity, Access","Compliance, Insurance, Audit","Confidentiality, Identity, Authentication"],"Every control protects one or more of these three. Encryption → C, hashing → I, backups → A.","C: only the right people read it. I: no one changed it. A: it's there when you need it."],
+  ["ctl","A firewall rule that blocks a port is what control TYPE?",["Preventive","Detective","Corrective","Deterrent"],"Preventive stops it before it happens. Detective finds it. Corrective fixes it after. Deterrent discourages it.","Preventive is the lock. Detective is the camera. Corrective is the repair crew. Deterrent is the \"Beware of Dog\" sign."],
+  ["ctl","Security+ groups controls into four CATEGORIES. Which set is right?",["Technical, Managerial, Operational, Physical","Preventive, Detective, Corrective, Deterrent","Low, Moderate, High, Critical","People, Process, Technology, Data"],"Category = who or what implements it. Type = what it does. A control has both: a security guard is Operational and Preventive/Deterrent.","Category is the job title. Type is the job duty."],
+  ["ctl","A written security policy is what control category?",["Managerial (administrative)","Technical","Physical","Operational"],"Managerial controls are policies, risk assessments, and planning. Operational controls are carried out by people (guards, training).","Managerial is the rulebook. Operational is the referee enforcing it."],
+  ["ctl","Giving users only the access they need to do their job is…",["Least privilege","Separation of duties","Defense in depth","Implicit deny"],"Least privilege limits the blast radius if an account is compromised.","A hotel key card that only opens your room, not every room."],
+  ["ctl","One person requests a payment and a different person approves it. That's…",["Separation of duties","Least privilege","Job rotation","Mandatory vacation"],"Splitting critical tasks means fraud needs two people working together (collusion).","A bank vault that needs two keys held by two different people."],
+  ["ctl","Firewall + IDS + MFA + backups + training, all layered together, is called…",["Defense in depth","Zero trust","Single sign-on","Segmentation"],"No single control is perfect, so you stack them. If one fails, the next one catches it.","A castle: moat, wall, gate, guards, and a locked keep."],
+  ["ctl","A password plus a code from an authenticator app is MFA because they're different…",["Factors: something you know + something you have","Passwords","Accounts","Encryption keys"],"The factors are something you know, have, are (biometrics), plus somewhere you are. Two passwords are not MFA.","A key and a PIN for the same door: stealing one isn't enough."],
+  ["ctl","Restoring systems from backup after an incident is what control type?",["Corrective (recovery)","Preventive","Deterrent","Detective"],"Corrective controls reduce impact and restore normal operations after something happens.","Corrective is the spare tire after the flat."],
+
+  // Policy & Audit
+  ["pol","Rank these from high-level to most detailed:",["Policy → Standard → Procedure","Procedure → Standard → Policy","Standard → Policy → Procedure","Guideline → Policy → Standard"],"Policy = the what and why (mandatory). Standard = specific requirements. Procedure = step-by-step how. Guidelines are optional advice.","Policy: \"Eat healthy.\" Standard: \"Under 2,000 calories.\" Procedure: the recipe."],
+  ["pol","Which of these is OPTIONAL?",["Guideline","Policy","Standard","Procedure"],"Guidelines are recommendations. The other three are mandatory.","A guideline is a suggestion from a friend. A policy is a rule from your boss."],
+  ["pol","An auditor says \"show me, don't tell me.\" What do they want?",["Evidence: screenshots, configs, logs, tickets","A verbal walkthrough","Your opinion on the control","The vendor's marketing page"],"Audits run on evidence. If it isn't documented or provable, it didn't happen.","A receipt, not a story about what you bought."],
+  ["pol","Comparing current controls to a framework to find what's missing is a…",["Gap assessment","Penetration test","Tabletop exercise","Business impact analysis"],"A gap assessment shows where you fall short. Fixes then go into a remediation plan (POA&M in federal work).","Holding your outfit up to the dress code to see what you're missing."],
+  ["pol","In federal compliance, a POA&M is…",["A Plan of Action and Milestones to fix findings","A type of firewall","A privacy law","A risk score"],"A POA&M lists each weakness, the fix, the owner, the resources, and the due date.","A to-do list with deadlines and names attached."],
+  ["pol","The maximum amount of data loss you can accept, measured in time, is the…",["RPO (Recovery Point Objective)","RTO (Recovery Time Objective)","MTTR","MTBF"],"RPO = how far back you can lose data (it drives backup frequency). RTO = how long until you're back up.","RPO: \"I can lose the last hour of my essay.\" RTO: \"I need my laptop back in 4 hours.\""],
+  ["pol","Which document figures out which business processes are critical and how long they can be down?",["Business Impact Analysis (BIA)","Acceptable Use Policy","Risk register","SLA"],"The BIA sets RTO, RPO, and MTD, which feed the disaster recovery and continuity plans.","Deciding which rooms to save first in a fire."],
+  ["pol","A vendor will hold your customers' data. Before signing, GRC should do a…",["Third-party (vendor) risk assessment","Penetration test of your own network","Tabletop exercise","Phishing simulation"],"Review their security: questionnaires, their SOC 2 report, contract security clauses, and right-to-audit.","Checking a babysitter's references before handing over the house keys."],
+  ["pol","A contract that defines uptime (e.g. 99.9%) and penalties is a…",["SLA (Service Level Agreement)","NDA","MOU","AUP"],"An SLA sets measurable service levels. An NDA protects secrets. An MOU is a looser agreement of intent.","An SLA is the pizza place's \"30 minutes or it's free.\""],
+  ["pol","Changing a production config without approval, testing, or a rollback plan breaks…",["Change management","Data classification","Least privilege","Incident response"],"Change management: request → assess impact → approve → back up → test → implement → document.","Remodeling a kitchen without a permit or a plan B."],
+  ["pol","Who is accountable for a dataset and decides who gets access?",["Data owner","Data custodian","Data processor","End user"],"The owner (usually a business leader) is accountable. The custodian (usually IT) handles the day-to-day: backups, permissions.","The owner owns the car. The custodian is the mechanic who maintains it."],
+
+  // Evidence commands
+  ["cmd","Auditor: \"Prove SSH password login is disabled.\" Best evidence?",["sudo sshd -T | grep -i passwordauthentication","cat ~/.bash_history","ping wyse","ls /etc"],"sshd -T prints the effective SSH config the server is actually using, which beats reading a file that might be overridden.","Checking the lock itself, not the instruction manual."],
+  ["cmd","Auditor: \"Who has admin (sudo) rights on this server?\"",["getent group sudo","whoami","df -h","uptime"],"It lists the members of the sudo group. On Debian, that's who can act as root.","Reading the list of who has a master key."],
+  ["cmd","Auditor: \"What network ports are open and which programs own them?\"",["sudo ss -tulpn","sudo apt update","cat /etc/hostname","free -h"],"-t TCP, -u UDP, -l listening, -p process, -n numeric. Every open port is attack surface that needs a reason.","Walking the building and listing every unlocked door and who's behind it."],
+  ["cmd","Auditor: \"Show me recent login history.\"",["last","history -c","clear","date"],"last reads the login records (who, from where, when). Login review is a common SOC 2 / ISO control.","The building's sign-in sheet."],
+  ["cmd","Auditor: \"Are there missing security patches?\"",["apt list --upgradable","apt remove","ls /var","echo patched"],"It shows installed packages that have newer versions. Patch management is a top control in every framework.","Checking which recalls haven't been fixed on your car."],
+  ["cmd","Auditor: \"Prove the secrets file is only readable by its owner.\"",["stat -c '%a %U %n' .env","cat .env","rm .env","touch .env"],"It shows the permissions (600 = owner read/write only) and the owner, without printing the secrets. Never use cat on a secrets file for evidence.","Showing the safe is locked, without opening the safe."],
+  ["cmd","Auditor: \"Prove this downloaded file wasn't tampered with.\"",["sha256sum file, compared to the publisher's hash","ls -l file","file file","open the file and look"],"If the hashes match, the file is byte-for-byte what the publisher released. That's integrity, the I in CIA.","Matching a package's tamper-seal number to the receipt."],
+  ["cmd","Auditor: \"Give me an inventory of running services.\"",["systemctl list-units --type=service --state=running","ps -ef | head -1","top -n 0","cat /etc/passwd"],"Asset and software inventory is CIS Control 1 and 2. You can't protect what you don't know is running.","Taking attendance of everyone working in the building."],
+  ["cmd","Auditor: \"What OS and version is this asset running?\"",["cat /etc/os-release","uname -n","hostname","pwd"],"It shows the distro and version (Debian 12 bookworm). That's needed for the asset inventory and to know if it's still supported.","Checking the model year on the car's sticker."],
+  ["cmd","Auditor: \"Show SSH authentication logs from today.\"",["sudo journalctl -u ssh --since today","cat /var/log/auth.log","tail /etc/ssh/sshd_config","dmesg | head"],"On Debian 12, SSH logs live in the systemd journal (auth.log may not exist). That's the same gap CrowdSec hit in my lab.","Rewinding today's security-camera tape for the front door."],
+  ["cmd","Auditor: \"List all user accounts on the system.\"",["getent passwd","users","w","id"],"getent passwd lists every account, including service accounts. Look for unknown or unused ones (account review).","The full employee roster, including the night shift."],
+  ["cmd","Auditor: \"What containers are running?\"",["docker ps","docker rm","docker pull","docker build"],"Container inventory: name, image, ports, uptime. Unknown containers = shadow IT.","A head count of every food truck parked in the lot."],
+
+  // Laws & Privacy
+  ["law","Under GDPR, a personal data breach must be reported to the supervisory authority within…",["72 hours of becoming aware","24 hours","30 days","1 year"],"GDPR Article 33: 72 hours, where feasible. Fines can reach 4% of global annual revenue.","A 3-day deadline to report the fire."],
+  ["law","HIPAA protects…",["Protected Health Information (PHI) in US healthcare","Credit card numbers","Student records","EU citizens' data"],"Covered entities and their business associates must protect PHI's confidentiality, integrity, and availability.","HIPAA is the lock on the doctor's file cabinet."],
+  ["law","FERPA protects…",["Student education records","Health records","Financial reports","Card data"],"FERPA covers schools that get US Department of Education funding, like STU. Your grades are protected.","FERPA is why the school can't hand your transcript to just anyone."],
+  ["law","SOX (Sarbanes-Oxley) mainly targets…",["Accurate financial reporting at public companies","Healthcare privacy","Card payments","Defense contracts"],"SOX requires internal controls over financial reporting. IT controls like access and change management support it.","SOX makes sure the company's report card isn't faked."],
+  ["law","Under GDPR, the company that decides WHY and HOW personal data is processed is the…",["Data controller","Data processor","Data subject","DPO"],"The processor acts on the controller's instructions (like a cloud vendor). The data subject is the person.","The controller is the restaurant owner. The processor is the delivery app."],
+  ["law","Collecting only the personal data you actually need is…",["Data minimization","Data masking","Tokenization","Retention"],"It's a core privacy principle: less data = less to protect = smaller breach.","Only packing what you need, so there's less to lose if the bag gets stolen."],
+  ["law","Which is NOT one of the three main states of data?",["Data in storage limbo","Data at rest","Data in transit","Data in use"],"At rest (on disk) → encryption. In transit (on the network) → TLS/VPN. In use (in memory) → access controls.","Parked, driving, or being worked on."],
+
+  // My lab
+  ["lab","My SSH login banner \"Authorized access only\" is mainly what control type?",["Deterrent","Corrective","Detective","Compensating"],"It discourages attackers and supports legal action. It's also a policy requirement in NIST 800-53 (AC-8, System Use Notification).","The \"Beware of Dog\" sign on the gate."],
+  ["lab","CrowdSec reads my logs AND bans attacker IPs. Which control types?",["Detective + Corrective","Preventive only","Deterrent + Directive","Physical + Managerial"],"Spotting the brute force is detective. Banning the IP to stop it is corrective (an IPS-style response).","A guard who sees the intruder and then locks him out."],
+  ["lab","Dozzle reads Docker logs through a socket proxy with POST disabled. Which principle?",["Least privilege","Separation of duties","Data minimization","Job rotation"],"Giving Dozzle the raw Docker socket would be root-level power. The proxy allows reads only.","A visitor badge that opens the lobby, not the server room."],
+  ["lab","I bought my Wyse with Debian already installed by the seller. The GRC concern?",["Supply-chain risk: an untrusted build that could hide users, keys, or jobs","No concern, Linux is secure","Too little storage","Debian isn't certified"],"The fix is to re-image from official media, or at least audit the users, sudoers, authorized_keys, cron, and services.","A used house: you don't know who kept a copy of the keys."],
+  ["lab","Before editing services.yaml, I ran cp services.yaml services.yaml.bak. What practice is that?",["Change management: having a rollback plan","Encryption","Data classification","Hashing"],"When the YAML broke, the backup restored the dashboard in seconds. That's corrective control plus change management.","Saving your game before the boss fight."],
+  ["lab","Composio asked for ~12 Outlook permissions (incl. send-as) when I only needed read. STU's admin consent blocked it. Which concepts?",["Least privilege + third-party risk","Defense in depth + RTO","Data minimization + SLA","Separation of duties + MFA"],"The app was over-permissioned, and admin consent is a control against risky third-party apps.","Asking for the master key to borrow one mailbox. The front desk said no."],
+  ["lab","Uptime Kuma pinging my services every 60 seconds with phone alerts is mainly…",["Detective (monitoring)","Preventive","Deterrent","Compensating"],"Monitoring detects outages fast, which lowers MTTD (Mean Time To Detect).","A smoke detector that texts you."],
+  ["lab","Pi-hole blocking known ad and tracker domains before they load is…",["Preventive","Detective","Corrective","Directive"],"It stops the connection before it happens, at the DNS layer.","A bouncer who turns people away at the door."],
+  ["lab","My API keys live in a .env file with chmod 600, not in GitHub. What does that protect?",["Confidentiality (secrets management)","Availability","Integrity of backups","Physical security"],"Committing secrets to a repo is one of the most common real-world leaks. 600 = only the owner can read/write.","Keeping the house key in your pocket, not taped to the front door."]
+];
+
+// ---------- state ----------
+const RANKS = [[0,"Intern"],[150,"Analyst"],[400,"Auditor"],[800,"GRC Lead"],[1400,"CISO"]];
+let store = { xp:0, best:0, runs:0, seen:{} };
+try { const s = JSON.parse(localStorage.getItem("auditReady") || "null"); if (s) store = Object.assign(store, s); } catch (e) {}
+const save = () => { try { localStorage.setItem("auditReady", JSON.stringify(store)); } catch (e) {} };
+let picked = new Set(Object.keys(DECKS));
+let run = null;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// Wrap anything that looks like a command in <code>
+const fmt = s => esc(s).replace(/(sudo [^,?]+|getent \w+(?: \w+)?|apt list --upgradable|stat -c [^,]+? \.env|sha256sum file|systemctl [^,]+|cat \/etc\/os-release|docker \w+|ss -tulpn|journalctl[^,]*|\bchmod 600\b|cp services\.yaml services\.yaml\.bak|\blast\b(?= reads)|\.env|services\.yaml)/g, "<code>$1</code>");
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function rankInfo() {
+  let i = 0; while (i + 1 < RANKS.length && store.xp >= RANKS[i + 1][0]) i++;
+  const lo = RANKS[i][0], hi = RANKS[i + 1] ? RANKS[i + 1][0] : lo;
+  return { name: RANKS[i][1], pct: hi > lo ? (store.xp - lo) / (hi - lo) * 100 : 100 };
+}
+function paintRank() {
+  const r = rankInfo();
+  $("rankName").textContent = r.name; $("rankBar").style.width = r.pct + "%"; $("xpText").textContent = store.xp + " XP";
+  const mastered = Object.values(store.seen).filter(v => v >= 2).length;
+  $("stats").innerHTML = `<span>Best run <b>${store.best}/10</b></span><span>Runs <b>${store.runs}</b></span><span>Mastered <b>${mastered}/${Q.length}</b></span>`;
+}
+
+function paintDecks() {
+  $("decks").innerHTML = Object.entries(DECKS).map(([k, v]) =>
+    `<button class="chip" data-k="${k}" aria-pressed="${picked.has(k)}">${v} · ${Q.filter(q => q[0] === k).length}</button>`).join("");
+}
+$("decks").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if (!b) return;
+  const k = b.dataset.k;
+  if (picked.has(k)) { if (picked.size > 1) picked.delete(k); } else picked.add(k);
+  paintDecks();
+});
+
+// ---------- game ----------
+function startRun() {
+  const pool = Q.map((q, i) => ({ q, i })).filter(o => picked.has(o.q[0]));
+  // Favor questions not yet mastered
+  const weighted = shuffle(pool).sort((a, b) => (store.seen[a.i] || 0) - (store.seen[b.i] || 0));
+  run = { list: shuffle(weighted.slice(0, Math.min(10, pool.length))), n: 0, score: 0, lives: 3, missed: [] };
+  $("setup").hidden = true; $("game").hidden = false; show();
+}
+function show() {
+  const { q, i } = run.list[run.n];
+  const opts = shuffle(q[2].map((t, k) => ({ t, ok: k === 0 })));
+  $("game").innerHTML = `
+    <div class="file" data-tab="Case ${String(run.n + 1).padStart(2, "0")} · ${DECKS[q[0]]}">
+      <div class="meta"><span>Q ${run.n + 1}/${run.list.length} · Score ${run.score}</span><span class="lives" aria-label="${run.lives} findings left">${"■".repeat(run.lives)}${"□".repeat(3 - run.lives)}</span></div>
+      <div class="stamp" id="stamp" aria-hidden="true"></div>
+      <p class="q">${fmt(q[1])}</p>
+      <div class="opts">${opts.map((o, k) => `<button class="opt" data-ok="${o.ok}" id="opt${k}">${fmt(o.t)}</button>`).join("")}</div>
+      <div id="after"></div>
+    </div>`;
+  $("game").querySelectorAll(".opt").forEach(b => b.addEventListener("click", () => answer(b, q, i)));
+}
+function answer(btn, q, i) {
+  const ok = btn.dataset.ok === "true";
+  $("game").querySelectorAll(".opt").forEach(b => { b.disabled = true; if (b.dataset.ok === "true") b.classList.add("right"); });
+  const st = $("stamp");
+  if (ok) {
+    run.score++; store.xp += 15; store.seen[i] = (store.seen[i] || 0) + 1;
+    st.textContent = "COMPLIANT"; st.className = "stamp ok on";
+  } else {
+    btn.classList.add("wrong"); run.lives--; store.xp += 3; store.seen[i] = 0; run.missed.push(q);
+    st.textContent = "FINDING"; st.className = "stamp no on";
+    const lv = $("game").querySelector(".lives"); lv.textContent = "■".repeat(run.lives) + "□".repeat(3 - run.lives);
+  }
+  save(); paintRank();
+  const last = run.lives === 0 || run.n === run.list.length - 1;
+  $("after").innerHTML = `<div class="why"><p>${fmt(q[3])}</p><p class="an"><b>Analogy:</b> ${esc(q[4])}</p></div>
+    <div class="next"><button class="btn primary" id="nextBtn">${last ? "See audit result" : "Next case"}</button></div>`;
+  $("nextBtn").focus();
+  $("nextBtn").addEventListener("click", () => { if (last) finish(); else { run.n++; show(); } });
+}
+function finish() {
+  run.done = true;
+  const passed = run.lives > 0;
+  store.runs++; store.best = Math.max(store.best, run.score); if (passed && run.score === run.list.length) store.xp += 50;
+  save(); paintRank();
+  $("game").innerHTML = `<div class="panel end">
+    <p class="label">${passed ? "Audit passed" : "Audit failed: 3 findings"}</p>
+    <div class="big">${run.score}/${run.list.length}</div>
+    <p class="hint">${passed ? (run.score === run.list.length ? "Clean report. +50 XP bonus." : "Passed with findings. Review them below.") : "Every finding is something to study. That's how real audits work too."}</p>
+    ${run.missed.length ? `<div class="miss">${run.missed.map(q => `<div><b>${esc(DECKS[q[0]])}:</b> ${fmt(q[1])}<br>→ ${fmt(q[2][0])}</div>`).join("")}</div>` : ""}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn primary" id="again">Run another audit</button><button class="btn" id="home">Change scope</button></div>
+  </div>`;
+  $("again").addEventListener("click", startRun);
+  $("home").addEventListener("click", () => tab("play"));
+}
+$("start").addEventListener("click", startRun);
+
+// ---------- guide ----------
+function paintGuide() {
+  $("guide").innerHTML = `<p class="hint">Every answer in the game, grouped by topic. Read it once, then test yourself in Audit Run.</p>` +
+    Object.entries(DECKS).map(([k, v]) => {
+      const items = Q.filter(q => q[0] === k);
+      return `<details${k === "fw" ? " open" : ""}><summary>${v}<small>${items.length}</small></summary>${items.map(q =>
+        `<div class="item">${fmt(q[1])}<br><b>${fmt(q[2][0])}</b><p>${fmt(q[3])}</p><p class="an">${esc(q[4])}</p></div>`).join("")}</details>`;
+    }).join("");
+}
+function tab(which) {
+  const play = which === "play";
+  $("tabPlay").setAttribute("aria-selected", play); $("tabGuide").setAttribute("aria-selected", !play);
+  $("guide").hidden = play;
+  const inGame = !!run && !run.done;
+  $("game").hidden = !play || !inGame;
+  $("setup").hidden = !play || inGame;
+  if (!play) paintGuide();
+}
+$("tabPlay").addEventListener("click", () => tab("play"));
+$("tabGuide").addEventListener("click", () => tab("guide"));
+
+paintDecks(); paintRank();
+if (location.hash === "#guide") tab("guide");
+</script>
+</body>
+</html>

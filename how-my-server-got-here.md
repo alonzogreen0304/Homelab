@@ -6,7 +6,7 @@
 
 The Dell Wyse 5060 was never built to be a server. It's a **thin client**: a small office computer made to be a "dumb screen" that logs into a bigger computer somewhere else. Companies replace them in bulk, so they sell used for cheap. "Server" describes a **job**, not a special machine, so I gave it that job.
 
-> **Analogy:** I bought an old empty storefront and turned it into a restaurant. The building came empty (the hardware). Installing Debian was gutting it and hiring a manager (the OS). Plugging into the network got it a street address. SSH and Tailscale are the back door and a phone line, so I can run it without standing inside. Then the cooks moved in (the programs).
+> **Analogy:** I bought an old storefront and turned it into a restaurant. The seller had already gutted it and hired a manager (Debian came pre-installed). Plugging into the network got it a street address. SSH and Tailscale are the back door and a phone line, so I can run it without standing inside. Then the cooks moved in (the programs).
 
 ---
 
@@ -14,8 +14,7 @@ The Dell Wyse 5060 was never built to be a server. It's a **thin client**: a sma
 
 ```mermaid
 flowchart LR
-    A["🛒 Used Wyse 5060<br/>thin client, ~$40<br/>Dell's locked-down OS"] --> B["💾 Debian 12 installer<br/>from debian.org"]
-    B --> C["🧹 Install Debian<br/>old system wiped<br/>I'm the admin now"]
+    A["🛒 Used Wyse 5060<br/>thin client, ~$40"] --> C["📦 Came with Debian 12<br/>already installed<br/>by the seller"]
     C --> D["🔌 Plug into network<br/>ethernet to my<br/>Wi-Fi extender"]
     D --> E["🔑 Remote control<br/>SSH + Tailscale"]
     E --> F["🖥️ Go headless<br/>no monitor or keyboard"]
@@ -36,7 +35,7 @@ flowchart TB
         A1["No screen (headless)"] --> A2["Debian 12 Linux<br/>(I control everything)"]
         A2 --> A3["Serves my devices 24/7:<br/>ad blocking, DNS, streaming,<br/>monitoring, attack blocking"]
     end
-    Before -->|"wipe + install Debian"| After
+    Before -->|"seller installed Debian,<br/>I set it up as a server"| After
 ```
 
 ## Visual: how it's connected today
@@ -58,8 +57,8 @@ flowchart LR
 | # | Step | Why it matters |
 |---|---|---|
 | 1 | Bought a used Wyse 5060 | Cheap, quiet, low power, so it can run 24/7 |
-| 2 | Downloaded Debian 12 from the official site | Trusted source (supply-chain safety) |
-| 3 | Booted the installer and installed Debian | Replaced Dell's OS; I'm root/admin now |
+| 2 | It arrived with Debian 12 already installed by the seller | Saved setup time, but I didn't build it myself (see Security angle) |
+| 3 | Logged in and took over as admin | It's my machine now |
 | 4 | Connected it by ethernet through my Wi-Fi extender | Other devices can reach it |
 | 5 | Set up SSH (key-only) and Tailscale | Control it from my laptop or phone, from anywhere |
 | 6 | Unplugged the monitor and keyboard | Runs **headless**, like real data-center servers |
@@ -67,8 +66,13 @@ flowchart LR
 
 ## Security angle
 
-- **Clean, trusted build:** wiping the old system and installing from the official source means I know what's on the machine. It's the same idea as companies **re-imaging** used laptops before giving them out.
+- **Trust gap (supply-chain risk):** the seller installed Debian, not me. I can't fully prove what else they set up, such as extra users, SSH keys, or startup scripts. Companies **re-image** used machines for this reason.
+- **Two ways to close the gap:**
+  1. **Best:** reinstall Debian from the official debian.org image (a clean, trusted build). This means re-setting up the services.
+  2. **Good:** audit what's there now: users (`getent passwd`), admins (`getent group sudo`), SSH keys (`~/.ssh/authorized_keys`), scheduled jobs (`crontab -l`, `/etc/cron*`), and running services (`systemctl list-units --type=service --state=running`).
 - **Headless + remote:** fewer physical attack points. Access goes through SSH keys and Tailscale, not someone sitting at a keyboard.
+
+> **Analogy:** buying a used house. The seller hands you keys, but you don't know who else has copies. Re-imaging is changing every lock, and the audit is walking through checking every door.
 
 ## Related notes
 

@@ -152,19 +152,18 @@ h1 span { color: var(--purple); }
         <p><b>The journey, step by step:</b></p>
         <ol>
           <li><b>Got the hardware.</b> A used Wyse 5060, about $40.</li>
-          <li><b>Made an installer USB.</b> I downloaded Debian 12 from debian.org and wrote it onto a USB stick, which turns the stick into a bootable "install disc."</li>
-          <li><b>Booted from the USB.</b> I plugged in a monitor and keyboard and told the Wyse to start from the USB instead of its own drive.</li>
-          <li><b>Installed Debian.</b> This replaced Dell's system with Linux. Now I'm the admin, so I can install anything.</li>
+          <li><b>It came with Debian already on it.</b> The seller had replaced Dell's system with Debian 12 Linux before selling it.</li>
+          <li><b>Took over as admin.</b> I logged in with a monitor and keyboard. Now it's my machine, and I can install anything.</li>
           <li><b>Connected it to the network.</b> An ethernet cable runs from the Wyse to my wall-plug Wi-Fi extender, which links it to my router, so other devices can reach it.</li>
           <li><b>Turned on remote control.</b> I set up SSH (control by typing from my laptop or phone) and later Tailscale (reach it from anywhere).</li>
           <li><b>Went headless.</b> I unplugged the monitor and keyboard. Now it sits in a corner and I run everything remotely.</li>
           <li><b>Moved in the workers.</b> Docker, Pi-hole, Unbound, Jellyfin, Uptime Kuma, CrowdSec, Dozzle, and the dashboard.</li>
         </ol>
         <div class="flow" aria-label="Thin client, then install Debian, then plug into the network, then SSH and Tailscale, then headless server">
-          <span>Used thin client</span><i>→</i><span>Install Debian</span><i>→</i><span>Ethernet to extender</span><i>→</i><span>SSH + Tailscale</span><i>→</i><span>Headless server ✅</span>
+          <span>Used thin client</span><i>→</i><span>Debian pre-installed</span><i>→</i><span>Ethernet to extender</span><i>→</i><span>SSH + Tailscale</span><i>→</i><span>Headless server ✅</span>
         </div>
-        <p class="hint">Analogy: buying an old storefront and turning it into a restaurant. The building came empty (the hardware). Installing Debian is gutting it and hiring a manager (the OS). Plugging into the network is getting a street address. SSH and Tailscale are the back door and a phone line, so I can run things without standing inside. Then the cooks move in (the programs).</p>
-        <p class="eg">Security note: wiping the old system and installing Debian from the official site is a <b>clean, trusted build</b>. You know exactly what's on the machine, which is the same idea as companies "re-imaging" used laptops.</p>
+        <p class="hint">Analogy: buying an old storefront and turning it into a restaurant. The building came empty (the hardware). The seller already gutted it and hired a manager (Debian came pre-installed). Plugging into the network is getting a street address. SSH and Tailscale are the back door and a phone line, so I can run things without standing inside. Then the cooks move in (the programs).</p>
+        <p class="eg">Security note: since the seller installed Debian, it isn't a build I can fully trust. That's <b>supply-chain risk</b>: like a used house, you don't know who kept a copy of the keys. The fix is to reinstall from debian.org (change every lock) or audit the users, SSH keys, and startup jobs (check every door).</p>
       </details>
     </div>
     <div class="step"><span class="n">3</span><b>What runs on it?</b><p>Three layers stacked on each other: the hardware, an operating system (Linux), and programs on top. Some programs run silently in the background (services). Others run in sealed boxes (Docker containers) and have a web page you open in a browser.</p><p class="eg">Pi-hole is a program. Its dashboard is a web page served by the Wyse, not a website on the internet.</p></div>
