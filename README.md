@@ -110,6 +110,7 @@ flowchart LR
 
 ## Logs and write-ups
 
+- [How my server got here](how-my-server-got-here.md): from a $40 used thin client to a headless Debian server, with journey, before/after, and network diagrams
 - [Wyse boot failure recovery](wyse-boot-recovery.md): fixing emergency mode, network, desktop, and a kernel panic
 - [First headless boot + remote access](remote-access-log.md): exit node kill switch, a missing ethernet cable, and reaching Pi-hole from my phone through Tailscale
 - [Disk cleanup, SSH, and hardening](disk-cleanup-and-ssh-log.md): finding a 486MB duplicate safely, verifying an SSH fingerprint, key-only SSH, and an open-port audit

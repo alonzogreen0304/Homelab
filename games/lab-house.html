@@ -155,13 +155,13 @@ h1 span { color: var(--purple); }
           <li><b>Made an installer USB.</b> I downloaded Debian 12 from debian.org and wrote it onto a USB stick, which turns the stick into a bootable "install disc."</li>
           <li><b>Booted from the USB.</b> I plugged in a monitor and keyboard and told the Wyse to start from the USB instead of its own drive.</li>
           <li><b>Installed Debian.</b> This replaced Dell's system with Linux. Now I'm the admin, so I can install anything.</li>
-          <li><b>Connected it to the network.</b> I plugged it into my home network, so other devices can reach it.</li>
+          <li><b>Connected it to the network.</b> An ethernet cable runs from the Wyse to my wall-plug Wi-Fi extender, which links it to my router, so other devices can reach it.</li>
           <li><b>Turned on remote control.</b> I set up SSH (control by typing from my laptop or phone) and later Tailscale (reach it from anywhere).</li>
           <li><b>Went headless.</b> I unplugged the monitor and keyboard. Now it sits in a corner and I run everything remotely.</li>
           <li><b>Moved in the workers.</b> Docker, Pi-hole, Unbound, Jellyfin, Uptime Kuma, CrowdSec, Dozzle, and the dashboard.</li>
         </ol>
         <div class="flow" aria-label="Thin client, then install Debian, then plug into the network, then SSH and Tailscale, then headless server">
-          <span>Used thin client</span><i>→</i><span>Install Debian</span><i>→</i><span>Plug into network</span><i>→</i><span>SSH + Tailscale</span><i>→</i><span>Headless server ✅</span>
+          <span>Used thin client</span><i>→</i><span>Install Debian</span><i>→</i><span>Ethernet to extender</span><i>→</i><span>SSH + Tailscale</span><i>→</i><span>Headless server ✅</span>
         </div>
         <p class="hint">Analogy: buying an old storefront and turning it into a restaurant. The building came empty (the hardware). Installing Debian is gutting it and hiring a manager (the OS). Plugging into the network is getting a street address. SSH and Tailscale are the back door and a phone line, so I can run things without standing inside. Then the cooks move in (the programs).</p>
         <p class="eg">Security note: wiping the old system and installing Debian from the official site is a <b>clean, trusted build</b>. You know exactly what's on the machine, which is the same idea as companies "re-imaging" used laptops.</p>
