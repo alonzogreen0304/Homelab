@@ -136,7 +136,7 @@ flowchart LR
 
 ## Roadmap
 
-**Career roadmap:** [GRC → Consultant → My Own Firm](grc-consultant-roadmap.md): phases, certs, and 9 GRC projects that turn this lab into audit practice.
+**Career roadmap:** [visual map](https://alonzogreen0304.github.io/Homelab/games/roadmap.html) · [written version](grc-consultant-roadmap.md): phases, certs, and 9 GRC projects that turn this lab into audit practice.
 
 **Homelab to-dos:**
 

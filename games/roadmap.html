@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Road to My Own Firm</title>
+<meta name="theme-color" content="#120d24">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a game campaign map. Levels sit along one winding trail, top to bottom. */
+:root {
+  color-scheme: dark;
+  --bg: #120d24; --panel: #1b1535; --panel2: #231b45; --line: #352a62;
+  --ink: #ece8fb; --muted: #a99fd0; --faint: #6d6496;
+  --purple: #a78bfa; --teal: #4fd1c5; --amber: #ffc15e; --coral: #ff8a6b; --good: #57e39b;
+  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 var(--display);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 48px;
+  background-image: radial-gradient(circle at 1px 1px, #241c47 1px, transparent 0); background-size: 22px 22px;
+}
+.wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 22px; }
+.wrap > * { min-width: 0; }
+h1 { margin: 0; font-size: clamp(28px, 6vw, 42px); font-weight: 800; letter-spacing: -1px; line-height: 1.05; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--amber); }
+.sub { color: var(--muted); margin: 6px 0 0; max-width: 60ch; }
+.hud { display: flex; flex-wrap: wrap; gap: 10px; }
+.hud div { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; min-width: 0; flex: 1 1 150px; }
+.hud small { display: block; font: 600 11px var(--mono); color: var(--faint); text-transform: uppercase; letter-spacing: 1.2px; }
+.hud b { font-size: 20px; }
+.meter { height: 6px; background: var(--panel2); border-radius: 99px; margin-top: 6px; overflow: hidden; }
+.meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--purple), var(--teal)); transition: width .4s; }
+
+/* Trail */
+.trail { position: relative; display: grid; gap: 26px; padding: 6px 0; }
+.trail::before { content: ""; position: absolute; left: 27px; top: 10px; bottom: 10px; border-left: 3px dashed var(--line); }
+.lvl { position: relative; display: grid; grid-template-columns: 56px 1fr; gap: 14px; align-items: start; }
+.node {
+  width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; position: relative; z-index: 1;
+  font: 800 20px var(--display); background: var(--panel2); border: 3px solid var(--c); color: var(--c);
+}
+.lvl.here .node { background: var(--c); color: #160f2e; box-shadow: 0 0 0 6px color-mix(in srgb, var(--c) 25%, transparent); }
+.here-tag { position: absolute; left: -2px; top: 60px; font: 700 10px var(--mono); color: var(--amber); letter-spacing: 1px; white-space: nowrap; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; min-width: 0; border-top: 4px solid var(--c); }
+.card header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 10px; }
+.card h2 { margin: 0; font-size: 20px; font-weight: 800; }
+.when { font: 600 12px var(--mono); color: var(--c); }
+.role { color: var(--muted); font-size: 14px; margin: 2px 0 10px; }
+.tracks { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.track { background: var(--panel2); border-radius: 10px; padding: 10px 12px; min-width: 0; }
+.track h3 { margin: 0 0 4px; font: 600 11px var(--mono); text-transform: uppercase; letter-spacing: 1.2px; color: var(--faint); }
+.track ul { margin: 0; padding-left: 16px; font-size: 14px; display: grid; gap: 2px; }
+.badge { display: inline-block; font: 700 12px var(--mono); padding: 3px 8px; border-radius: 6px; background: color-mix(in srgb, var(--c) 20%, transparent); color: var(--c); margin: 2px 4px 2px 0; }
+.quest { display: flex; gap: 8px; align-items: start; font-size: 14px; padding: 3px 0; cursor: pointer; }
+.quest input { accent-color: var(--good); margin-top: 3px; flex: none; width: 16px; height: 16px; }
+.quest.done span { text-decoration: line-through; color: var(--faint); }
+.an { margin: 10px 0 0; font-size: 13.5px; color: var(--amber); }
+
+/* Cert ladder */
+.section-title { font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: 1.5px; color: var(--faint); margin: 0 0 10px; }
+.ladder { display: flex; align-items: flex-end; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.step { flex: 1 0 104px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px 10px 4px 4px; padding: 10px; display: grid; align-content: end; gap: 2px; min-width: 104px; }
+.step b { font-size: 15px; } .step span { font: 12px var(--mono); color: var(--muted); }
+.step.need { border-style: dashed; }
+.legend { font-size: 13px; color: var(--muted); margin-top: 8px; }
+.skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.skills .track { background: var(--panel); border: 1px solid var(--line); }
+.skills li.y { color: var(--good); list-style: "✓ "; }
+footer { color: var(--faint); font-size: 12px; text-align: center; }
+footer a { color: var(--muted); }
+input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+@media (min-width: 720px) {
+  .trail::before { left: 50%; }
+  .lvl { grid-template-columns: 1fr 56px 1fr; }
+  .lvl .node { grid-column: 2; grid-row: 1; }
+  .lvl .card { grid-column: 3; grid-row: 1; }
+  .lvl:nth-child(even) .card { grid-column: 1; }
+  .here-tag { left: 50%; transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) { .meter i { transition: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h1>Road to <em>My Own Firm</em></h1>
+    <p class="sub">GRC → Consultant → my own cybersecurity business. Each level has what to study, the cert to earn, homelab side quests that prove it, and the job it unlocks.</p>
+  </div>
+
+  <div class="hud" aria-live="polite">
+    <div><small>Current level</small><b>0 · Foundations</b></div>
+    <div><small>Side quests done</small><b id="qCount">0 / 9</b><div class="meter"><i id="qBar"></i></div></div>
+    <div><small>Next badge</small><b>Security+</b></div>
+  </div>
+
+  <section class="trail" id="trail"></section>
+
+  <section>
+    <p class="section-title">Cert ladder</p>
+    <div class="ladder" aria-label="Certifications in order, from Security+ to CISSP">
+      <div class="step" style="height:70px"><b>Security+</b><span>Level 1 · no exp.</span></div>
+      <div class="step" style="height:100px"><b>ISO 27001</b><span>Level 2 · optional</span></div>
+      <div class="step need" style="height:130px"><b>CISA / CGRC</b><span>Level 3 · exp.</span></div>
+      <div class="step need" style="height:160px"><b>CRISC</b><span>Level 4 · exp.</span></div>
+      <div class="step need" style="height:190px"><b>CISSP</b><span>Level 4 · exp.</span></div>
+    </div>
+    <p class="legend">Dashed = needs work experience (you can often pass the exam first and certify later). Check the official sites for current rules.</p>
+  </section>
+
+  <section>
+    <p class="section-title">Skill tree</p>
+    <div class="skills">
+      <div class="track"><h3>Technical base</h3><ul>
+        <li class="y">Linux, SSH, permissions</li><li class="y">DNS, ports, VPN, firewalls</li><li class="y">Logs + monitoring</li>
+        <li>IAM, MFA, SSO</li><li>Cloud + shared responsibility</li><li>Windows / Active Directory</li></ul></div>
+      <div class="track"><h3>GRC core</h3><ul>
+        <li>NIST CSF 2.0 · 800-53 · RMF</li><li>ISO 27001 · SOC 2 · CIS v8</li><li>PCI · HIPAA · GDPR · FERPA · SOX · CMMC</li>
+        <li>Risk assessment + register</li><li>Control testing + evidence</li><li>Policies · vendor risk · BIA/DR</li></ul></div>
+      <div class="track"><h3>Consultant + business</h3><ul>
+        <li>Short reports + exec summaries</li><li>Presenting to non-tech people</li><li>Excel</li>
+        <li>Project scope + timelines</li><li>Niche, offer, pricing</li><li>LLC, contracts, insurance</li></ul></div>
+    </div>
+    <p class="legend">Green check = already practiced in my homelab.</p>
+  </section>
+
+  <footer>Full written version: <a href="https://github.com/alonzogreen0304/Homelab/blob/main/grc-consultant-roadmap.md">grc-consultant-roadmap.md</a> · Part of my <a href="https://github.com/alonzogreen0304/Homelab">Homelab</a></footer>
+</div>
+
+<script>
+const LEVELS = [
+  { n:"0", c:"var(--teal)", t:"Foundations", when:"Now → Dec 2026", role:"Student · internship hunt", here:true,
+    study:["Security+ SY0-701, all 5 domains","Daily: Audit Ready, Acronym Breach, Command Center"],
+    cert:[], career:["Apply to Summer 2027 internships: GRC, IT audit, compliance, SOC","LinkedIn headline + GitHub link","Email Angela Hernandez (STU career services)"],
+    quests:[1,2], an:"Tutorial level: learn the controls before the real game starts." },
+  { n:"1", c:"var(--purple)", t:"Security+ & GRC basics", when:"Jan → May 2027", role:"Student → graduate",
+    study:["NIST CSF 2.0, CIS v8 (IG1), 800-53 families","ISO 27001 + SOC 2 basics","Risk math (SLE / ALE)","Excel + short report writing"],
+    cert:["Security+"], career:["Lock in the internship","Local events: ISACA Miami, ISC2 South Florida, BSides","Graduate"],
+    quests:[3,4], an:"First boss: Security+. Beat it and the job maps unlock." },
+  { n:"2", c:"var(--amber)", t:"First seat at the table", when:"Summer → Dec 2027", role:"Intern → GRC / IT Audit / Compliance Analyst",
+    study:["Privacy laws: GDPR, HIPAA, FERPA, state laws","Cloud shared responsibility (AWS / Azure)"],
+    cert:["ISO 27001 Foundation (optional)"], career:["Turn the internship into a job offer","Or apply: GRC Analyst, IT Audit Associate, SOC Analyst"],
+    quests:[5,6], an:"You joined a guild. Now you learn by doing real quests." },
+  { n:"3", c:"var(--coral)", t:"GRC Analyst", when:"Years 1-2", role:"Evidence, control testing, risk tracking, vendor reviews",
+    study:["GRC tools: Vanta, Drata, ServiceNow GRC, Archer, OneTrust","How real SOC 2 / ISO audits run"],
+    cert:["CISA or CGRC"], career:["Join ISACA + ISC2","Post what I learn on LinkedIn"],
+    quests:[7,8], an:"Grinding XP: every audit you support levels you up." },
+  { n:"4", c:"var(--good)", t:"Consultant", when:"Years 2-5", role:"Big 4, Coalfire, Optiv, A-LIGN, Schellman, or a boutique",
+    study:["Running client projects","Executive presentations","Picking a niche: industry + problem"],
+    cert:["CRISC","CISSP"], career:["Small side gigs (with employer OK)","Build a name in the niche"],
+    quests:[9], an:"Traveling hero: new client, new dungeon, every few weeks." },
+  { n:"5", c:"var(--amber)", t:"My Own Firm", when:"Year 5+", role:"Founder · vCISO · consultant",
+    study:["Sales: offer, pricing, proposals","AI automation for evidence + policies"],
+    cert:[], career:["LLC + E&O / cyber insurance + contracts (lawyer + accountant)","Productized packages, e.g. \"SOC 2 readiness in 90 days\"","Monthly vCISO retainers","First clients: old coworkers, subcontracting, local businesses"],
+    quests:[], an:"Final level: you run the guild now." }
+];
+const QUESTS = {
+  1:"Asset inventory of the lab (CIS 1 & 2)",
+  2:"Supply-chain audit of the pre-installed Debian",
+  3:"CIS IG1 / NIST CSF self-assessment + gap report",
+  4:"Risk register (likelihood × impact, owners, POA&M)",
+  5:"Policy pack: AUP, access, change mgmt, backup, IR",
+  6:"BIA + DR plan with a real restore test",
+  7:"Vendor risk: Tailscale, Composio, Docker Hub",
+  8:"Evidence-collection automation script",
+  9:"Mock client report on my own lab"
+};
+let done = {};
+try { done = JSON.parse(localStorage.getItem("roadmapQuests") || "{}") || {}; } catch (e) {}
+const save = () => { try { localStorage.setItem("roadmapQuests", JSON.stringify(done)); } catch (e) {} };
+const li = a => a.map(x => `<li>${x}</li>`).join("");
+
+document.getElementById("trail").innerHTML = LEVELS.map(L => `
+  <article class="lvl${L.here ? " here" : ""}" style="--c:${L.c}">
+    <div class="node" aria-hidden="true">${L.n}${L.here ? '<span class="here-tag">YOU ARE HERE</span>' : ""}</div>
+    <div class="card">
+      <header><h2>Level ${L.n}: ${L.t}</h2><span class="when">${L.when}</span></header>
+      <p class="role">${L.role}</p>
+      ${L.cert.length ? `<div>${L.cert.map(c => `<span class="badge">🏅 ${c}</span>`).join("")}</div>` : ""}
+      <div class="tracks" style="margin-top:8px">
+        <div class="track"><h3>Study</h3><ul>${li(L.study)}</ul></div>
+        <div class="track"><h3>Career moves</h3><ul>${li(L.career)}</ul></div>
+        ${L.quests.length ? `<div class="track"><h3>Homelab side quests</h3>${L.quests.map(q =>
+          `<label class="quest${done[q] ? " done" : ""}"><input type="checkbox" id="q${q}" data-q="${q}"${done[q] ? " checked" : ""}><span>${q}. ${QUESTS[q]}</span></label>`).join("")}</div>` : ""}
+      </div>
+      <p class="an">${L.an}</p>
+    </div>
+  </article>`).join("");
+
+function paint() {
+  const n = Object.values(done).filter(Boolean).length;
+  document.getElementById("qCount").textContent = `${n} / 9`;
+  document.getElementById("qBar").style.width = (n / 9 * 100) + "%";
+}
+document.getElementById("trail").addEventListener("change", e => {
+  const q = e.target.dataset.q; if (!q) return;
+  done[q] = e.target.checked; e.target.closest(".quest").classList.toggle("done", e.target.checked);
+  save(); paint();
+});
+paint();
+</script>
+</body>
+</html>

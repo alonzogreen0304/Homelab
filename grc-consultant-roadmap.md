@@ -1,6 +1,7 @@
 # My Roadmap: GRC → Consultant → My Own Firm
 
 **Started:** Oct 25, 2026 · senior at St. Thomas University, Class of 2027
+**Visual version:** [interactive roadmap map](https://alonzogreen0304.github.io/Homelab/games/roadmap.html) (tick off side quests as I finish them)
 **Goal:** land a GRC role, become a cybersecurity consultant, then run my own consulting business (with AI automation as my edge).
 
 > **Analogy:** this roadmap is a video game campaign. Each phase is a level: you learn new skills (study), earn badges (certs), beat side quests that prove it (homelab projects), and unlock the next map (a job). You can't skip to the final boss, but every level makes the next one easier.
