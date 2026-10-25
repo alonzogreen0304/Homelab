@@ -79,6 +79,7 @@ flowchart LR
 
 | Date | What I did |
 |---|---|
+| Oct 25, 2026 | Wrote my [career roadmap](grc-consultant-roadmap.md): 6 phases from Security+ to my own consultancy, cert order, and 9 GRC side-quest projects for the lab (inventory, supply-chain audit, CIS/CSF assessment, risk register, policies, BIA/DR, vendor risk, evidence automation, client-style report) |
 | Oct 25, 2026 | Built **Audit Ready**, a GRC study game (71 questions: frameworks, risk math, controls, audit evidence commands, privacy laws, and my lab mapped to controls). Documented how my server got here; Debian came pre-installed by the seller, so I flagged it as a supply-chain risk to audit or re-image ([notes](how-my-server-got-here.md)) |
 | Oct 25, 2026 | Added a Dozzle tile to the dashboard's Security row; a phone-typed YAML spacing error broke the page, so I restored the backup, measured the real indents with `cat -A`, and inserted the block exactly with `sed` ([notes](homepage.md)) |
 | Oct 25, 2026 | Connected Composio to Claude and linked GitHub; STU's admin consent blocked Outlook (app asked for ~12 permissions incl. send-as, I needed 1), so I used the built-in browser instead ([notes](composio.md)) |
@@ -134,6 +135,10 @@ flowchart LR
 ---
 
 ## Roadmap
+
+**Career roadmap:** [GRC → Consultant → My Own Firm](grc-consultant-roadmap.md): phases, certs, and 9 GRC projects that turn this lab into audit practice.
+
+**Homelab to-dos:**
 
 - [ ] Point my router's DNS at Pi-hole so every device gets ad blocking
 - [x] Free up space on the Wyse's drive (93% → 81%)
