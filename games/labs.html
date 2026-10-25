@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wyse Labs</title>
+<meta name="description" content="Hands-on practice labs I run on my own homelab: Linux, logs, DNS, ports, attack and detect, incident response, hardening audits, and vulnerability scanning.">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Wyse Labs">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#120d24">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #120d24; --panel: #1b1535; --panel-2: #241c45; --line: #352a62;
+  --ink: #ece8fb; --muted: #a99fd0; --faint: #6d6496;
+  --purple: #a78bfa; --teal: #4fd1c5; --coral: #ff8a6b; --good: #57e39b; --bad: #ff5f6d; --amber: #ffc15e;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink); font-family: var(--display); font-size: 16px; line-height: 1.55;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 48px 48px; background-position: -1px -1px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 48px;
+}
+@media (display-mode: standalone) { body { padding-top: calc(20px + env(safe-area-inset-top, 0px)); } }
+.wrap { max-width: 780px; margin: 0 auto; }
+header { margin-bottom: 14px; }
+h1 { margin: 0; font-weight: 800; font-size: clamp(30px, 7vw, 44px); line-height: 1; letter-spacing: -0.02em; }
+h1 span { color: var(--purple); }
+.tag { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; margin-top: 6px; }
+.intro { color: var(--muted); font-size: 15px; margin: 10px 0 14px; }
+.rules { background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--amber); border-radius: 0; padding: 10px 14px; font-size: 14px; color: var(--ink); margin-bottom: 16px; }
+.rules b { color: var(--amber); }
+.progress { font-family: var(--mono); font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+.progress b { color: var(--good); }
+.grid { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.lab-card { text-align: left; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px; color: var(--ink); font: inherit; cursor: pointer; display: grid; gap: 4px; }
+.lab-card:hover { border-color: var(--purple); }
+.lab-card .num { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+.lab-card h3 { margin: 0; font-size: 18px; font-weight: 800; }
+.lab-card p { margin: 0; color: var(--muted); font-size: 14px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.pill { font-family: var(--mono); font-size: 11px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.pill.easy { color: var(--good); border-color: #2c5a45; }
+.pill.med { color: var(--amber); border-color: #5e4a22; }
+.pill.done { color: var(--bg); background: var(--good); border-color: var(--good); }
+.bar { height: 4px; background: var(--line); border-radius: 4px; overflow: hidden; margin-top: 6px; }
+.bar i { display: block; height: 100%; background: var(--good); }
+.btn { border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: 600 14px var(--display); padding: 9px 14px; border-radius: 10px; cursor: pointer; }
+.btn.primary { background: var(--purple); color: var(--bg); border-color: var(--purple); }
+.btn:focus-visible, .lab-card:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+.lab h2 { margin: 6px 0 2px; font-size: 26px; font-weight: 800; line-height: 1.15; }
+.lab .goal { margin: 6px 0 10px; }
+.box { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+.analogy { color: var(--amber); }
+.analogy::before { content: "ANALOGY  "; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 8px; }
+.flow span.n { font-family: var(--mono); font-size: 12px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; }
+.flow span.a { color: var(--faint); font-family: var(--mono); }
+.task { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 10px 0; }
+.task.ok { border-color: #2c5a45; }
+.task h4 { margin: 0 0 6px; font-size: 16px; display: flex; gap: 8px; align-items: baseline; }
+.task h4 .k { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+.task h4 .tick { margin-left: auto; color: var(--good); font-family: var(--mono); font-size: 12px; }
+.task p { margin: 0 0 8px; font-size: 15px; }
+.cmd { position: relative; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 44px 10px 12px; font-family: var(--mono); font-size: 13px; color: var(--teal); white-space: pre-wrap; word-break: break-word; margin: 6px 0 10px; }
+.copy { position: absolute; top: 6px; right: 6px; border: 1px solid var(--line); background: var(--panel-2); color: var(--muted); font: 600 11px var(--mono); padding: 4px 7px; border-radius: 6px; cursor: pointer; }
+.q { font-weight: 600; margin: 4px 0 6px; }
+.ans { display: flex; gap: 8px; }
+.ans input { flex: 1; min-width: 0; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font: 15px var(--mono); padding: 9px 10px; }
+.fb { font-size: 14px; margin-top: 8px; min-height: 1em; }
+.fb.good { color: var(--good); }
+.fb.bad { color: var(--bad); }
+.small { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.link { background: none; border: 0; color: var(--purple); font: 600 13px var(--mono); padding: 0; cursor: pointer; text-decoration: underline; }
+.hint { color: var(--amber); font-size: 14px; margin-top: 6px; }
+.debrief { border-color: var(--good); }
+.debrief h3 { margin: 0 0 6px; color: var(--good); }
+.debrief ul { margin: 6px 0 0; padding-left: 20px; }
+.secplus { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 8px; }
+.nav { display: flex; justify-content: space-between; gap: 8px; margin-top: 14px; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Wyse <span>Labs</span></h1>
+    <div class="tag">Hands-on practice on my own homelab</div>
+  </header>
+
+  <section id="home">
+    <p class="intro">Like TryHackMe rooms, but on my real server. Each lab has a goal, an analogy, a picture of the steps, commands to run in Termius, and questions to check my work. Answers depend on what I actually see.</p>
+    <div class="rules"><b>Lab rules:</b> only practice on systems I own (my Wyse, my phone, my PC). Read every command before running it. If a step says <i>2-minute ban</i>, it's because I'm testing on myself.</div>
+    <div class="progress" id="progress"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="lab" class="lab" hidden></section>
+</div>
+
+<script>
+/* q: { q, a: [accepted answers] }  -> auto-checked
+   q: { q, open: true }             -> answer depends on my lab; self-check, any non-empty answer counts */
+const LABS = [
+ { id:"linux", title:"Linux Detective", time:"15 min", lvl:"easy", tags:["Linux","Permissions"],
+   blurb:"Find important files and read their permissions like an investigator.",
+   goal:"Learn to find where things live on the Wyse and who's allowed to touch them.",
+   analogy:"A detective walking through the house: which rooms exist, who has keys to each door, and which drawers are locked.",
+   flow:["whoami","ls -la","stat","ls -l (owner)","lock check"],
+   tasks:[
+    { t:"Who am I?", p:"Every command runs as some user. Check which one you are.", cmd:"whoami", q:{ q:"What username does it print?", a:["me"] }, hint:"It's the part before @ in your prompt." },
+    { t:"Find the hidden SSH folder", p:"Folders starting with a dot are hidden. -a shows them.", cmd:"ls -la ~", q:{ q:"What's the name of the hidden folder that holds SSH keys? (include the dot)", a:[".ssh"] }, hint:"It's short for Secure Shell." },
+    { t:"Read the lock on your key list", p:"Permissions as a number: 6 = read+write, 0 = nothing. Three digits = owner, group, everyone else.", cmd:"stat -c '%a %n' ~/.ssh/authorized_keys", q:{ q:"What permission number does authorized_keys have?", a:["600"] }, hint:"Only the owner can read and write it." },
+    { t:"Check the secrets drawer", p:"Your Homepage API keys live in .env. It should be locked down too.", cmd:"sudo stat -c '%a %U %n' /opt/homepage/.env", q:{ q:"What permission number does .env have?", a:["600"] }, hint:"Same lock as authorized_keys." },
+    { t:"Who owns the bouncer's config?", p:"Some files belong to root (the admin) so normal users can't read them.", cmd:"ls -l /etc/crowdsec/bouncers/", q:{ q:"Which user owns crowdsec-firewall-bouncer.yaml?", a:["root"] }, hint:"It's the most powerful account on Linux." },
+   ],
+   debrief:["Hidden files start with a dot; ls -a reveals them.","600 = owner read/write only. It's how secrets and key lists are protected.","root-owned files need sudo, which is why you got 'Permission denied' earlier: that's the lock working."],
+   secplus:"Security+: access control, file permissions, least privilege (DAC)." },
+
+ { id:"logs", title:"Log Hunter", time:"20 min", lvl:"med", tags:["SOC","Logs"],
+   blurb:"Dig through SSH logs to find failed logins and where they came from.",
+   goal:"Practice the #1 SOC skill: reading logs to find suspicious activity.",
+   analogy:"Rewinding the security camera footage, counting how many times someone tried the wrong key, and writing down their license plate.",
+   flow:["journalctl","grep failures","count","extract IPs","CrowdSec alerts"],
+   tasks:[
+    { t:"Open the footage", p:"SSH logs live in the systemd journal on Debian 12 (not /var/log/auth.log).", cmd:"sudo journalctl -u ssh --since \"7 days ago\" | tail -20", q:{ q:"What tool reads the systemd journal? (one word)", a:["journalctl"] } },
+    { t:"Count failed logins", p:"Your fake 'hacker' attack left lines saying Invalid user.", cmd:"sudo journalctl -u ssh --since \"30 days ago\" | grep -c \"Invalid user\"", q:{ q:"How many 'Invalid user' lines did you find?", open:true } },
+    { t:"Write down the license plates", p:"Pull out the IP addresses and count how many times each one appears.", cmd:"sudo journalctl -u ssh --since \"30 days ago\" | grep \"Invalid user\" | grep -oE 'from [0-9.]+' | sort | uniq -c | sort -rn", q:{ q:"Which IP tried the most? (it should be one of your own devices)", open:true }, hint:"100.84.243.114 is your iPhone's Tailscale IP." },
+    { t:"Check what the guard saw", p:"CrowdSec keeps its own record of alerts.", cmd:"sudo cscli alerts list", q:{ q:"What's the CrowdSec scenario name for SSH brute force? (format: crowdsecurity/...)", a:["crowdsecurity/ssh-bf","ssh-bf"] } },
+    { t:"Watch it live in Dozzle", p:"Open http://wyse:8888, tap pihole, then load a site with ads on your phone. Watch blocked lookups scroll.", q:{ q:"In Pi-hole's log, what word shows a lookup was blocked? (look for it next to a domain)", open:true }, hint:"Look for 'gravity blocked' or 'blocked'." },
+   ],
+   debrief:["Logs are the evidence. SOC analysts spend most of the day reading them.","grep filters, sort | uniq -c counts, sort -rn ranks: a classic log-hunting combo.","An IP you don't recognize trying 'Invalid user' over and over = brute force."],
+   secplus:"Security+: log analysis, indicators of compromise (IoCs), brute-force attacks, SIEM concepts." },
+
+ { id:"dns", title:"DNS Lab", time:"15 min", lvl:"easy", tags:["Networking","DNS"],
+   blurb:"Ask your own DNS servers questions and watch Pi-hole and Unbound do their jobs.",
+   goal:"See DNS blocking, caching, and DNSSEC with your own eyes.",
+   analogy:"Calling the operator (Pi-hole) and the librarian (Unbound) directly to test that they give the right answers, refuse junk, and spot forgeries.",
+   flow:["dig a real site","dig an ad domain","cache test","DNSSEC test"],
+   tasks:[
+    { t:"Normal lookup through Pi-hole", p:"Ask Pi-hole (on the Wyse) for a real site.", cmd:"dig @127.0.0.1 example.com +short", q:{ q:"Did you get an IP address back? (yes/no)", a:["yes","y"] } },
+    { t:"Ask for an ad domain", p:"Pi-hole should refuse it.", cmd:"dig @127.0.0.1 doubleclick.net +short", q:{ q:"What address does Pi-hole hand back for a blocked domain?", a:["0.0.0.0"] }, hint:"It's the 'nowhere' address: all zeros." },
+    { t:"Watch the cache work", p:"Run the same lookup twice and compare the Query time line at the bottom.", cmd:"dig @127.0.0.1 wikipedia.org | grep \"Query time\"\ndig @127.0.0.1 wikipedia.org | grep \"Query time\"", q:{ q:"Was the second lookup faster? (yes/no)", a:["yes","y"] }, hint:"The second answer comes from memory (cache), usually ~0-1 msec." },
+    { t:"Catch a forgery (DNSSEC)", p:"This domain is deliberately signed wrong. Unbound should refuse it.", cmd:"dig @127.0.0.1 -p 5335 dnssec-failed.org | grep status", q:{ q:"What status does Unbound return?", a:["SERVFAIL"] }, hint:"It means 'server failure': it refused to give a fake answer." },
+   ],
+   debrief:["0.0.0.0 = Pi-hole's way of saying 'that doesn't exist'. The ad never loads.","Caching = Unbound remembers answers, so repeat lookups are instant.","SERVFAIL on a bad signature = DNSSEC protecting you from forged addresses."],
+   secplus:"Security+: DNS, DNS sinkholes, DNSSEC, DNS poisoning/spoofing." },
+
+ { id:"ports", title:"Know Your Doors", time:"15 min", lvl:"easy", tags:["Networking","Asset inventory"],
+   blurb:"List every open port on the Wyse and match it to the program behind it.",
+   goal:"Build a port inventory, a real security control: if you don't know why a door is open, find out.",
+   analogy:"Walking the whole building with a clipboard, writing down every unlocked door and who's behind it.",
+   flow:["ss -tlnp","match ports","localhost vs all","tailnet devices"],
+   tasks:[
+    { t:"List the open doors", p:"-t TCP, -l listening, -n numbers, -p program.", cmd:"sudo ss -tlnp", q:{ q:"What port does SSH listen on?", a:["22"] } },
+    { t:"The private door", p:"Find the line with port 5335. Look at the address in front of it.", q:{ q:"Which program listens on 127.0.0.1:5335?", a:["unbound"] }, hint:"It's the librarian. 127.0.0.1 means only the Wyse itself can reach it." },
+    { t:"Match the apps", p:"Look for 3000, 3001, 8096, and 8888 (Docker shows these as docker-proxy).", q:{ q:"Which port is Dozzle on?", a:["8888"] } },
+    { t:"Inventory the devices", p:"An asset inventory also means knowing every device on your network.", cmd:"tailscale status", q:{ q:"How many devices are on your tailnet?", open:true }, hint:"Count the lines. Any device you don't recognize should be removed." },
+   ],
+   debrief:["Every open port is a door. Unknown doors are risks.","127.0.0.1 = only reachable from the machine itself. That's why Unbound is safe.","Knowing every device and port you own is asset inventory, CIS Control #1 and #2."],
+   secplus:"Security+: ports and protocols, attack surface, asset inventory, hardening." },
+
+ { id:"attack", title:"Attack & Detect", time:"20 min", lvl:"med", tags:["Blue team","CrowdSec"],
+   blurb:"Play the attacker from your phone, then play the defender and watch CrowdSec catch you.",
+   goal:"Run a safe, self-expiring attack drill and confirm detection and blocking both work.",
+   analogy:"A fire drill for burglars: you try the wrong keys on purpose and check that the guard notices and the bouncer throws you out.",
+   flow:["fake logins","engine detects","bouncer bans","blocked test","ban expires"],
+   tasks:[
+    { t:"Check you're starting clean", cmd:"sudo cscli decisions list", q:{ q:"Are there any active decisions? (yes/no)", open:true } },
+    { t:"Attack (from your phone)", p:"In Termius, connect as a fake user (no key) 6-8 times. Your phone will get banned, so do the next step from your laptop, OR skip the attack and use the self-expiring ban below.", q:{ q:"Type 'done' when finished", a:["done"] } },
+    { t:"Safe alternative: 2-minute self-expiring ban", p:"Bans your phone for 2 minutes only, then it lifts by itself.", cmd:"sudo cscli decisions add --ip 100.84.243.114 --duration 2m --reason \"lab drill\"", q:{ q:"While banned, did Uptime Kuma (a container) fail to load on your phone? (yes/no)", a:["yes","y"] }, hint:"That proves the DOCKER-USER (garage door) fix works." },
+    { t:"Confirm it lifted", p:"Wait 2 minutes, reconnect.", cmd:"sudo cscli decisions list", q:{ q:"What does it say now?", open:true } },
+   ],
+   debrief:["The engine detects (IDS), the bouncer blocks (IPS).","Test the effect of a control, not just that it fired.","Self-expiring bans let you test on yourself without getting locked out."],
+   secplus:"Security+: IDS vs IPS, brute force, firewalls, control testing." },
+
+ { id:"ir", title:"Incident Response Drill", time:"20 min", lvl:"med", tags:["IR","Monitoring"],
+   blurb:"Break a service on purpose, time how fast you detect and recover, and write a mini incident report.",
+   goal:"Practice the incident response cycle and measure MTTD and MTTR on your own lab.",
+   analogy:"A fire drill with a stopwatch: how long until the alarm goes off, and how long until everyone's back inside.",
+   flow:["break","detect (alert)","respond","recover","report"],
+   tasks:[
+    { t:"Note the start time and break it", p:"Write down the time, then stop Jellyfin.", cmd:"date\nsudo docker stop jellyfin", q:{ q:"What time did you stop it?", open:true } },
+    { t:"Detect", p:"Wait for the ntfy DOWN alert on your phone.", q:{ q:"How many minutes until the alert arrived? (that's your MTTD)", open:true }, hint:"MTTD = Mean Time To Detect." },
+    { t:"Investigate", p:"Read what Uptime Kuma logged.", cmd:"sudo docker logs uptime-kuma --tail 10", q:{ q:"What error appears for Jellyfin? (one word, starts with ECONN)", a:["ECONNREFUSED"] } },
+    { t:"Recover", cmd:"sudo docker start jellyfin\ndate", q:{ q:"Total minutes from break to UP alert? (that's your MTTR)", open:true }, hint:"MTTR = Mean Time To Recover." },
+    { t:"Write the report", p:"In your notes, write 4 lines: what happened, how you detected it, how you fixed it, how to prevent it.", q:{ q:"Type 'done' when your 4-line report is written", a:["done"] } },
+   ],
+   debrief:["Detect, respond, recover, report: the incident response loop.","Lower MTTD and MTTR = a stronger security team.","A short written report is what turns an outage into evidence."],
+   secplus:"Security+: incident response process, MTTD/MTTR, monitoring, lessons learned." },
+
+ { id:"audit", title:"Hardening Audit (GRC)", time:"25 min", lvl:"med", tags:["GRC","Lynis"],
+   blurb:"Run a real security audit on the Wyse, get a hardening score, and pick fixes.",
+   goal:"Produce GRC evidence: a baseline score, prioritized findings, and a re-test.",
+   analogy:"A home inspector's report card: a score out of 100, plus a list of what to fix.",
+   flow:["install Lynis","audit","score","pick 3 fixes","re-test"],
+   tasks:[
+    { t:"Install the inspector", p:"Lynis is tiny and from Debian's own repo.", cmd:"sudo apt install lynis -y", q:{ q:"Type 'done' when installed", a:["done"] } },
+    { t:"Run the audit", p:"Takes 1-3 minutes. Lots of output scrolls by.", cmd:"sudo lynis audit system --quick", q:{ q:"Type 'done' when it finishes", a:["done"] } },
+    { t:"Get your score", cmd:"sudo grep hardening_index /var/log/lynis-report.dat", q:{ q:"What's your hardening index (0-100)?", open:true }, hint:"Write this down. It's your baseline." },
+    { t:"Read the fix list", cmd:"sudo grep suggestion /var/log/lynis-report.dat | head -15", q:{ q:"Pick one suggestion you understand. What is it?", open:true } },
+    { t:"Map it to a framework", p:"GRC = connecting technical findings to controls.", q:{ q:"Which CIS Control or NIST CSF function does your pick fit? (e.g., Protect, Detect)", open:true } },
+   ],
+   debrief:["A baseline score + fixes + re-test = audit evidence you can show.","Not every suggestion fits a homelab. Choosing what matters is risk management.","Mapping findings to frameworks is the core GRC skill."],
+   secplus:"Security+: hardening, benchmarks, audits, risk management, compliance." },
+
+ { id:"vuln", title:"Vulnerability Scan", time:"25 min", lvl:"med", tags:["Vuln mgmt","Trivy"],
+   blurb:"Scan the Pi-hole image for known vulnerabilities (CVEs) and research one.",
+   goal:"Practice vulnerability management: scan, read severity, research, decide.",
+   analogy:"Checking every appliance in the house against the recall list.",
+   flow:["scan image","count CRITICAL/HIGH","pick a CVE","research","decide"],
+   tasks:[
+    { t:"Scan Pi-hole", p:"Runs Trivy once, then removes it. It downloads Pi-hole's image from the registry itself, so it never touches the Docker socket (least privilege). The vulnerability database is cached on the big drive.", cmd:"sudo docker run --rm -v /mnt/agents/trivy-cache:/root/.cache/ aquasec/trivy:latest image --severity CRITICAL,HIGH pihole/pihole:latest", q:{ q:"Type 'done' when the scan finishes", a:["done"] } },
+    { t:"Read the totals", p:"Near the top: Total: X (HIGH: Y, CRITICAL: Z).", q:{ q:"How many CRITICAL did it find?", open:true } },
+    { t:"Pick one CVE", p:"Copy one CVE ID (looks like CVE-2025-12345).", q:{ q:"Which CVE did you pick?", open:true } },
+    { t:"Research it", p:"Look it up on nvd.nist.gov. Note the CVSS score and whether a fixed version exists.", q:{ q:"What's its CVSS score?", open:true } },
+    { t:"Decide", p:"Vuln management isn't fixing everything. It's prioritizing. Usually: update the image when a fix exists.", q:{ q:"Your decision: update now, wait for a fix, or accept the risk?", open:true } },
+   ],
+   debrief:["CVE = the ID of a known vulnerability. CVSS = how bad it is (0-10).","Scanners find a lot. Prioritizing by severity and exposure is the real skill.","Pi-hole is only reachable over Tailscale, which lowers real-world risk. That's context."],
+   secplus:"Security+: vulnerability scanning, CVE, CVSS, patch management, risk acceptance." },
+];
+
+const KEY = "wyselabs-v1";
+let S = {};
+try { S = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+const norm = s => s.trim().toLowerCase().replace(/\s+/g, " ");
+const doneCount = lab => lab.tasks.filter((t,i) => S[lab.id + ":" + i]).length;
+
+function renderHome(){
+  document.getElementById("home").hidden = false;
+  document.getElementById("lab").hidden = true;
+  const finished = LABS.filter(l => doneCount(l) === l.tasks.length).length;
+  document.getElementById("progress").innerHTML = `Labs complete: <b>${finished}</b> / ${LABS.length}`;
+  document.getElementById("grid").innerHTML = LABS.map((l,i) => {
+    const d = doneCount(l), pct = Math.round(d / l.tasks.length * 100);
+    return `<button class="lab-card" data-id="${l.id}">
+      <span class="num">LAB ${String(i+1).padStart(2,"0")}</span>
+      <h3>${esc(l.title)}</h3><p>${esc(l.blurb)}</p>
+      <div class="meta"><span class="pill ${l.lvl}">${l.lvl === "easy" ? "Easy" : "Medium"}</span><span class="pill">${l.time}</span>${l.tags.map(t => `<span class="pill">${esc(t)}</span>`).join("")}${d === l.tasks.length ? `<span class="pill done">Done</span>` : ""}</div>
+      <div class="bar"><i style="width:${pct}%"></i></div></button>`;
+  }).join("");
+  document.querySelectorAll(".lab-card").forEach(b => b.onclick = () => openLab(b.dataset.id));
+  window.scrollTo(0, 0);
+}
+
+function openLab(id){
+  const i = LABS.findIndex(l => l.id === id), l = LABS[i];
+  document.getElementById("home").hidden = true;
+  const el = document.getElementById("lab"); el.hidden = false;
+  const all = doneCount(l) === l.tasks.length;
+  el.innerHTML = `
+    <button class="btn" id="back">← All labs</button>
+    <h2>${esc(l.title)}</h2>
+    <div class="meta"><span class="pill ${l.lvl}">${l.lvl === "easy" ? "Easy" : "Medium"}</span><span class="pill">${l.time}</span>${l.tags.map(t => `<span class="pill">${esc(t)}</span>`).join("")}</div>
+    <div class="box"><p class="goal" style="margin-top:0"><b>Goal:</b> ${esc(l.goal)}</p><p class="analogy" style="margin:0">${esc(l.analogy)}</p>
+      <div class="flow" aria-label="Lab steps">${l.flow.map((f,k) => `${k ? '<span class="a">→</span>' : ""}<span class="n">${esc(f)}</span>`).join("")}</div></div>
+    ${l.tasks.map((t,k) => taskHTML(l,t,k)).join("")}
+    <div class="box debrief" id="debrief" ${all ? "" : "hidden"}><h3>Debrief: what you learned</h3><ul>${l.debrief.map(d => `<li>${esc(d)}</li>`).join("")}</ul><div class="secplus">${esc(l.secplus)}</div></div>
+    <div class="nav"><button class="btn" id="prevLab">← Prev lab</button><button class="btn" id="nextLab">Next lab →</button></div>`;
+  document.getElementById("back").onclick = renderHome;
+  document.getElementById("prevLab").onclick = () => openLab(LABS[(i - 1 + LABS.length) % LABS.length].id);
+  document.getElementById("nextLab").onclick = () => openLab(LABS[(i + 1) % LABS.length].id);
+  el.querySelectorAll(".copy").forEach(b => b.onclick = () => {
+    const txt = b.parentElement.querySelector("code").textContent;
+    const done = () => { b.textContent = "Copied"; setTimeout(() => b.textContent = "Copy", 1200); };
+    try { navigator.clipboard.writeText(txt).then(done, () => {}); } catch (e) {}
+  });
+  el.querySelectorAll("form").forEach(f => f.onsubmit = e => { e.preventDefault(); check(l, +f.dataset.k, f); });
+  el.querySelectorAll("[data-hint]").forEach(b => b.onclick = () => { b.nextElementSibling.hidden = !b.nextElementSibling.hidden; });
+  el.querySelectorAll("[data-show]").forEach(b => b.onclick = () => { const t = l.tasks[+b.dataset.show]; const fb = b.closest(".task").querySelector(".fb"); fb.className = "fb"; fb.textContent = "Answer: " + t.q.a[0]; });
+  window.scrollTo(0, 0);
+}
+
+function taskHTML(l,t,k){
+  const ok = S[l.id + ":" + k];
+  return `<div class="task${ok ? " ok" : ""}" id="t-${k}">
+    <h4><span class="k">${String(k+1).padStart(2,"0")}</span>${esc(t.t)}${ok ? '<span class="tick">✓ done</span>' : ""}</h4>
+    ${t.p ? `<p>${esc(t.p)}</p>` : ""}
+    ${t.cmd ? `<div class="cmd"><code>${esc(t.cmd)}</code><button class="copy" type="button">Copy</button></div>` : ""}
+    <p class="q">${esc(t.q.q)}</p>
+    <form class="ans" data-k="${k}"><input type="text" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Your answer" value="${ok ? esc(ok) : ""}"><button class="btn primary" type="submit">Check</button></form>
+    <div class="fb">${ok ? "Saved." : ""}</div>
+    <div class="small">${t.hint ? `<button class="link" type="button" data-hint>Hint</button><span class="hint" hidden>${esc(t.hint)}</span>` : ""}${t.q.a ? `<button class="link" type="button" data-show="${k}">Show answer</button>` : ""}</div>
+  </div>`;
+}
+
+function check(l,k,form){
+  const t = l.tasks[k], v = form.querySelector("input").value, fb = form.parentElement.querySelector(".fb");
+  if (!v.trim()) { fb.className = "fb bad"; fb.textContent = "Type an answer first."; return; }
+  let ok;
+  if (t.q.open) ok = true;
+  else ok = t.q.a.some(a => norm(a) === norm(v));
+  if (ok) {
+    S[l.id + ":" + k] = v.trim(); save();
+    fb.className = "fb good"; fb.textContent = t.q.open ? "Saved. Your lab, your answer." : "Correct.";
+    const box = form.parentElement; box.classList.add("ok");
+    if (!box.querySelector(".tick")) box.querySelector("h4").insertAdjacentHTML("beforeend", '<span class="tick">✓ done</span>');
+    if (doneCount(l) === l.tasks.length) { const d = document.getElementById("debrief"); d.hidden = false; }
+  } else {
+    fb.className = "fb bad"; fb.textContent = "Not quite. Try again, or tap Hint.";
+  }
+}
+
+renderHome();
+</script>
+</body>
+</html>
