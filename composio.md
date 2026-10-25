@@ -83,6 +83,68 @@ Every call shows me an approval prompt first, so nothing happens without my OK.
 
 ---
 
+## Before vs after: what we had to do without Composio
+
+### Before (without Composio)
+
+To get the same issue made ("add Dozzle to Uptime Kuma"), it took one of two routes.
+
+**Route A: I do it myself by hand**
+1. Open github.com and sign in.
+2. Go to the Homelab repo, then the **Issues** tab.
+3. Click **New issue**, type the title and description, and click **Submit**.
+
+**Route B: Claude does it, but only from a coding session**
+1. Start a Claude coding session (not a normal chat).
+2. Claude attaches the repo to the session (`add_repo`), which needs GitHub access for that session.
+3. Claude clones the repo into its workspace.
+4. Claude edits files, then runs `git add`, `git commit`, and `git push`.
+5. For issues or PRs, Claude also needs the `gh` command-line tool signed in.
+
+Problems with this:
+- It didn't work from a normal Claude chat or my phone.
+- Every new session had to set the repo up again.
+- It was great for files and commits, but clunky for issues.
+
+> **Analogy (before):** to get something from the fridge, I either walked to the kitchen myself (Route A), or I had to bring the chef **into my house** and set up a whole kitchen first (Route B).
+
+### After (with Composio)
+
+1. Type one sentence in any Claude chat.
+2. Approve the prompt.
+3. Done.
+
+> **Analogy (after):** I just tell the waiter. The kitchen is already set up, and the manager already has the keys.
+
+### Side by side
+
+| | Before: by hand | Before: coding session | After: Composio |
+|---|---|---|---|
+| Where it works | github.com only | Coding session only | Any Claude chat, phone included |
+| Setup each time | Sign in | Attach + clone repo | None (connected once) |
+| Steps for one issue | ~5 clicks | ~5 steps + tools | 1 sentence + approve |
+| Good for | Anything | Editing files, commits | Issues, PRs, quick reads |
+| Who holds the GitHub key | Me | The session (temporary) | Composio (stored until revoked) |
+
+> **Tradeoff:** the last row is the cost. Convenience goes up, but now a third party holds a long-lived key. That's why the revoke steps further down matter.
+
+```mermaid
+flowchart TB
+    subgraph Before["Before"]
+        direction TB
+        B1["Me"] -->|"by hand"| B2["github.com<br/>click, type, submit"]
+        B3["Claude coding session"] --> B4["attach repo"] --> B5["clone"] --> B6["edit + commit + push"]
+    end
+    subgraph After["After"]
+        direction TB
+        A1["Me (any chat)"] --> A2["Claude"] --> A3["Composio"] --> A4["GitHub ✅"]
+    end
+```
+
+**Note:** I still use the coding-session route for big jobs like writing these notes, since it's better at editing lots of files. Composio is for quick hits like issues, checks, and small updates.
+
+---
+
 ## The security lesson: STU blocked Outlook (good!)
 
 When I tried to connect my school Outlook, Microsoft showed **"Approval required."** Composio asked for a lot:
