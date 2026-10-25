@@ -69,6 +69,7 @@ flowchart LR
 | [Homepage](homepage.md) | One dashboard linking every service: live Pi-hole, Uptime Kuma and Jellyfin widgets, status dots, weather, and study links | ✅ Running, purple redesign |
 | [Uptime Kuma](uptime-kuma.md) | Checks every service every 60 seconds (web pages and real DNS queries) and shows uptime history | ✅ Running, 4 monitors with phone alerts (fire drill passed) |
 | [CrowdSec](crowdsec.md) | Reads SSH logs, detects brute-force attacks, and bans attacker IPs at the firewall (IDS + IPS) | ✅ Running, caught and banned a simulated attack |
+| [Dozzle](dozzle.md) | Live logs from every container in one web page, read-only through a socket proxy, login required | ✅ Running |
 | XFCE desktop | Lightweight graphical desktop | ✅ Installed, but the server runs headless (no monitor needed) |
 
 ---
@@ -77,6 +78,7 @@ flowchart LR
 
 | Date | What I did |
 |---|---|
+| Oct 24, 2026 | Installed Dozzle (live container logs) behind a read-only socket proxy instead of handing it the Docker socket; added a login after the in-app setup silently failed ([notes](dozzle.md)) |
 | Oct 24, 2026 | MagicDNS: reach everything by name (`http://wyse:3000`); added the name to Homepage's allowed hosts (DNS-rebinding protection); Lab House added to the dashboard ([notes](tailscale.md)) |
 | Oct 24, 2026 | Login screen flagged disk growth (79% → 86%); measured it, removed Discord, Firefox (least functionality) and the apt cache: back to 81% ([log](disk-cleanup-and-ssh-log.md)) |
 | Oct 24, 2026 | Custom neofetch logo (AZ + Matrix rain + heart + bat) shown at every login ([notes](ssh-setup.md)) |
