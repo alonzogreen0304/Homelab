@@ -162,6 +162,10 @@ Always check each cert's current experience rules on the official site before sc
 
 ---
 
+## What to read
+
+See [Resources](resources.md): h4cker folders and research papers, tagged by level, with a one-per-week reading order.
+
 ## How I'll track this
 
 - Tick boxes in this file as I finish things, and log each one in the README progress table.
