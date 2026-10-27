@@ -174,6 +174,7 @@ flowchart LR
 - [ ] AI SOC analyst: nightly read-only Claude briefing of CrowdSec / Uptime Kuma / disk status pushed to my phone via ntfy (locked-down user, key in `chmod 600`, logs treated as untrusted for prompt injection)
 - [x] CrowdSec `DOCKER-USER` fix + re-test: bans now block containers too ([notes](crowdsec.md))
 - [x] Find what grew the main disk from 79% to 86% (spotted by the new login screen): new programs; removed Discord + Firefox, 86% → 81%
+- [ ] Self-host my private Brain Vault on the Wyse as a phone app: `tailscale serve` over HTTPS (tailnet-only), then Add to Home Screen. Grades stay inside my lab ([template](brain-vault/README.md))
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
 
