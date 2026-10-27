@@ -80,6 +80,7 @@ flowchart LR
 | Date | What I did |
 |---|---|
 | Oct 26, 2026 | Planned the [lab expansion](lab-expansion-plan.md): measured the Wyse (3.3GB RAM, 1.3GB free, too small for Immich), picked an OptiPlex 3050 Micro ($80) over a parts-only Wyse 5070, added a $15 government-surplus Wyse 5060 as Pi-hole #2 (NIST 800-88 wipe), and designed an 8U DeskPi rack layout, cabling, and power plan |
+| Oct 27, 2026 | Got Wyse #2 for the [backup Pi-hole](wyse2-setup-log.md): it came with Windows Embedded 7 (wiping it), found the 5060 boot keys (P / Del), and used `lsblk` to confirm the spare SanDisk on Wyse #1 was safe to pull for the Debian installer |
 | Oct 25, 2026 | Built my [Resources](resources.md) page: the h4cker folders that fit GRC/SOC, plus classic papers (Saltzer & Schroeder, Trusting Trust, Kill Chain, ATT&CK, 99% False Positives, Gordon-Loeb, NIST 800-61r3, IR 8286) mapped to roadmap levels with a weekly reading order |
 | Oct 25, 2026 | Wrote my [career roadmap](grc-consultant-roadmap.md): 6 phases from Security+ to my own consultancy, cert order, and 9 GRC side-quest projects for the lab (inventory, supply-chain audit, CIS/CSF assessment, risk register, policies, BIA/DR, vendor risk, evidence automation, client-style report) |
 | Oct 25, 2026 | Built **Audit Ready**, a GRC study game (71 questions: frameworks, risk math, controls, audit evidence commands, privacy laws, and my lab mapped to controls). Documented how my server got here; Debian came pre-installed by the seller, so I flagged it as a supply-chain risk to audit or re-image ([notes](how-my-server-got-here.md)) |
@@ -162,7 +163,7 @@ flowchart LR
 - [x] SSH from my phone with its own key
 - [x] Audit open ports (OpenClaw gateway is localhost-only)
 - [x] Set up Unbound (recursive DNS + DNSSEC)
-- [ ] Second Pi-hole on another always-on device, synced with nebula-sync
+- [ ] Second Pi-hole on another always-on device, synced with nebula-sync. Wyse #2 is here ([setup log](wyse2-setup-log.md))
 - [x] Install Jellyfin
 - [x] Reclaim old containerd image data on the internal drive (203M → 668K)
 - [x] Homepage dashboard
