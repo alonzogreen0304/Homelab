@@ -82,11 +82,30 @@ One USB is enough. The installer is reusable (like a key that opens as many door
    ```
 7. **Next session:** Pi-hole #2 + Unbound, then nebula-sync.
 
+## Install day notes (what actually happened)
+
+| Problem | Fix | Lesson |
+|---|---|---|
+| Boot menu only showed the internal drive + PXE, then booted old Windows | BIOS (**Del**) → Advanced → **Boot From USB: Enabled** | Thin clients ship locked down. Check the BIOS first. |
+| `curl: (1) Protocol "https" not supported` | Typed the URL **without** `https://` (`curl -fsSL tailscale.com/install.sh \| sh`); `-L` follows the redirect to https | `curl -V` proved https worked, so the problem was a typo or hidden character, not curl |
+| `wget: invalid option -- '0'` | It's a capital letter **O** (`-qO-`), not a zero | Read flags carefully |
+| `Could not resolve host: get.docker.com` right after `tailscale up` | `sudo tailscale set --accept-dns=false` | Tailscale pointed DNS at Pi-hole #1, which was offline. A DNS server shouldn't depend on another DNS server. |
+
+> **Analogy for the DNS bug:** Wyse #2 was told "call the operator for every phone number," but the operator (Pi-hole #1) had its phone unplugged. Fix: Wyse #2 now uses its own phone book.
+
+**BIOS hardening done on Wyse #2:** Boot From USB enabled (for the install), Power Loss Recovery on, Wireless LAN + Bluetooth disabled (less attack surface).
+
+**Result:** Debian 13 (trixie), hostname `AZWyse2`, LAN IP `192.168.11.200`, user `me`, Tailscale linked, Docker working (`hello-world` passed).
+
 ## Status
 
 - [x] Got Wyse #2, booted it, and identified the old OS
 - [x] Found a USB stick and confirmed it's safe to pull from Wyse #1
-- [ ] Flash Debian 13 to the USB
-- [ ] Install Debian on Wyse #2
+- [x] Flash Debian 13 to the USB (Rufus, ISO mode, matching GRUB download)
+- [x] Install Debian on Wyse #2 (old Windows wiped)
+- [x] Tailscale (`--accept-dns=false`) + Docker
+- [ ] SSH key from PC + Termius, then disable password login
+- [ ] Disable Tailscale key expiry for azwyse2
+- [ ] DHCP reservation for 192.168.11.200
 - [ ] Second Ethernet cable (+ switch if needed)
 - [ ] Pi-hole #2 + Unbound + nebula-sync
