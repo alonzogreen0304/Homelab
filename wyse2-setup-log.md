@@ -104,8 +104,11 @@ One USB is enough. The installer is reusable (like a key that opens as many door
 - [x] Flash Debian 13 to the USB (Rufus, ISO mode, matching GRUB download)
 - [x] Install Debian on Wyse #2 (old Windows wiped)
 - [x] Tailscale (`--accept-dns=false`) + Docker
-- [ ] SSH key from PC + Termius, then disable password login
+- [x] SSH key from PC (`ssh-keygen -t ed25519 -C "alonzo-pc"`, login over Tailscale `100.66.216.44`)
+- [x] Red prompt on Wyse #2 so I never mix up the servers (purple planned for Wyse #1)
+- [ ] Disable password login on Wyse #2 (`/etc/ssh/sshd_config.d/10-keys-only.conf`)
+- [ ] Termius phone key on Wyse #2
 - [ ] Disable Tailscale key expiry for azwyse2
 - [ ] DHCP reservation for 192.168.11.200
-- [ ] Second Ethernet cable (+ switch if needed)
+- [ ] Switch arriving Oct 28: plug Wyse #1 + Wyse #2 into it
 - [ ] Pi-hole #2 + Unbound + nebula-sync
