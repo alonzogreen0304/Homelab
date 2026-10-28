@@ -177,6 +177,7 @@ flowchart LR
 - [x] CrowdSec `DOCKER-USER` fix + re-test: bans now block containers too ([notes](crowdsec.md))
 - [x] Find what grew the main disk from 79% to 86% (spotted by the new login screen): new programs; removed Discord + Firefox, 86% → 81%
 - [ ] Self-host my private Brain Vault on the Wyse as a phone app: `tailscale serve` over HTTPS (tailnet-only), then Add to Home Screen. Grades stay inside my lab ([template](brain-vault/README.md))
+- [ ] Mission-control touchscreen dashboard (after OptiPlex + screen): custom 1280x400 HUD on the OptiPlex, tap-to-expand panels (Glances stats, Docker, both Pi-holes, Uptime Kuma, Jellyfin now-playing, CrowdSec, weather, live node map), API keys kept server-side, LAN/tailnet only, Chromium kiosk mode
 - [ ] Insignia Fire TV (after the 2nd Wyse 5060 + OptiPlex are set up): privacy settings off, ADB debloat (keep the launcher, settings, and updates), DNS → Pi-hole to block TV tracking, install Jellyfin
 - [ ] Build a VM lab on my PC (Kali, Ubuntu, Windows Server, Wazuh SIEM)
 - [ ] Audit the homelab against NIST CSF / CIS Controls
