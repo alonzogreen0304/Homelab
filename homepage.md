@@ -170,3 +170,19 @@ flowchart TD
 - [ ] Docker container status through a read-only socket proxy (least privilege)
 - [ ] Add new services here as I add them (OptiPlex, VM lab, etc.)
 - [ ] Optional: small rack screen showing the dashboard
+
+## Fix: "API Error" everywhere when I'm away from the extender Wi-Fi (Oct 28, 2026)
+
+**Problem:** the "Alonzo's Lab" home-screen app showed API Error on every widget unless my phone was on the extender's Wi-Fi.
+
+**Why:** the app was saved with the Wyse's **local IP** (`192.168.11.x`). That address only exists on the extender's network. Away from it, the page loaded from cache but every live call failed.
+
+**Fix:** with Tailscale on, open `http://wyse:3000` (the Tailscale name, already on `HOMEPAGE_ALLOWED_HOSTS`), delete the old icon, and **Add to Home Screen** again. Now it works on any Wi-Fi or cellular.
+
+```mermaid
+flowchart LR
+  P["Phone"] -->|"192.168.11.x (only works on extender Wi-Fi)"| X["❌ unreachable away from home"]
+  P -->|"http://wyse:3000 over Tailscale"| W["✅ Wyse #1 · Homepage"]
+```
+
+> **Analogy:** a local IP is a room number: "Room 11" only means something when you're inside that building. The Tailscale name is a phone number that reaches me anywhere.
